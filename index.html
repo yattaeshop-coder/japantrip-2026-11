@@ -1,522 +1,155 @@
 <!doctype html><html lang="zh-Hant"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#fff8ed"><meta name="description" content="Family Japan Trip 2026 京都東京八日家庭行程">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="description" content="Family Japan Trip 2026 京都東京家庭旅遊網站">
 <title>Family Japan Trip 2026</title>
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon.svg">
-<link rel="stylesheet" href="css/style.css"></head><body>
-<div id="petals"></div>
-<header class="hero">
-<div class="hero-image"></div><div class="hero-filter"></div>
-<nav><a class="brand" href="#">FAMILY <b>JAPAN</b> 2026</a><div><a href="#days">每日行程</a><a href="#transport">交通</a><a href="#tools">旅行工具</a></div><button id="installBtn" hidden>安裝到手機</button></nav>
-<div class="hero-copy"><p>KYOTO · TOKYO · 8 DAYS</p><h1>我們家的<br><em>日本旅行雜誌</em></h1><span>2026年11月2日 — 11月9日</span><a href="#days">閱讀每日行程 ↓</a></div>
-<div class="cover-badge"><b>8</b><span>DAYS<br>FAMILY<br>TRIP</span></div>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg">
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="css/style.css?v=5.1"></head>
+<body>
+<div id="sakura" aria-hidden="true"></div>
+<header class="video-hero">
+  <div class="video-layer active" id="videoKyoto"><iframe src="https://www.youtube.com/embed/aSksCBrDKO8?autoplay=1&mute=1&controls=0&loop=1&playlist=aSksCBrDKO8&playsinline=1&rel=0&modestbranding=1" title="京都影片" allow="autoplay; encrypted-media"></iframe></div>
+  <div class="video-layer" id="videoTokyo"><iframe src="https://www.youtube.com/embed/8vvizjujnKY?autoplay=1&mute=1&controls=0&loop=1&playlist=8vvizjujnKY&playsinline=1&rel=0&modestbranding=1" title="東京影片" allow="autoplay; encrypted-media"></iframe></div>
+  <div class="video-overlay"></div>
+  <nav><a class="logo" href="#">JAPAN <b>2026</b></a><div><a href="#journey">每日行程</a><a href="#flight-hotel">航班住宿</a><a href="#rail">交通</a><a href="#food">美食</a><a href="#tools">工具</a></div><button id="installBtn" hidden>安裝 App</button></nav>
+  <div class="hero-copy"><p>KYOTO · TOKYO · FAMILY JOURNEY</p><h1>八天的日本<br><em>家庭旅行故事</em></h1><span>2026.11.02 — 11.09</span><a href="#journey">開始探索 ↓</a></div>
+  <div class="video-switch"><button class="active" data-video="kyoto">京都</button><button data-video="tokyo">東京</button></div>
 </header>
 
-<section class="dashboard" id="tools">
-<div><small>距離出發</small><b id="countdown">--</b></div>
-<div><small>日本時間</small><b id="japanTime">--:--</b></div>
-<div><small>京都天氣</small><b id="kyotoWeather">--</b></div>
-<div><small>東京天氣</small><b id="tokyoWeather">--</b></div>
-<div><small>1 TWD 約兌</small><b id="fxRate">-- JPY</b></div>
-<div><small>旅行總預算</small><b><span id="budgetTotal">0</span> 円</b></div>
+<section class="quick-stats reveal" id="tools">
+ <div><small>日本時間</small><b id="japanTime">--:--</b></div>
+ <div><small>京都天氣</small><b id="kyotoWeather">--</b></div>
+ <div><small>東京天氣</small><b id="tokyoWeather">--</b></div>
+ <div><small>1 TWD 約兌</small><b id="fxRate">-- JPY</b></div>
+ <div><small>旅行預算</small><b><span id="budgetTotal">0</span> 円</b></div>
 </section>
 
-<section class="intro-section">
-<div class="kicker">FAMILY TRAVEL NOTE</div><h2>不是趕景點，而是讓七個人都能舒服完成的旅行。</h2>
-<p>每天都保留休息與彈性時間，移動日不塞景點，購物日可以自由分組。點選下方 DAY 1～DAY 8，就能看到當天完整安排、注意事項及 Google Maps 導航。</p>
+<section class="journey-head reveal" id="journey"><p>DAILY ITINERARY</p><h2>每日行程與互動地圖</h2><span>點選 Day 或左側景點，右側地圖會即時更新。</span></section>
+<div class="day-selector"><button class="day-button active" data-day="day1"><b>DAY 1</b><span>11/2</span><small>抵達京都</small></button><button class="day-button" data-day="day2"><b>DAY 2</b><span>11/3</span><small>清水寺・和服・祇園</small></button><button class="day-button" data-day="day3"><b>DAY 3</b><span>11/4</span><small>奈良・三十三間堂</small></button><button class="day-button" data-day="day4"><b>DAY 4</b><span>11/5</span><small>京都 → 東京 → 銀座</small></button><button class="day-button" data-day="day5"><b>DAY 5</b><span>11/6</span><small>築地・淺草・晴空塔</small></button><button class="day-button" data-day="day6"><b>DAY 6</b><span>11/7</span><small>上野・阿美橫町・秋葉原</small></button><button class="day-button" data-day="day7"><b>DAY 7</b><span>11/8</span><small>六本木・東京鐵塔</small></button><button class="day-button" data-day="day8"><b>DAY 8</b><span>11/9</span><small>Skyliner・成田機場</small></button></div>
+
+<main class="journey-layout">
+ <aside class="timeline-column"><section class="day-panel active" id="day1">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85" alt="抵達京都" loading="lazy"><img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85" alt="抵達京都" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 1 · 11/2</span><h2>抵達京都</h2><p>京都</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day1" data-lat="25.0797" data-lng="121.2342" data-name="桃園國際機場">
+      <time>06:00</time><div><span class="type transport">transport</span><h3>機場接送</h3><p>桃園國際機場</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.4347" data-lng="135.244" data-name="關西國際機場">
+      <time>09:45–13:20</time><div><span class="type transport">transport</span><h3>中華航空 CI152</h3><p>桃園 → 關西國際機場</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.9858" data-lng="135.7588" data-name="京都車站">
+      <time>15:30</time><div><span class="type transport">transport</span><h3>HARUKA 特快</h3><p>京都車站</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.9854" data-lng="135.7578" data-name="京都車站拉麵小路">
+      <time>16:50</time><div><span class="type food">food</span><h3>京都拉麵小路</h3><p>京都車站拉麵小路</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.9933" data-lng="135.7715" data-name="Hotel SUI Kyoto Kiyomizu">
+      <time>17:40</time><div><span class="type hotel">hotel</span><h3>飯店 Check-in</h3><p>Hotel SUI Kyoto Kiyomizu</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="35.005" data-lng="135.7708" data-name="先斗町">
+      <time>18:30</time><div><span class="type food">food</span><h3>先斗町晚餐</h3><p>先斗町</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="35.0037" data-lng="135.7785" data-name="八坂神社">
+      <time>20:00</time><div><span class="type sight">sight</span><h3>八坂神社夜景</h3><p>八坂神社</p></div><i>↗</i></button></div>
+    </section><section class="day-panel" id="day2">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85" alt="清水寺・和服・祇園" loading="lazy"><img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85" alt="清水寺・和服・祇園" loading="lazy"><img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85" alt="清水寺・和服・祇園" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 2 · 11/3</span><h2>清水寺・和服・祇園</h2><p>京都</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day2" data-lat="34.9949" data-lng="135.785" data-name="清水寺">
+      <time>08:00</time><div><span class="type sight">sight</span><h3>清水寺</h3><p>清水寺</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="34.998" data-lng="135.7814" data-name="二寧坂">
+      <time>09:00</time><div><span class="type sight">sight</span><h3>和服・二寧坂三寧坂</h3><p>二寧坂</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="35.005" data-lng="135.7649" data-name="錦市場">
+      <time>12:00</time><div><span class="type food">food</span><h3>錦市場</h3><p>錦市場</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="35.0034" data-lng="135.769" data-name="河原町">
+      <time>15:30</time><div><span class="type shopping">shopping</span><h3>河原町商圈</h3><p>河原町</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="35.0053" data-lng="135.7753" data-name="祇園白川">
+      <time>20:30</time><div><span class="type sight">sight</span><h3>祇園白川散步</h3><p>祇園白川</p></div><i>↗</i></button></div>
+    </section><section class="day-panel" id="day3">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85" alt="奈良・三十三間堂" loading="lazy"><img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85" alt="奈良・三十三間堂" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 3 · 11/4</span><h2>奈良・三十三間堂</h2><p>奈良／京都</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day3" data-lat="34.6814" data-lng="135.8485" data-name="春日大社">
+      <time>09:15</time><div><span class="type sight">sight</span><h3>春日大社</h3><p>春日大社</p></div><i>↗</i></button><button class="stop-card" data-day="day3" data-lat="34.689" data-lng="135.8398" data-name="東大寺">
+      <time>10:00</time><div><span class="type sight">sight</span><h3>東大寺與小鹿</h3><p>東大寺</p></div><i>↗</i></button><button class="stop-card" data-day="day3" data-lat="34.6777" data-lng="135.832" data-name="奈良町">
+      <time>11:30</time><div><span class="type food">food</span><h3>奈良商店街午餐</h3><p>奈良町</p></div><i>↗</i></button><button class="stop-card" data-day="day3" data-lat="34.9879" data-lng="135.7717" data-name="三十三間堂">
+      <time>15:30</time><div><span class="type sight">sight</span><h3>三十三間堂</h3><p>三十三間堂</p></div><i>↗</i></button></div>
+    </section><section class="day-panel" id="day4">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85" alt="京都 → 東京 → 銀座" loading="lazy"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="京都 → 東京 → 銀座" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 4 · 11/5</span><h2>京都 → 東京 → 銀座</h2><p>東京</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day4" data-lat="34.9858" data-lng="135.7588" data-name="京都車站">
+      <time>14:01</time><div><span class="type transport">transport</span><h3>東海道新幹線</h3><p>京都車站</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6812" data-lng="139.7671" data-name="東京車站">
+      <time>16:15</time><div><span class="type transport">transport</span><h3>抵達東京</h3><p>東京車站</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6684" data-lng="139.7631" data-name="相鐵Fresa Inn銀座七丁目">
+      <time>17:00</time><div><span class="type hotel">hotel</span><h3>飯店 Check-in</h3><p>相鐵Fresa Inn銀座七丁目</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6697" data-lng="139.7643" data-name="GINZA SIX">
+      <time>傍晚</time><div><span class="type shopping">shopping</span><h3>銀座購物</h3><p>GINZA SIX</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6751" data-lng="139.7638" data-name="有樂町站">
+      <time>晚上</time><div><span class="type sight">sight</span><h3>有樂町散步</h3><p>有樂町站</p></div><i>↗</i></button></div>
+    </section><section class="day-panel" id="day5">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85" alt="築地・淺草・晴空塔" loading="lazy"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="築地・淺草・晴空塔" loading="lazy"><img src="https://images.unsplash.com/photo-1505069190533-da1c9af13346?auto=format&fit=crop&w=1600&q=85" alt="築地・淺草・晴空塔" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 5 · 11/6</span><h2>築地・淺草・晴空塔</h2><p>東京</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day5" data-lat="35.6655" data-lng="139.7707" data-name="築地場外市場">
+      <time>07:30</time><div><span class="type food">food</span><h3>築地市場早餐</h3><p>築地場外市場</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.7111" data-lng="139.7964" data-name="雷門">
+      <time>上午</time><div><span class="type sight">sight</span><h3>雷門</h3><p>雷門</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.7148" data-lng="139.7967" data-name="淺草寺">
+      <time>上午</time><div><span class="type sight">sight</span><h3>淺草寺</h3><p>淺草寺</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.71" data-lng="139.812" data-name="東京晴空街道">
+      <time>下午</time><div><span class="type shopping">shopping</span><h3>Solamachi 商場</h3><p>東京晴空街道</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.7101" data-lng="139.8107" data-name="東京晴空塔">
+      <time>傍晚</time><div><span class="type sight">sight</span><h3>晴空塔展望台</h3><p>東京晴空塔</p></div><i>↗</i></button></div>
+    </section><section class="day-panel" id="day6">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1600&q=85" alt="上野・阿美橫町・秋葉原" loading="lazy"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="上野・阿美橫町・秋葉原" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 6 · 11/7</span><h2>上野・阿美橫町・秋葉原</h2><p>東京</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day6" data-lat="35.7148" data-lng="139.7732" data-name="上野公園">
+      <time>上午</time><div><span class="type sight">sight</span><h3>上野公園</h3><p>上野公園</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.7088" data-lng="139.7746" data-name="阿美橫町">
+      <time>中午前</time><div><span class="type shopping">shopping</span><h3>阿美橫町</h3><p>阿美橫町</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.7138" data-lng="139.7773" data-name="上野站">
+      <time>午餐</time><div><span class="type food">food</span><h3>上野午餐</h3><p>上野站</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.6984" data-lng="139.7731" data-name="秋葉原站">
+      <time>下午</time><div><span class="type shopping">shopping</span><h3>秋葉原購物</h3><p>秋葉原站</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.6988" data-lng="139.7747" data-name="Yodobashi Akiba">
+      <time>下午</time><div><span class="type shopping">shopping</span><h3>BIC／Yodobashi</h3><p>Yodobashi Akiba</p></div><i>↗</i></button></div>
+    </section><section class="day-panel" id="day7">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1600&q=85" alt="六本木・東京鐵塔" loading="lazy"><img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85" alt="六本木・東京鐵塔" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 7 · 11/8</span><h2>六本木・東京鐵塔</h2><p>東京</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day7" data-lat="35.6605" data-lng="139.7292" data-name="六本木之丘">
+      <time>中午</time><div><span class="type sight">sight</span><h3>六本木 Hills</h3><p>六本木之丘</p></div><i>↗</i></button><button class="stop-card" data-day="day7" data-lat="35.6658" data-lng="139.731" data-name="Tokyo Midtown">
+      <time>下午</time><div><span class="type shopping">shopping</span><h3>Tokyo Midtown</h3><p>Tokyo Midtown</p></div><i>↗</i></button><button class="stop-card" data-day="day7" data-lat="35.6586" data-lng="139.7454" data-name="東京鐵塔">
+      <time>下午</time><div><span class="type sight">sight</span><h3>東京鐵塔</h3><p>東京鐵塔</p></div><i>↗</i></button><button class="stop-card" data-day="day7" data-lat="35.6717" data-lng="139.765" data-name="銀座">
+      <time>晚上</time><div><span class="type shopping">shopping</span><h3>銀座最後採買</h3><p>銀座</p></div><i>↗</i></button></div>
+    </section><section class="day-panel" id="day8">
+      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="Skyliner・成田機場" loading="lazy"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=85" alt="Skyliner・成田機場" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
+      <div class="photo-caption"><span>DAY 8 · 11/9</span><h2>Skyliner・成田機場</h2><p>東京／成田</p></div></div>
+      <div class="stops"><button class="stop-card" data-day="day8" data-lat="35.6684" data-lng="139.7631" data-name="相鐵Fresa Inn銀座七丁目">
+      <time>早上</time><div><span class="type hotel">hotel</span><h3>飯店退房</h3><p>相鐵Fresa Inn銀座七丁目</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.6812" data-lng="139.7671" data-name="東京車站">
+      <time>上午</time><div><span class="type shopping">shopping</span><h3>東京車站／KITTE</h3><p>東京車站</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.7113" data-lng="139.7732" data-name="京成上野站">
+      <time>中午前後</time><div><span class="type transport">transport</span><h3>京成上野站</h3><p>京成上野站</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.772" data-lng="140.3929" data-name="成田國際機場">
+      <time>之後</time><div><span class="type transport">transport</span><h3>Skyliner</h3><p>成田國際機場</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.772" data-lng="140.3929" data-name="成田國際機場"><time>14:35–17:45</time><div><span class="type transport">transport</span><h3>中華航空 CI101</h3><p>成田 → 桃園國際機場</p></div><i>↗</i></button></div>
+    </section></aside>
+ <section class="map-column">
+   <div class="map-sticky">
+     <div class="map-toolbar"><div><small>INTERACTIVE MAP</small><h2 id="mapTitle">Day 1 抵達京都</h2></div><a id="googleRoute" target="_blank">Google Maps 路線 ↗</a></div>
+     <div id="map"></div>
+     <div class="budget-box"><label>這一天預算 <input id="dayBudget" inputmode="numeric" placeholder="0"> 円</label><small>輸入後自動儲存在這台裝置</small></div>
+   </div>
+ </section>
+</main>
+
+<section class="rail-section reveal" id="flight-hotel"><div class="section-title"><p>FLIGHT & HOTEL</p><h2>航班與住宿</h2></div>
+ <div class="food-grid">
+  <article><div><span>去程航班 · 11/2</span><h3>中華航空 CI152</h3><p>09:45 桃園國際機場起飛</p><p>13:20 抵達關西國際機場</p></div></article>
+  <article><div><span>回程航班 · 11/9</span><h3>中華航空 CI101</h3><p>14:35 成田國際機場起飛</p><p>17:45 抵達桃園國際機場</p></div></article>
+  <article><div><span>京都住宿 · 11/2～11/5</span><h3>Hotel SUI Kyoto Kiyomizu</h3><p>京都府京都市東山區朱雀町423番</p><p>電話：075-532-3131</p></div></article>
+  <article><div><span>東京住宿 · 11/5～11/9</span><h3>相鐵 Fresa Inn 銀座七丁目</h3><p>7-11-12 Ginza, Chuo-ku, Tokyo 104-0061</p><p>電話：+81 3-6891-0203</p></div></article>
+ </div>
 </section>
 
-<section id="days" class="days-nav"><div class="day-tabs"><button class="day-tab active" data-day="d1"><span>DAY 1</span><b>11/02</b><small>飛抵關西，慢慢進入京都節奏</small></button><button class="day-tab" data-day="d2"><span>DAY 2</span><b>11/03</b><small>清水寺、和服與祇園的京都經典日</small></button><button class="day-tab" data-day="d3"><span>DAY 3</span><b>11/04</b><small>奈良小鹿、東大寺與京都古寺</small></button><button class="day-tab" data-day="d4"><span>DAY 4</span><b>11/05</b><small>搭新幹線前往東京，夜遊銀座</small></button><button class="day-tab" data-day="d5"><span>DAY 5</span><b>11/06</b><small>築地早餐、淺草老街與晴空塔夜景</small></button><button class="day-tab" data-day="d6"><span>DAY 6</span><b>11/07</b><small>上野公園、阿美橫町與秋葉原購物日</small></button><button class="day-tab" data-day="d7"><span>DAY 7</span><b>11/08</b><small>六本木、東京鐵塔與最後採買</small></button><button class="day-tab" data-day="d8"><span>DAY 8</span><b>11/09</b><small>東京最後巡禮，搭 Skyliner 前往成田</small></button></div></section>
-<main><section class="day-page active" id="d1" data-day="d1">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 1 · 11/02・星期一</span><h2>飛抵關西，慢慢進入京都節奏</h2><p>第一天以移動和適應環境為主。抵達日本後不安排過多景點，讓全家從機場一路順暢前往京都，吃完晚餐再用八坂神社的夜景為旅程揭開序幕。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/02・星期一</b></div>
-        <div><small>行程數量</small><b>8 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>長途飛行後容易疲倦，晚間行程採彈性安排；若長輩或家人體力不足，可在飯店休息，不必勉強前往八坂神社。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>飛抵關西，慢慢進入京都節奏</h3><p>第一天以移動和適應環境為主。抵達日本後不安排過多景點，讓全家從機場一路順暢前往京都，吃完晚餐再用八坂神社的夜景為旅程揭開序幕。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d1" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">06:00</div>
-          <div class="stop-copy"><h3>機場接送</h3><p>從住處出發前往桃園國際機場。建議所有護照、機票與網路設備前一晚集中放入隨身包，避免清晨匆忙遺漏。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=桃園國際機場">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">07:45</div>
-          <div class="stop-copy"><h3>抵達桃園機場</h3><p>預留約兩小時辦理報到、托運、安檢與出境。七人同行時，行李整理與集合會比一般旅客花更多時間。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=桃園國際機場">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">09:45</div>
-          <div class="stop-copy"><h3>搭機前往關西</h3><p>登機後先休息，並在機上填妥必要資料。抵達前再次確認護照與隨身物品。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=關西國際機場">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">13:20</div>
-          <div class="stop-copy"><h3>抵達關西機場</h3><p>完成入境、領取行李及海關程序。全員集合後再前往 JR 車站，不要分散行動。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=關西國際機場">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">15:30</div>
-          <div class="stop-copy"><h3>搭乘 HARUKA</h3><p>從關西機場搭乘 HARUKA 特急前往京都，車程約八十分鐘。大型行李要放在行李區，貴重物品留在身邊。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=JR關西機場站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-5"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">06</div>
-          <div class="stop-time">17:00</div>
-          <div class="stop-copy"><h3>京都車站與晚餐</h3><p>抵達京都後先在京都拉麵小路用餐，也可順便確認氣溫並決定是否添購外套。吃完再前往飯店，避免拖著行李四處逛。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=京都拉麵小路">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-6"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">07</div>
-          <div class="stop-time">18:30</div>
-          <div class="stop-copy"><h3>先斗町散步</h3><p>辦理入住、稍作休息後再前往先斗町。這裡巷弄狹窄、店家密集，適合安排居酒屋或京都料理。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=先斗町">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-7"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">08</div>
-          <div class="stop-time">20:00</div>
-          <div class="stop-copy"><h3>八坂神社夜景</h3><p>以輕鬆散步方式前往八坂神社，欣賞夜間燈光與祇園氛圍。停留約三十分鐘即可返回飯店。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=八坂神社">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d1-8"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section><section class="day-page " id="d2" data-day="d2">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 2 · 11/03・星期二</span><h2>清水寺、和服與祇園的京都經典日</h2><p>今天是京都最具代表性的古都行程。上午趁人潮較少時走訪清水寺，再穿和服漫步二寧坂、三寧坂；午后安排錦市場與河原町購物，晚上回到祇園感受京都夜色。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/03・星期二</b></div>
-        <div><small>行程數量</small><b>8 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>石板路與坡道較多，和服鞋不適合快走。建議穿著方便更換的衣物，並為長輩準備舒適鞋子，拍照結束後及早歸還和服。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>清水寺、和服與祇園的京都經典日</h3><p>今天是京都最具代表性的古都行程。上午趁人潮較少時走訪清水寺，再穿和服漫步二寧坂、三寧坂；午后安排錦市場與河原町購物，晚上回到祇園感受京都夜色。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d2" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">08:00</div>
-          <div class="stop-copy"><h3>清水寺</h3><p>早到可避開大量團客。從入口進入後依序參觀仁王門、本堂與清水舞台，拍照後再往音羽瀑布方向前進。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=清水寺">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">09:00</div>
-          <div class="stop-copy"><h3>和服換裝</h3><p>到預約店家辦理和服租借。七人同行建議事先選定方案，避免現場花太多時間挑選。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=清水寺和服租借">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">10:00</div>
-          <div class="stop-copy"><h3>二寧坂與三寧坂</h3><p>沿著古老街道慢慢散步，沿途有甜點、雜貨、陶器和伴手禮店。階梯多，雨天需要特別注意。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=二寧坂">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">11:30</div>
-          <div class="stop-copy"><h3>歸還和服</h3><p>拍照結束後歸還和服，再換回適合步行的鞋子，接著搭車前往市中心。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=清水寺和服租借">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">12:00</div>
-          <div class="stop-copy"><h3>錦市場午餐</h3><p>以少量多樣的方式品嚐玉子燒、豆乳甜點、漬物與海鮮小吃。市場通道狹窄，盡量不要邊走邊吃。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=錦市場">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-5"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">06</div>
-          <div class="stop-time">13:30</div>
-          <div class="stop-copy"><h3>回飯店休息</h3><p>午后先休息約一至兩小時，讓長輩恢復體力，也能整理上午購買的物品。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Hotel+SUI+Kyoto+Kiyomizu">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-6"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">07</div>
-          <div class="stop-time">15:30</div>
-          <div class="stop-copy"><h3>河原町商圈</h3><p>逛百貨、藥妝與甜點咖啡店。這段行程可自由分組，再約定時間集合。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=京都河原町">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-7"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">08</div>
-          <div class="stop-time">20:30</div>
-          <div class="stop-copy"><h3>祇園夜間散步</h3><p>從花見小路走到祇園白川，再視體力前往鴨川。夜間以安靜散步為主，不打擾當地居民。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=祇園白川">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d2-8"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section><section class="day-page " id="d3" data-day="d3">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 3 · 11/04・星期三</span><h2>奈良小鹿、東大寺與京都古寺</h2><p>上午前往奈良，在春日大社的森林與東大寺周邊感受古都氣氛，也能與奈良小鹿互動。午餐後返回京都休息，下午再安排三十三間堂，避免整天長距離步行。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/04・星期三</b></div>
-        <div><small>行程數量</small><b>7 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>餵鹿時不要拿著紙袋或地圖，小鹿可能會靠近搶食。購買鹿仙貝後分次餵食，遇到體型較大的鹿可先把雙手攤開示意沒有食物。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>奈良小鹿、東大寺與京都古寺</h3><p>上午前往奈良，在春日大社的森林與東大寺周邊感受古都氣氛，也能與奈良小鹿互動。午餐後返回京都休息，下午再安排三十三間堂，避免整天長距離步行。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d3" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">08:30</div>
-          <div class="stop-copy"><h3>前往奈良</h3><p>可依住宿位置選擇 JR 或近鐵。若希望抵達後較快進入奈良公園，近鐵奈良站通常較方便。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=近鐵奈良站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d3-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">09:15</div>
-          <div class="stop-copy"><h3>春日大社</h3><p>沿著石燈籠與森林步道前往本殿，環境清幽但步行距離較長，途中可適時休息。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=春日大社">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d3-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">10:00</div>
-          <div class="stop-copy"><h3>東大寺與奈良小鹿</h3><p>參觀大佛殿，再於奈良公園與小鹿互動。拍照時不要站在車道，也不要讓孩子單獨拿大量鹿仙貝。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=東大寺">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d3-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">11:30</div>
-          <div class="stop-copy"><h3>奈良午餐</h3><p>前往奈良町或近鐵奈良站周邊用餐，可選擇柿葉壽司、烏龍麵或家庭餐廳。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=奈良町">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d3-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">12:55</div>
-          <div class="stop-copy"><h3>返回京都休息</h3><p>回到飯店休息，避免將奈良與京都景點連續塞得太滿。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Hotel+SUI+Kyoto+Kiyomizu">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d3-5"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">06</div>
-          <div class="stop-time">15:30</div>
-          <div class="stop-copy"><h3>三十三間堂</h3><p>欣賞一千零一尊千手觀音像。館內通常禁止攝影，參觀時保持安靜並依動線前進。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=三十三間堂">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d3-6"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">07</div>
-          <div class="stop-time">18:00</div>
-          <div class="stop-copy"><h3>京都晚餐</h3><p>晚餐以飯店附近或交通方便的居酒屋為主，吃完早點休息，準備隔日移動東京。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=京都居酒屋">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d3-7"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section><section class="day-page " id="d4" data-day="d4">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 4 · 11/05・星期四</span><h2>搭新幹線前往東京，夜遊銀座</h2><p>今天從古都京都移動到東京。上午保留整理行李與京都車站活動時間，下午搭東海道新幹線前往東京，入住銀座飯店後，以附近購物和夜景作為東京行程的開場。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/05・星期四</b></div>
-        <div><small>行程數量</small><b>7 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>七人搭新幹線最好預先劃位。大型行李若超過規定尺寸，需預約特大行李放置處；上車前先買好飲料與簡單點心。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>搭新幹線前往東京，夜遊銀座</h3><p>今天從古都京都移動到東京。上午保留整理行李與京都車站活動時間，下午搭東海道新幹線前往東京，入住銀座飯店後，以附近購物和夜景作為東京行程的開場。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d4" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">10:00</div>
-          <div class="stop-copy"><h3>飯店退房</h3><p>再次檢查護照、充電器與房間抽屜。行李可先寄放飯店，再輕鬆前往京都車站。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Hotel+SUI+Kyoto+Kiyomizu">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d4-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">上午</div>
-          <div class="stop-copy"><h3>京都車站自由活動</h3><p>可逛車站商場、喝咖啡或購買便當。不要安排太遠的景點，以免錯過新幹線。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=京都車站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d4-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">14:01</div>
-          <div class="stop-copy"><h3>搭乘東海道新幹線</h3><p>提早二十分鐘到月台確認車廂。行李先放妥，抵達前十至十五分鐘開始整理。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=京都車站新幹線">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d4-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">16:15</div>
-          <div class="stop-copy"><h3>抵達東京</h3><p>抵達東京站後先確認轉乘方向。七人帶行李建議搭計程車或分兩車前往銀座飯店，減少轉乘負擔。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=東京車站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d4-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">17:00</div>
-          <div class="stop-copy"><h3>東京飯店入住</h3><p>入住相鐵 Fresa Inn 銀座七丁目，簡單整理後再出門。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=相鐵Fresa+Inn銀座七丁目">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d4-5"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">06</div>
-          <div class="stop-time">傍晚</div>
-          <div class="stop-copy"><h3>銀座購物</h3><p>依序安排 UNIQLO TOKYO、GU、GINZA SIX、松屋與三越。不要每家都停留太久，可先列出主要購物目標。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=銀座">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d4-6"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">07</div>
-          <div class="stop-time">晚上</div>
-          <div class="stop-copy"><h3>有樂町夜景</h3><p>從銀座步行至有樂町，欣賞街景與鐵道高架周邊。若已疲累，可直接回飯店休息。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=有樂町">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d4-7"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section><section class="day-page " id="d5" data-day="d5">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1505069190533-da1c9af13346?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 5 · 11/06・星期五</span><h2>築地早餐、淺草老街與晴空塔夜景</h2><p>今天把東京最具代表性的市場、下町與現代地標串在一起。上午從築地早餐開始，再到雷門、仲見世與淺草寺，下午前往晴空塔與 Solamachi，從白天一路玩到夜景。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/06・星期五</b></div>
-        <div><small>行程數量</small><b>8 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>築地與淺草上午人潮都多，建議提早出發。從淺草到晴空塔可依體力選擇步行或搭車，長輩不必勉強走完全程。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>築地早餐、淺草老街與晴空塔夜景</h3><p>今天把東京最具代表性的市場、下町與現代地標串在一起。上午從築地早餐開始，再到雷門、仲見世與淺草寺，下午前往晴空塔與 Solamachi，從白天一路玩到夜景。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d5" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">07:30</div>
-          <div class="stop-copy"><h3>築地市場早餐</h3><p>以海鮮丼、玉子燒或牛丼作為早餐。熱門店家排隊時間較長，可準備兩到三個備選店家。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=築地場外市場">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">09:30</div>
-          <div class="stop-copy"><h3>前往淺草</h3><p>搭地鐵前往淺草，下車後先確認雷門方向。沿途商店多，建議先完成主要景點再購物。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=淺草站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">10:00</div>
-          <div class="stop-copy"><h3>雷門與仲見世</h3><p>從雷門進入仲見世商店街，購買人形燒、和菓子、扇子及小物。人多時要約定走散後的集合地點。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=雷門">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">11:00</div>
-          <div class="stop-copy"><h3>淺草寺</h3><p>參拜本堂、抽御神籤並拍攝五重塔。停留約一小時後再安排午餐。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=淺草寺">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">13:30</div>
-          <div class="stop-copy"><h3>前往晴空塔</h3><p>體力充足可沿隅田川方向步行，否則搭電車一站即可抵達。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=東京晴空塔">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-5"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">06</div>
-          <div class="stop-time">14:00</div>
-          <div class="stop-copy"><h3>Solamachi 購物</h3><p>安排 Pokémon Center、吉伊卡哇、Disney Store 與 Kirby 商店。可分組購物，避免全家等待同一家店。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=東京晴空街道">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-6"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">07</div>
-          <div class="stop-time">17:00</div>
-          <div class="stop-copy"><h3>晴空塔展望台</h3><p>傍晚登塔可同時看到夕陽與夜景。若已購票，需提早抵達指定入口。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=東京晴空塔展望台">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-7"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">08</div>
-          <div class="stop-time">19:00</div>
-          <div class="stop-copy"><h3>商場晚餐</h3><p>在 Solamachi 用餐後返回銀座。回程前先確認購物袋與隨身物品。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=東京晴空街道餐廳">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d5-8"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section><section class="day-page " id="d6" data-day="d6">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 6 · 11/07・星期六</span><h2>上野公園、阿美橫町與秋葉原購物日</h2><p>今天安排東京北側的公園、市場與電器街。上午在上野公園散步，再到阿美橫町採買藥妝與零食；下午前往秋葉原，集中購買電器、動漫與扭蛋商品。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/07・星期六</b></div>
-        <div><small>行程數量</small><b>7 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>阿美橫町與秋葉原購物袋會快速增加，建議帶可折疊購物袋。購買電器前確認電壓、插頭、保固與是否支援繁體中文。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>上野公園、阿美橫町與秋葉原購物日</h3><p>今天安排東京北側的公園、市場與電器街。上午在上野公園散步，再到阿美橫町採買藥妝與零食；下午前往秋葉原，集中購買電器、動漫與扭蛋商品。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d6" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">09:00</div>
-          <div class="stop-copy"><h3>上野公園</h3><p>從上野站進入公園，視體力安排不忍池與西鄉隆盛像。若對博物館沒有特別興趣，不必排入室內館舍。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=上野公園">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d6-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">10:30</div>
-          <div class="stop-copy"><h3>阿美橫町</h3><p>逛藥妝、運動鞋、零食與乾貨。價格不一定每家相同，先比較再購買。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=阿美橫町">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d6-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">12:00</div>
-          <div class="stop-copy"><h3>上野午餐</h3><p>選擇牛丼、炸豬排或拉麵等用餐速度較快的餐廳，避免午餐排隊過久。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=上野站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d6-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">13:30</div>
-          <div class="stop-copy"><h3>前往秋葉原</h3><p>從上野搭 JR 前往秋葉原。到站後先決定主要採買店家與集合時間。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=秋葉原站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d6-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">14:00</div>
-          <div class="stop-copy"><h3>BIC Camera 與 Yodobashi</h3><p>大型電器量販店適合集中比較價格。退稅時需出示護照，商品拆封規定依店家說明。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Yodobashi+Akiba">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d6-5"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">06</div>
-          <div class="stop-time">16:30</div>
-          <div class="stop-copy"><h3>Animate 與動漫商店</h3><p>安排動漫、模型、扭蛋與角色周邊。對動漫沒興趣的家人可在咖啡店休息。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Animate秋葉原">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d6-6"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">07</div>
-          <div class="stop-time">19:00</div>
-          <div class="stop-copy"><h3>返回銀座</h3><p>購物完成後返回飯店整理戰利品，確認行李空間是否足夠。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=銀座">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d6-7"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section><section class="day-page " id="d7" data-day="d7">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 7 · 11/08・星期日</span><h2>六本木、東京鐵塔與最後採買</h2><p>旅程倒數第二天不安排早起，讓全家睡飽後再前往六本木。下午可在東京 Midtown 與六本木 Hills 散步，再依興趣選擇東京鐵塔或 TeamLab，晚上回銀座完成最後採買。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/08・星期日</b></div>
-        <div><small>行程數量</small><b>5 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>東京鐵塔與 TeamLab 不建議同一天都排，容易趕行程。若選 TeamLab，應事先預約並預留較完整的參觀時間。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>六本木、東京鐵塔與最後採買</h3><p>旅程倒數第二天不安排早起，讓全家睡飽後再前往六本木。下午可在東京 Midtown 與六本木 Hills 散步，再依興趣選擇東京鐵塔或 TeamLab，晚上回銀座完成最後採買。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d7" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">上午</div>
-          <div class="stop-copy"><h3>睡晚一點</h3><p>早餐可在飯店附近簡單解決。這一天最重要的是恢復體力，不必為了早起而增加疲勞。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=銀座">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d7-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">11:30</div>
-          <div class="stop-copy"><h3>六本木 Hills</h3><p>逛六本木之丘、毛利庭園與周邊商店。若天氣好，可在戶外多停留。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=六本木之丘">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d7-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">14:00</div>
-          <div class="stop-copy"><h3>Tokyo Midtown</h3><p>安排午餐、咖啡及商場逛街。這裡環境舒適，適合讓長輩休息。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Tokyo+Midtown">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d7-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">16:00</div>
-          <div class="stop-copy"><h3>東京鐵塔或 TeamLab</h3><p>兩者擇一。東京鐵塔適合經典夜景，TeamLab 適合沉浸式體驗，依家人興趣決定。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=東京鐵塔">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d7-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">19:00</div>
-          <div class="stop-copy"><h3>銀座最後採買</h3><p>回到銀座購買藥妝、精品與伴手禮。採買完立刻回飯店整理行李，避免隔天手忙腳亂。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=銀座">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d7-5"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section><section class="day-page " id="d8" data-day="d8">
-      <div class="day-cover" style="background-image:url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=88')">
-        <div class="cover-overlay"></div>
-        <div class="cover-copy"><span>DAY 8 · 11/09・星期一</span><h2>東京最後巡禮，搭 Skyliner 前往成田</h2><p>最後一天以退房、補買伴手禮與前往機場為主。上午只安排交通方便的東京站或銀座，不再前往較遠景點，並預留足夠時間搭乘 Skyliner 前往成田機場。</p></div>
-      </div>
-      <div class="day-summary">
-        <div><small>今日城市</small><b>11/09・星期一</b></div>
-        <div><small>行程數量</small><b>5 個安排</b></div>
-        <div><small>建議節奏</small><b>慢遊・保留休息</b></div>
-      </div>
-      <div class="editor-note"><span>編輯提醒</span><p>國際航班建議至少提前三小時抵達機場。若行李多，從銀座前往京成上野站時可搭計程車，避免在地鐵站搬運大型行李。</p></div>
-      <div class="day-body">
-        <aside class="left-index"><span>ITINERARY</span><h3>東京最後巡禮，搭 Skyliner 前往成田</h3><p>最後一天以退房、補買伴手禮與前往機場為主。上午只安排交通方便的東京站或銀座，不再前往較遠景點，並預留足夠時間搭乘 Skyliner 前往成田機場。</p>
-          <div class="day-budget"><label>今日預算（日圓）</label><input class="budget-input" data-budget="d8" inputmode="numeric" placeholder="0"></div>
-        </aside>
-        <div class="stops-list"><article class="stop-card">
-          <div class="stop-number">01</div>
-          <div class="stop-time">早上</div>
-          <div class="stop-copy"><h3>飯店退房</h3><p>檢查床下、浴室、保險箱與插座，確認護照和所有購物品都已裝妥。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=相鐵Fresa+Inn銀座七丁目">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d8-1"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">02</div>
-          <div class="stop-time">09:30</div>
-          <div class="stop-copy"><h3>東京站或 KITTE</h3><p>若時間充裕，可逛東京站 Character Street、KITTE 或購買最後伴手禮。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=KITTE丸之內">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d8-2"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">03</div>
-          <div class="stop-time">中午前後</div>
-          <div class="stop-copy"><h3>前往京成上野站</h3><p>從銀座搭車前往京成上野。七人與大型行李可考慮分乘兩台計程車。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=京成上野站">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d8-3"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">04</div>
-          <div class="stop-time">之後</div>
-          <div class="stop-copy"><h3>搭乘 Skyliner</h3><p>依航班時間預先選定班次。上車後將大型行李放入行李區，並保管好車票與護照。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=京成上野站Skyliner">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d8-4"><span>完成</span></label>
-        </article><article class="stop-card">
-          <div class="stop-number">05</div>
-          <div class="stop-time">抵達後</div>
-          <div class="stop-copy"><h3>成田機場</h3><p>辦理報到、托運、安檢與出境。完成手續後再安排免稅店與用餐，不要先逛街才報到。</p>
-          <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=成田國際機場">開啟 Google Maps 導航 ↗</a></div>
-          <label class="done-check"><input type="checkbox" data-check="d8-5"><span>完成</span></label>
-        </article></div>
-      </div>
-    </section></main>
+<section class="rail-section reveal" id="rail"><div class="section-title"><p>RAIL JOURNEY</p><h2>主要鐵路路線</h2></div>
+ <div class="rail-map">
+   <article><span class="rail-icon">✈</span><b>關西機場</b><small>抵達日本</small></article><i></i>
+   <article><span class="rail-icon">🚆</span><b>HARUKA</b><small>約80分鐘</small></article><i></i>
+   <article><span class="rail-icon">⛩</span><b>京都</b><small>11/2～11/5</small></article><i></i>
+   <article><span class="rail-icon">🚄</span><b>新幹線</b><small>京都 → 東京</small></article><i></i>
+   <article><span class="rail-icon">🗼</span><b>東京</b><small>11/5～11/9</small></article><i></i>
+   <article><span class="rail-icon">🚅</span><b>Skyliner</b><small>京成上野 → 成田</small></article><i></i>
+   <article><span class="rail-icon">✈</span><b>成田機場</b><small>返程</small></article>
+ </div>
+</section>
 
-<section class="transport-section" id="transport">
-<div class="section-heading"><span>RAIL GUIDE</span><h2>三段重要鐵路移動</h2></div>
-<div class="transport-grid">
-<article><div class="transport-icon">01</div><span>KANSAI AIRPORT → KYOTO</span><h3>JR HARUKA</h3><p>抵達關西機場後，依 JR 指標前往車站。搭乘 HARUKA 約八十分鐘可抵達京都。七人同行建議事先準備車票或劃位，並把大型行李集中放置。</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=JR+Kansai+Airport+Station">查看車站 ↗</a></article>
-<article><div class="transport-icon">02</div><span>KYOTO → TOKYO</span><h3>東海道新幹線</h3><p>建議預先劃位，並確認是否需要特大行李座位。上車前二十分鐘到月台，抵達東京前提早整理行李，避免七人同時在車門口匆忙移動。</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kyoto+Station+Shinkansen">查看車站 ↗</a></article>
-<article><div class="transport-icon">03</div><span>KEISEI UENO → NARITA</span><h3>Skyliner</h3><p>返程日由京成上野直達成田機場。應依航班時間倒推班次，並至少預留三小時辦理國際航班手續。行李多時，銀座到京成上野可改搭計程車。</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Keisei+Ueno+Station">查看車站 ↗</a></article>
-</div></section>
+<section class="food-section reveal" id="food"><div class="section-title"><p>FOOD GUIDE</p><h2>行程美食卡片</h2><span>評分與營業時間可能變動，出發前請再點地圖確認。</span></div>
+ <div class="food-grid">
+  <article><img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=900&q=85"><div><span>築地／豐洲</span><h3>壽司大</h3><p class="rating">★ 4.4　熱門排隊店</p><p>參考營業：06:00～約14:00</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Sushi+Dai+Toyosu">查看地圖 ↗</a></div></article>
+  <article><img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85"><div><span>築地場外市場</span><h3>狐狸屋</h3><p class="rating">★ 4.2　牛丼／內臟丼</p><p>參考營業：06:30～13:30</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kitsuneya+Tsukiji">查看地圖 ↗</a></div></article>
+  <article><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=85"><div><span>京都車站</span><h3>京都拉麵小路</h3><p class="rating">★ 多家名店集合</p><p>通常約11:00～22:00，各店不同</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kyoto+Ramen+Koji">查看地圖 ↗</a></div></article>
+  <article><img src="https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=900&q=85"><div><span>東京晴空塔</span><h3>Solamachi 餐廳</h3><p class="rating">★ 選擇多、適合家庭</p><p>各餐廳營業時間不同</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Tokyo+Solamachi+Restaurants">查看地圖 ↗</a></div></article>
+ </div>
+</section>
 
-<section class="utility-section">
-<div class="section-heading"><span>TRAVEL TOOLS</span><h2>行李、步數與備忘</h2></div>
-<div class="utility-grid">
-<article class="checklist"><h3>出發行李清單</h3>
-<label><input type="checkbox" data-item="passport">護照與機票</label>
-<label><input type="checkbox" data-item="insurance">旅遊保險資料</label>
-<label><input type="checkbox" data-item="icoca">ICOCA／Suica</label>
-<label><input type="checkbox" data-item="network">SIM 或網路設備</label>
-<label><input type="checkbox" data-item="power">行動電源與充電線</label>
-<label><input type="checkbox" data-item="medicine">個人藥品</label>
-<label><input type="checkbox" data-item="jacket">外套與雨具</label></article>
-<article><h3>今日步數紀錄</h3><div class="step-value" id="steps">0</div><p>一般網頁無法直接讀取手機健康資料，因此以手動方式記錄。</p><div class="step-buttons"><button data-step="500">＋500</button><button data-step="1000">＋1000</button><button id="resetSteps">歸零</button></div></article>
-<article><h3>旅行備忘錄</h3><textarea id="memo" placeholder="例如：要買的伴手禮、車票座位、餐廳預約號碼……"></textarea><small>內容只儲存在目前裝置。</small></article>
-</div></section>
+<section class="tools-section reveal">
+ <div class="section-title"><p>TRAVEL TOOLS</p><h2>旅行預算</h2></div>
+ <div class="tools-grid">
+  <article><h3>每日預算</h3><div id="budgetList"></div><button id="clearBudget">清除全部預算</button></article>
+ </div>
+</section>
 
-<footer><div><b>Family Japan Trip 2026</b><span>Kyoto · Tokyo · 11/2—11/9</span></div><a href="#">回到首頁 ↑</a></footer>
-<script>window.TRIP_DAYS=[{"id": "d1", "day": "DAY 1", "date": "11/02・星期一", "title": "飛抵關西，慢慢進入京都節奏", "theme": "arrival", "cover": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1800&q=88", "intro": "第一天以移動和適應環境為主。抵達日本後不安排過多景點，讓全家從機場一路順暢前往京都，吃完晚餐再用八坂神社的夜景為旅程揭開序幕。", "note": "長途飛行後容易疲倦，晚間行程採彈性安排；若長輩或家人體力不足，可在飯店休息，不必勉強前往八坂神社。", "stops": [["06:00", "機場接送", "從住處出發前往桃園國際機場。建議所有護照、機票與網路設備前一晚集中放入隨身包，避免清晨匆忙遺漏。", "桃園國際機場"], ["07:45", "抵達桃園機場", "預留約兩小時辦理報到、托運、安檢與出境。七人同行時，行李整理與集合會比一般旅客花更多時間。", "桃園國際機場"], ["09:45", "搭機前往關西", "登機後先休息，並在機上填妥必要資料。抵達前再次確認護照與隨身物品。", "關西國際機場"], ["13:20", "抵達關西機場", "完成入境、領取行李及海關程序。全員集合後再前往 JR 車站，不要分散行動。", "關西國際機場"], ["15:30", "搭乘 HARUKA", "從關西機場搭乘 HARUKA 特急前往京都，車程約八十分鐘。大型行李要放在行李區，貴重物品留在身邊。", "JR關西機場站"], ["17:00", "京都車站與晚餐", "抵達京都後先在京都拉麵小路用餐，也可順便確認氣溫並決定是否添購外套。吃完再前往飯店，避免拖著行李四處逛。", "京都拉麵小路"], ["18:30", "先斗町散步", "辦理入住、稍作休息後再前往先斗町。這裡巷弄狹窄、店家密集，適合安排居酒屋或京都料理。", "先斗町"], ["20:00", "八坂神社夜景", "以輕鬆散步方式前往八坂神社，欣賞夜間燈光與祇園氛圍。停留約三十分鐘即可返回飯店。", "八坂神社"]]}, {"id": "d2", "day": "DAY 2", "date": "11/03・星期二", "title": "清水寺、和服與祇園的京都經典日", "theme": "kyoto", "cover": "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1800&q=88", "intro": "今天是京都最具代表性的古都行程。上午趁人潮較少時走訪清水寺，再穿和服漫步二寧坂、三寧坂；午后安排錦市場與河原町購物，晚上回到祇園感受京都夜色。", "note": "石板路與坡道較多，和服鞋不適合快走。建議穿著方便更換的衣物，並為長輩準備舒適鞋子，拍照結束後及早歸還和服。", "stops": [["08:00", "清水寺", "早到可避開大量團客。從入口進入後依序參觀仁王門、本堂與清水舞台，拍照後再往音羽瀑布方向前進。", "清水寺"], ["09:00", "和服換裝", "到預約店家辦理和服租借。七人同行建議事先選定方案，避免現場花太多時間挑選。", "清水寺和服租借"], ["10:00", "二寧坂與三寧坂", "沿著古老街道慢慢散步，沿途有甜點、雜貨、陶器和伴手禮店。階梯多，雨天需要特別注意。", "二寧坂"], ["11:30", "歸還和服", "拍照結束後歸還和服，再換回適合步行的鞋子，接著搭車前往市中心。", "清水寺和服租借"], ["12:00", "錦市場午餐", "以少量多樣的方式品嚐玉子燒、豆乳甜點、漬物與海鮮小吃。市場通道狹窄，盡量不要邊走邊吃。", "錦市場"], ["13:30", "回飯店休息", "午后先休息約一至兩小時，讓長輩恢復體力，也能整理上午購買的物品。", "Hotel SUI Kyoto Kiyomizu"], ["15:30", "河原町商圈", "逛百貨、藥妝與甜點咖啡店。這段行程可自由分組，再約定時間集合。", "京都河原町"], ["20:30", "祇園夜間散步", "從花見小路走到祇園白川，再視體力前往鴨川。夜間以安靜散步為主，不打擾當地居民。", "祇園白川"]]}, {"id": "d3", "day": "DAY 3", "date": "11/04・星期三", "title": "奈良小鹿、東大寺與京都古寺", "theme": "nara", "cover": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1800&q=88", "intro": "上午前往奈良，在春日大社的森林與東大寺周邊感受古都氣氛，也能與奈良小鹿互動。午餐後返回京都休息，下午再安排三十三間堂，避免整天長距離步行。", "note": "餵鹿時不要拿著紙袋或地圖，小鹿可能會靠近搶食。購買鹿仙貝後分次餵食，遇到體型較大的鹿可先把雙手攤開示意沒有食物。", "stops": [["08:30", "前往奈良", "可依住宿位置選擇 JR 或近鐵。若希望抵達後較快進入奈良公園，近鐵奈良站通常較方便。", "近鐵奈良站"], ["09:15", "春日大社", "沿著石燈籠與森林步道前往本殿，環境清幽但步行距離較長，途中可適時休息。", "春日大社"], ["10:00", "東大寺與奈良小鹿", "參觀大佛殿，再於奈良公園與小鹿互動。拍照時不要站在車道，也不要讓孩子單獨拿大量鹿仙貝。", "東大寺"], ["11:30", "奈良午餐", "前往奈良町或近鐵奈良站周邊用餐，可選擇柿葉壽司、烏龍麵或家庭餐廳。", "奈良町"], ["12:55", "返回京都休息", "回到飯店休息，避免將奈良與京都景點連續塞得太滿。", "Hotel SUI Kyoto Kiyomizu"], ["15:30", "三十三間堂", "欣賞一千零一尊千手觀音像。館內通常禁止攝影，參觀時保持安靜並依動線前進。", "三十三間堂"], ["18:00", "京都晚餐", "晚餐以飯店附近或交通方便的居酒屋為主，吃完早點休息，準備隔日移動東京。", "京都居酒屋"]]}, {"id": "d4", "day": "DAY 4", "date": "11/05・星期四", "title": "搭新幹線前往東京，夜遊銀座", "theme": "train", "cover": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1800&q=88", "intro": "今天從古都京都移動到東京。上午保留整理行李與京都車站活動時間，下午搭東海道新幹線前往東京，入住銀座飯店後，以附近購物和夜景作為東京行程的開場。", "note": "七人搭新幹線最好預先劃位。大型行李若超過規定尺寸，需預約特大行李放置處；上車前先買好飲料與簡單點心。", "stops": [["10:00", "飯店退房", "再次檢查護照、充電器與房間抽屜。行李可先寄放飯店，再輕鬆前往京都車站。", "Hotel SUI Kyoto Kiyomizu"], ["上午", "京都車站自由活動", "可逛車站商場、喝咖啡或購買便當。不要安排太遠的景點，以免錯過新幹線。", "京都車站"], ["14:01", "搭乘東海道新幹線", "提早二十分鐘到月台確認車廂。行李先放妥，抵達前十至十五分鐘開始整理。", "京都車站新幹線"], ["16:15", "抵達東京", "抵達東京站後先確認轉乘方向。七人帶行李建議搭計程車或分兩車前往銀座飯店，減少轉乘負擔。", "東京車站"], ["17:00", "東京飯店入住", "入住相鐵 Fresa Inn 銀座七丁目，簡單整理後再出門。", "相鐵Fresa Inn銀座七丁目"], ["傍晚", "銀座購物", "依序安排 UNIQLO TOKYO、GU、GINZA SIX、松屋與三越。不要每家都停留太久，可先列出主要購物目標。", "銀座"], ["晚上", "有樂町夜景", "從銀座步行至有樂町，欣賞街景與鐵道高架周邊。若已疲累，可直接回飯店休息。", "有樂町"]]}, {"id": "d5", "day": "DAY 5", "date": "11/06・星期五", "title": "築地早餐、淺草老街與晴空塔夜景", "theme": "tokyo", "cover": "https://images.unsplash.com/photo-1505069190533-da1c9af13346?auto=format&fit=crop&w=1800&q=88", "intro": "今天把東京最具代表性的市場、下町與現代地標串在一起。上午從築地早餐開始，再到雷門、仲見世與淺草寺，下午前往晴空塔與 Solamachi，從白天一路玩到夜景。", "note": "築地與淺草上午人潮都多，建議提早出發。從淺草到晴空塔可依體力選擇步行或搭車，長輩不必勉強走完全程。", "stops": [["07:30", "築地市場早餐", "以海鮮丼、玉子燒或牛丼作為早餐。熱門店家排隊時間較長，可準備兩到三個備選店家。", "築地場外市場"], ["09:30", "前往淺草", "搭地鐵前往淺草，下車後先確認雷門方向。沿途商店多，建議先完成主要景點再購物。", "淺草站"], ["10:00", "雷門與仲見世", "從雷門進入仲見世商店街，購買人形燒、和菓子、扇子及小物。人多時要約定走散後的集合地點。", "雷門"], ["11:00", "淺草寺", "參拜本堂、抽御神籤並拍攝五重塔。停留約一小時後再安排午餐。", "淺草寺"], ["13:30", "前往晴空塔", "體力充足可沿隅田川方向步行，否則搭電車一站即可抵達。", "東京晴空塔"], ["14:00", "Solamachi 購物", "安排 Pokémon Center、吉伊卡哇、Disney Store 與 Kirby 商店。可分組購物，避免全家等待同一家店。", "東京晴空街道"], ["17:00", "晴空塔展望台", "傍晚登塔可同時看到夕陽與夜景。若已購票，需提早抵達指定入口。", "東京晴空塔展望台"], ["19:00", "商場晚餐", "在 Solamachi 用餐後返回銀座。回程前先確認購物袋與隨身物品。", "東京晴空街道餐廳"]]}, {"id": "d6", "day": "DAY 6", "date": "11/07・星期六", "title": "上野公園、阿美橫町與秋葉原購物日", "theme": "akiba", "cover": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1800&q=88", "intro": "今天安排東京北側的公園、市場與電器街。上午在上野公園散步，再到阿美橫町採買藥妝與零食；下午前往秋葉原，集中購買電器、動漫與扭蛋商品。", "note": "阿美橫町與秋葉原購物袋會快速增加，建議帶可折疊購物袋。購買電器前確認電壓、插頭、保固與是否支援繁體中文。", "stops": [["09:00", "上野公園", "從上野站進入公園，視體力安排不忍池與西鄉隆盛像。若對博物館沒有特別興趣，不必排入室內館舍。", "上野公園"], ["10:30", "阿美橫町", "逛藥妝、運動鞋、零食與乾貨。價格不一定每家相同，先比較再購買。", "阿美橫町"], ["12:00", "上野午餐", "選擇牛丼、炸豬排或拉麵等用餐速度較快的餐廳，避免午餐排隊過久。", "上野站"], ["13:30", "前往秋葉原", "從上野搭 JR 前往秋葉原。到站後先決定主要採買店家與集合時間。", "秋葉原站"], ["14:00", "BIC Camera 與 Yodobashi", "大型電器量販店適合集中比較價格。退稅時需出示護照，商品拆封規定依店家說明。", "Yodobashi Akiba"], ["16:30", "Animate 與動漫商店", "安排動漫、模型、扭蛋與角色周邊。對動漫沒興趣的家人可在咖啡店休息。", "Animate秋葉原"], ["19:00", "返回銀座", "購物完成後返回飯店整理戰利品，確認行李空間是否足夠。", "銀座"]]}, {"id": "d7", "day": "DAY 7", "date": "11/08・星期日", "title": "六本木、東京鐵塔與最後採買", "theme": "tower", "cover": "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1800&q=88", "intro": "旅程倒數第二天不安排早起，讓全家睡飽後再前往六本木。下午可在東京 Midtown 與六本木 Hills 散步，再依興趣選擇東京鐵塔或 TeamLab，晚上回銀座完成最後採買。", "note": "東京鐵塔與 TeamLab 不建議同一天都排，容易趕行程。若選 TeamLab，應事先預約並預留較完整的參觀時間。", "stops": [["上午", "睡晚一點", "早餐可在飯店附近簡單解決。這一天最重要的是恢復體力，不必為了早起而增加疲勞。", "銀座"], ["11:30", "六本木 Hills", "逛六本木之丘、毛利庭園與周邊商店。若天氣好，可在戶外多停留。", "六本木之丘"], ["14:00", "Tokyo Midtown", "安排午餐、咖啡及商場逛街。這裡環境舒適，適合讓長輩休息。", "Tokyo Midtown"], ["16:00", "東京鐵塔或 TeamLab", "兩者擇一。東京鐵塔適合經典夜景，TeamLab 適合沉浸式體驗，依家人興趣決定。", "東京鐵塔"], ["19:00", "銀座最後採買", "回到銀座購買藥妝、精品與伴手禮。採買完立刻回飯店整理行李，避免隔天手忙腳亂。", "銀座"]]}, {"id": "d8", "day": "DAY 8", "date": "11/09・星期一", "title": "東京最後巡禮，搭 Skyliner 前往成田", "theme": "home", "cover": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=88", "intro": "最後一天以退房、補買伴手禮與前往機場為主。上午只安排交通方便的東京站或銀座，不再前往較遠景點，並預留足夠時間搭乘 Skyliner 前往成田機場。", "note": "國際航班建議至少提前三小時抵達機場。若行李多，從銀座前往京成上野站時可搭計程車，避免在地鐵站搬運大型行李。", "stops": [["早上", "飯店退房", "檢查床下、浴室、保險箱與插座，確認護照和所有購物品都已裝妥。", "相鐵Fresa Inn銀座七丁目"], ["09:30", "東京站或 KITTE", "若時間充裕，可逛東京站 Character Street、KITTE 或購買最後伴手禮。", "KITTE丸之內"], ["中午前後", "前往京成上野站", "從銀座搭車前往京成上野。七人與大型行李可考慮分乘兩台計程車。", "京成上野站"], ["之後", "搭乘 Skyliner", "依航班時間預先選定班次。上車後將大型行李放入行李區，並保管好車票與護照。", "京成上野站Skyliner"], ["抵達後", "成田機場", "辦理報到、托運、安檢與出境。完成手續後再安排免稅店與用餐，不要先逛街才報到。", "成田國際機場"]]}];</script><script src="js/app.js"></script></body></html>
+<footer><b>Family Japan Trip 2026</b><span>Kyoto · Tokyo · 11/2—11/9</span></footer>
+<script>window.TRIP_DAYS=[{"id": "day1", "date": "11/2", "title": "抵達京都", "city": "京都", "center": [35.0116, 135.7681], "photos": ["https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85"], "stops": [["06:00", "機場接送", "桃園國際機場", 25.0797, 121.2342, "transport"], ["09:45–13:20", "中華航空 CI152", "桃園 → 關西國際機場", 34.4347, 135.244, "transport"], ["15:30", "HARUKA 特快", "京都車站", 34.9858, 135.7588, "transport"], ["16:50", "京都拉麵小路", "京都車站拉麵小路", 34.9854, 135.7578, "food"], ["17:40", "飯店 Check-in", "Hotel SUI Kyoto Kiyomizu", 34.9933, 135.7715, "hotel"], ["18:30", "先斗町晚餐", "先斗町", 35.005, 135.7708, "food"], ["20:00", "八坂神社夜景", "八坂神社", 35.0037, 135.7785, "sight"]]}, {"id": "day2", "date": "11/3", "title": "清水寺・和服・祇園", "city": "京都", "center": [35.003, 135.776], "photos": ["https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85"], "stops": [["08:00", "清水寺", "清水寺", 34.9949, 135.785, "sight"], ["09:00", "和服・二寧坂三寧坂", "二寧坂", 34.998, 135.7814, "sight"], ["12:00", "錦市場", "錦市場", 35.005, 135.7649, "food"], ["15:30", "河原町商圈", "河原町", 35.0034, 135.769, "shopping"], ["20:30", "祇園白川散步", "祇園白川", 35.0053, 135.7753, "sight"]]}, {"id": "day3", "date": "11/4", "title": "奈良・三十三間堂", "city": "奈良／京都", "center": [34.6851, 135.8048], "photos": ["https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85"], "stops": [["09:15", "春日大社", "春日大社", 34.6814, 135.8485, "sight"], ["10:00", "東大寺與小鹿", "東大寺", 34.689, 135.8398, "sight"], ["11:30", "奈良商店街午餐", "奈良町", 34.6777, 135.832, "food"], ["15:30", "三十三間堂", "三十三間堂", 34.9879, 135.7717, "sight"]]}, {"id": "day4", "date": "11/5", "title": "京都 → 東京 → 銀座", "city": "東京", "center": [35.6812, 139.7671], "photos": ["https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85"], "stops": [["14:01", "東海道新幹線", "京都車站", 34.9858, 135.7588, "transport"], ["16:15", "抵達東京", "東京車站", 35.6812, 139.7671, "transport"], ["17:00", "飯店 Check-in", "相鐵Fresa Inn銀座七丁目", 35.6684, 139.7631, "hotel"], ["傍晚", "銀座購物", "GINZA SIX", 35.6697, 139.7643, "shopping"], ["晚上", "有樂町散步", "有樂町站", 35.6751, 139.7638, "sight"]]}, {"id": "day5", "date": "11/6", "title": "築地・淺草・晴空塔", "city": "東京", "center": [35.7101, 139.8107], "photos": ["https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1505069190533-da1c9af13346?auto=format&fit=crop&w=1600&q=85"], "stops": [["07:30", "築地市場早餐", "築地場外市場", 35.6655, 139.7707, "food"], ["上午", "雷門", "雷門", 35.7111, 139.7964, "sight"], ["上午", "淺草寺", "淺草寺", 35.7148, 139.7967, "sight"], ["下午", "Solamachi 商場", "東京晴空街道", 35.71, 139.812, "shopping"], ["傍晚", "晴空塔展望台", "東京晴空塔", 35.7101, 139.8107, "sight"]]}, {"id": "day6", "date": "11/7", "title": "上野・阿美橫町・秋葉原", "city": "東京", "center": [35.7077, 139.7745], "photos": ["https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85"], "stops": [["上午", "上野公園", "上野公園", 35.7148, 139.7732, "sight"], ["中午前", "阿美橫町", "阿美橫町", 35.7088, 139.7746, "shopping"], ["午餐", "上野午餐", "上野站", 35.7138, 139.7773, "food"], ["下午", "秋葉原購物", "秋葉原站", 35.6984, 139.7731, "shopping"], ["下午", "BIC／Yodobashi", "Yodobashi Akiba", 35.6988, 139.7747, "shopping"]]}, {"id": "day7", "date": "11/8", "title": "六本木・東京鐵塔", "city": "東京", "center": [35.6586, 139.7454], "photos": ["https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85"], "stops": [["中午", "六本木 Hills", "六本木之丘", 35.6605, 139.7292, "sight"], ["下午", "Tokyo Midtown", "Tokyo Midtown", 35.6658, 139.731, "shopping"], ["下午", "東京鐵塔", "東京鐵塔", 35.6586, 139.7454, "sight"], ["晚上", "銀座最後採買", "銀座", 35.6717, 139.765, "shopping"]]}, {"id": "day8", "date": "11/9", "title": "Skyliner・成田機場", "city": "東京／成田", "center": [35.772, 140.3929], "photos": ["https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=85"], "stops": [["早上", "飯店退房", "相鐵Fresa Inn銀座七丁目", 35.6684, 139.7631, "hotel"], ["上午", "東京車站／KITTE", "東京車站", 35.6812, 139.7671, "shopping"], ["中午前後", "京成上野站", "京成上野站", 35.7113, 139.7732, "transport"], ["之後", "Skyliner", "成田國際機場", 35.772, 140.3929, "transport"], ["14:35–17:45", "中華航空 CI101", "成田 → 桃園國際機場", 35.772, 140.3929, "transport"]]}];</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/app.js?v=5.1"></script></body></html>
