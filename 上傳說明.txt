@@ -1,18 +1,21 @@
-Family Japan Trip 2026｜單頁每日行程版
+Family Japan Trip 2026 V4｜日本旅遊雜誌版
 
-本版排版修正：
-- 京都與東京不再分開成兩個頁面
-- 全部 8 天行程集中在 index.html
-- 網頁上方有 Day 1～Day 8 快速選單
-- 點選天數會直接跳到當天行程
-- 捲動頁面時，上方天數會自動標示目前所在日期
-- 手機版可左右滑動天數選單
-- 原 kyoto.html 與 tokyo.html 會自動導回完整行程首頁
+本版重點：
+- 每日行程改寫成完整解說，不再只有簡短景點名稱
+- 每一天都有旅遊主題、整體安排說明與注意事項
+- 每個時間點包含交通方式、停留策略、長輩與七人同行提醒
+- Google Maps 一鍵導航
+- 每個行程可勾選完成
+- 日本時間、即時天氣、即時匯率
+- 每日預算與總預算
+- 行李清單、步數紀錄、旅行備忘錄
+- 櫻花動畫
+- PWA 安裝與基本離線快取
+- 日本旅遊雜誌配色：奶油白、楓葉紅、柚子黃、抹茶綠
 
-上傳：
+上傳 GitHub：
 1. 解壓縮 ZIP。
-2. 將 index.html、kyoto.html、tokyo.html、css、js、images、上傳說明.txt
-   全部上傳到 GitHub 儲存庫最外層。
-3. 不要上傳 ZIP 檔。
-4. 按 Commit changes。
-5. 等 GitHub Pages 更新後重新整理網站。
+2. 把 index.html、css、js、icons、manifest.webmanifest、
+   service-worker.js 等全部上傳到儲存庫最外層。
+3. 不要只上傳 ZIP。
+4. 按 Commit changes，等待 GitHub Pages 更新。
