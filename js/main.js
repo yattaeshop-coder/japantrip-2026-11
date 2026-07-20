@@ -74,3 +74,14 @@ function addPhoto(src,save){
  const img=document.createElement('img');img.src=src;img.alt='家庭旅行照片';gallery.appendChild(img);
  if(save){const arr=JSON.parse(localStorage.getItem('jp_gallery')||'[]');arr.push(src);localStorage.setItem('jp_gallery',JSON.stringify(arr.slice(-12)));}
 }
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const f=btn.dataset.filter;
+    document.querySelectorAll('.item[data-category]').forEach(item=>{
+      item.classList.toggle('hidden', f!=='all' && item.dataset.category!==f);
+    });
+  });
+});
