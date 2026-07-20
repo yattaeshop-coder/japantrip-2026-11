@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9a5c47"/><stop offset="1" stop-color="#5b3441"/></linearGradient></defs>
+    <rect width="1000" height="520" fill="url(#g)"/>
+    <circle cx="820" cy="80" r="190" fill="#fff" opacity=".08"/>
+    <circle cx="120" cy="450" r="220" fill="#fff" opacity=".06"/>
+    
+        <g transform="translate(590 155)">
+          <rect x="95" y="80" width="190" height="125" fill="#efd6c8"/>
+          <polygon points="45,80 335,80 285,35 95,35" fill="#efd6c8"/>
+          <rect x="125" y="120" width="30" height="85" fill="#9a5c47" opacity=".5"/>
+          <rect x="225" y="120" width="30" height="85" fill="#9a5c47" opacity=".5"/>
+          <rect x="150" y="100" width="80" height="105" fill="#9a5c47" opacity=".32"/>
+        </g>
+    <text x="70" y="155" fill="#fff" font-size="58" font-weight="800" font-family="Arial, sans-serif">KYOTO TEMPLES</text>
+    <text x="72" y="205" fill="#fff" opacity=".86" font-size="26" font-family="Arial, sans-serif">Kiyomizu-dera · Sanjusangendo</text>
+    </svg>

@@ -1,0 +1,27 @@
+Family Japan Trip 2026｜升級版
+
+本版新增：
+- 京都景點逐站 Google Maps 導航
+- 京都與東京飯店地圖
+- HARUKA／新幹線交通快捷連結
+- 日本時間
+- 京都即時氣溫
+- 台幣兌日圓參考匯率
+- 今日步數與估算公里數
+- 旅行預算紀錄
+- 家庭旅行相簿
+- 手機、平板、電腦版排版
+- 本機製作的京都、東京、奈良、列車插圖
+
+GitHub 上傳：
+1. 解壓縮 ZIP。
+2. 將解壓後裡面的 index.html、kyoto.html、tokyo.html、css、js、images 全部拖到儲存庫最外層。
+3. 同名檔案直接覆蓋。
+4. 向下捲到底按 Commit changes。
+5. 等待 GitHub Pages 部署完成。
+6. 開啟：
+https://yattaeshop-coder.github.io/japantrip-2026-11/
+
+注意：
+- 天氣與匯率需連網讀取；讀取失敗時仍可正常使用其他功能。
+- 步數、預算與相簿儲存在目前裝置的瀏覽器，不會自動同步到其他手機。

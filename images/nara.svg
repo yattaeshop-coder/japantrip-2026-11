@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a67f4b"/><stop offset="1" stop-color="#54755d"/></linearGradient></defs>
+    <rect width="1000" height="520" fill="url(#g)"/>
+    <circle cx="820" cy="80" r="190" fill="#fff" opacity=".08"/>
+    <circle cx="120" cy="450" r="220" fill="#fff" opacity=".06"/>
+    
+        <g transform="translate(615 170)" fill="#f1d7ac">
+          <ellipse cx="110" cy="95" rx="82" ry="48"/>
+          <rect x="42" y="120" width="16" height="115" rx="8"/><rect x="132" y="120" width="16" height="115" rx="8"/>
+          <ellipse cx="180" cy="60" rx="38" ry="28"/><rect x="148" y="65" width="22" height="55" rx="10"/>
+          <path d="M195 36 Q218 8 224 36 M184 31 Q169 4 162 31" fill="none" stroke="#f1d7ac" stroke-width="8" stroke-linecap="round"/>
+        </g>
+    <text x="70" y="155" fill="#fff" font-size="58" font-weight="800" font-family="Arial, sans-serif">NARA</text>
+    <text x="72" y="205" fill="#fff" opacity=".86" font-size="26" font-family="Arial, sans-serif">Deer park · Todaiji · Kasuga Taisha</text>
+    </svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#426d87"/><stop offset="1" stop-color="#203d52"/></linearGradient></defs>
+    <rect width="1000" height="520" fill="url(#g)"/>
+    <circle cx="820" cy="80" r="190" fill="#fff" opacity=".08"/>
+    <circle cx="120" cy="450" r="220" fill="#fff" opacity=".06"/>
+    
+        <g transform="translate(610 100)" fill="#b9d5e5">
+          <rect x="40" y="115" width="35" height="195"/><rect x="92" y="70" width="45" height="240"/>
+          <rect x="155" y="130" width="32" height="180"/><rect x="204" y="95" width="50" height="215"/>
+          <polygon points="110,15 120,70 100,70" />
+        </g>
+    <text x="70" y="155" fill="#fff" font-size="58" font-weight="800" font-family="Arial, sans-serif">TOKYO</text>
+    <text x="72" y="205" fill="#fff" opacity=".86" font-size="26" font-family="Arial, sans-serif">Ginza lights · City adventure</text>
+    </svg>
