@@ -1,16 +1,18 @@
-Family Japan Trip 2026｜京都＋東京完整版
+Family Japan Trip 2026｜單頁每日行程版
 
-新增完整東京五天四夜行程：
-- 11/5 銀座
-- 11/6 築地、淺草、晴空塔
-- 11/7 上野、阿美橫町、秋葉原
-- 11/8 六本木、東京鐵塔或 TeamLab
-- 11/9 京成上野、Skyliner、成田機場
+本版排版修正：
+- 京都與東京不再分開成兩個頁面
+- 全部 8 天行程集中在 index.html
+- 網頁上方有 Day 1～Day 8 快速選單
+- 點選天數會直接跳到當天行程
+- 捲動頁面時，上方天數會自動標示目前所在日期
+- 手機版可左右滑動天數選單
+- 原 kyoto.html 與 tokyo.html 會自動導回完整行程首頁
 
-上傳方式：
+上傳：
 1. 解壓縮 ZIP。
 2. 將 index.html、kyoto.html、tokyo.html、css、js、images、上傳說明.txt
    全部上傳到 GitHub 儲存庫最外層。
-3. 不要上傳 ZIP 本身。
+3. 不要上傳 ZIP 檔。
 4. 按 Commit changes。
-5. 等候 GitHub Pages 更新。
+5. 等 GitHub Pages 更新後重新整理網站。
