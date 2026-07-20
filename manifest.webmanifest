@@ -3,8 +3,8 @@
   "short_name": "Japan Trip",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#fff8ed",
-  "theme_color": "#fff8ed",
+  "background_color": "#f7f3ec",
+  "theme_color": "#f7f3ec",
   "icons": [
     {
       "src": "icons/icon.svg",
