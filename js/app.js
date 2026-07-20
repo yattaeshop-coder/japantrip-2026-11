@@ -1,35 +1,52 @@
-const $=(s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
-const storage={get:(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 
-function updateTime(){const t=new Intl.DateTimeFormat("zh-TW",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());$("#japanTime").textContent=t;$("#japanTime2").textContent=t}
-updateTime();setInterval(updateTime,30000);
+const days=window.TRIP_DAYS,$=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
+const store={get(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
 
-const depart=new Date("2026-11-02T09:45:00+08:00"), diff=depart-Date.now();
-$("#countdown").textContent=diff>0?Math.ceil(diff/86400000)+" 天":"旅途中";
+// hero video
+$$(".video-switch button").forEach(b=>b.onclick=()=>{$$(".video-switch button").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(".video-layer.active").classList.remove("active");$("#video"+(b.dataset.video==="kyoto"?"Kyoto":"Tokyo")).classList.add("active")});
 
-fetch("https://api.frankfurter.app/latest?from=TWD&to=JPY").then(r=>r.json()).then(d=>$("#fxValue").textContent=d.rates.JPY.toFixed(2)).catch(()=>$("#fxValue").textContent="—");
-async function weather(lat,lon,id){try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=Asia%2FTokyo`);const d=await r.json();$(id).textContent=`${Math.round(d.current.temperature_2m)}°C`}catch{$(id).textContent="—"}}
-weather(35.0116,135.7681,"#weatherKyoto");weather(35.6762,139.6503,"#weatherTokyo");
+// sakura
+function petal(){const e=document.createElement("span");e.className="petal";e.textContent=Math.random()>.5?"🌸":"✿";e.style.left=Math.random()*100+"vw";e.style.animationDuration=6+Math.random()*8+"s";e.style.setProperty("--drift",(Math.random()*220-110)+"px");$("#sakura").append(e);setTimeout(()=>e.remove(),15000)}
+setInterval(petal,650);
 
-const tabs=$$(".day-tab"), days=$$(".day-section");
-function activeDay(){let id=days[0].id;for(const d of days){if(scrollY+150>=d.offsetTop)id=d.id}tabs.forEach(t=>t.classList.toggle("active",t.dataset.day===id))}
-addEventListener("scroll",()=>{activeDay();$("#progress").style.width=(scrollY/(document.documentElement.scrollHeight-innerHeight)*100)+"%"},{passive:true});activeDay();
+// reveal
+const obs=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("visible")),{threshold:.1});$$(".reveal").forEach(e=>obs.observe(e));
 
-$$(".filter").forEach(btn=>btn.onclick=()=>{$$(".filter").forEach(b=>b.classList.remove("active"));btn.classList.add("active");const f=btn.dataset.filter;$$(".schedule-card").forEach(c=>c.hidden=f!=="all"&&c.dataset.category!==f)});
+// time/weather/fx
+function clock(){const v=new Intl.DateTimeFormat("zh-TW",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());$("#japanTime").textContent=v} clock();setInterval(clock,30000);
+async function weather(lat,lon,id){try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&timezone=Asia%2FTokyo`);const d=await r.json();$(id).textContent=Math.round(d.current.temperature_2m)+"°C"}catch{$(id).textContent="—"}}
+weather(35.0116,135.7681,"#kyotoWeather");weather(35.6762,139.6503,"#tokyoWeather");
+fetch("https://api.frankfurter.app/latest?from=TWD&to=JPY").then(r=>r.json()).then(d=>$("#fxRate").textContent=d.rates.JPY.toFixed(2)+" JPY").catch(()=>$("#fxRate").textContent="—");
 
-const obs=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("visible")),{threshold:.08});$$(".reveal").forEach(e=>obs.observe(e));
+// map
+const map=L.map("map",{zoomControl:true}).setView(days[0].center,12);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map);
+let layer=L.layerGroup().addTo(map),activeDay=days[0],budgets=store.get("budgets",{});
+function gmRoute(day){return "https://www.google.com/maps/dir/"+day.stops.map(s=>encodeURIComponent(s[2])).join("/")}
+function renderMap(day,focus){activeDay=day;layer.clearLayers();const pts=day.stops.map(s=>[s[3],s[4]]);day.stops.forEach((s,i)=>L.marker([s[3],s[4]]).addTo(layer).bindPopup(`<b>${s[0]} ${s[1]}</b><br>${s[2]}`));if(pts.length>1)L.polyline(pts,{color:"#b33a32",weight:4,opacity:.8,dashArray:"8 7"}).addTo(layer);if(focus){map.setView(focus,15)}else{map.fitBounds(pts,{padding:[35,35]})}$("#mapTitle").textContent=`${day.date} ${day.title}`;$("#googleRoute").href=gmRoute(day);$("#dayBudget").value=budgets[day.id]||"";setTimeout(()=>map.invalidateSize(),120)}
+renderMap(days[0]);
 
-const budgets=storage.get("tripBudgets",{});
-$$(".day-budget").forEach(i=>{i.value=budgets[i.dataset.budget]||"";i.oninput=()=>{budgets[i.dataset.budget]=Number(i.value)||0;storage.set("tripBudgets",budgets);sumBudget()}});
-function sumBudget(){$("#budgetTotal").textContent=Object.values(budgets).reduce((a,b)=>a+Number(b||0),0).toLocaleString()}
-sumBudget();$("#clearBudget").onclick=()=>{if(confirm("確定清除全部每日預算？")){Object.keys(budgets).forEach(k=>delete budgets[k]);storage.set("tripBudgets",budgets);$$(".day-budget").forEach(i=>i.value="");sumBudget()}};
+$$(".day-button").forEach(b=>b.onclick=()=>{const day=days.find(d=>d.id===b.dataset.day);$$(".day-button").forEach(x=>x.classList.toggle("active",x===b));$$(".day-panel").forEach(p=>p.classList.toggle("active",p.id===day.id));renderMap(day);initCarousel($("#"+day.id));scrollTo({top:$("#journey").offsetTop+120,behavior:"smooth"})});
+$$(".stop-card").forEach(b=>b.onclick=()=>{const day=days.find(d=>d.id===b.dataset.day);renderMap(day,[+b.dataset.lat,+b.dataset.lng]);L.popup().setLatLng([+b.dataset.lat,+b.dataset.lng]).setContent(`<b>${b.dataset.name}</b>`).openOn(map)});
 
-const checks=storage.get("tripChecklist",{});
-$$("[data-check]").forEach(i=>{i.checked=!!checks[i.dataset.check];i.onchange=()=>{checks[i.dataset.check]=i.checked;storage.set("tripChecklist",checks)}});
+// carousel
+function initCarousel(panel){if(panel.dataset.ready)return;panel.dataset.ready=1;const track=$(".photo-track",panel),imgs=$$("img",track),dots=$(".dots",panel);let index=0;imgs.forEach((_,i)=>{const d=document.createElement("i");if(i===0)d.className="active";dots.append(d)});const paint=()=>{track.style.transform=`translateX(-${index*100}%)`;$$("i",dots).forEach((d,i)=>d.classList.toggle("active",i===index))};$(".next",panel).onclick=()=>{index=(index+1)%imgs.length;paint()};$(".prev",panel).onclick=()=>{index=(index-1+imgs.length)%imgs.length;paint()}}
+$$(".day-panel").forEach(initCarousel);
 
-$("#photoInput").onchange=e=>{const g=$("#gallery");g.innerHTML="";[...e.target.files].slice(0,9).forEach(f=>{const img=new Image();img.src=URL.createObjectURL(f);g.append(img)})};
+// budgets
+function budgetTotal(){const t=Object.values(budgets).reduce((a,b)=>a+(+b||0),0);$("#budgetTotal").textContent=t.toLocaleString();$("#budgetList").innerHTML=days.map((d,i)=>`<div class="budget-item"><span>Day ${i+1} · ${d.date}</span><b>${(+budgets[d.id]||0).toLocaleString()} 円</b></div>`).join("")}
+$("#dayBudget").oninput=e=>{budgets[activeDay.id]=+e.target.value||0;store.set("budgets",budgets);budgetTotal()};budgetTotal();
+$("#clearBudget").onclick=()=>{if(confirm("確定清除全部預算？")){budgets={};store.set("budgets",budgets);$("#dayBudget").value="";budgetTotal()}};
 
-let deferredPrompt;addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("#installBtn").hidden=false});
-$("#installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("#installBtn").hidden=true}};
+// steps (manual because normal websites cannot reliably read phone health step data)
+let steps=store.get("steps",0);function drawSteps(){$("#stepsValue").textContent=steps.toLocaleString()}drawSteps();
+$("#addSteps").onclick=()=>{steps+=500;store.set("steps",steps);drawSteps()};
 
+// checklist
+const checklist=store.get("checklist",{});
+$$("[data-item]").forEach(x=>{x.checked=!!checklist[x.dataset.item];x.onchange=()=>{checklist[x.dataset.item]=x.checked;store.set("checklist",checklist)}});
+
+// PWA
+let prompt;addEventListener("beforeinstallprompt",e=>{e.preventDefault();prompt=e;$("#installBtn").hidden=false});
+$("#installBtn").onclick=async()=>{if(prompt){prompt.prompt();await prompt.userChoice;prompt=null;$("#installBtn").hidden=true}};
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
