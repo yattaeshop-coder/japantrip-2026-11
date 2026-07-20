@@ -1,0 +1,121 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+  color: #493c3c;
+  background: #fffaf7;
+  line-height: 1.8;
+}
+a { color: inherit; }
+.hero {
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: white;
+  background:
+    linear-gradient(rgba(80,42,50,.38), rgba(80,42,50,.62)),
+    url("images/japan-cover.jpg") center/cover no-repeat,
+    linear-gradient(135deg,#b77986,#72505a);
+}
+.hero-content { max-width: 850px; }
+.hero h1 { margin: 10px 0; font-size: clamp(38px,7vw,72px); letter-spacing: 5px; }
+.hero p { margin: 6px 0; font-size: 21px; }
+.small-title { text-transform: uppercase; letter-spacing: 4px; }
+.page-header { padding: 80px 20px; text-align: center; color: white; }
+.page-header h1 { margin: 0; font-size: clamp(34px,7vw,58px); }
+.page-header p { margin: 10px 0 0; font-size: 20px; }
+.kyoto-header {
+  background:
+    linear-gradient(rgba(78,38,43,.42), rgba(78,38,43,.68)),
+    url("images/kyoto.jpg") center/cover no-repeat,
+    linear-gradient(135deg,#b77986,#72505a);
+}
+.tokyo-header {
+  background:
+    linear-gradient(rgba(26,38,65,.38), rgba(26,38,65,.70)),
+    url("images/tokyo.jpg") center/cover no-repeat,
+    linear-gradient(135deg,#536b96,#25334e);
+}
+.menu {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; justify-content: center; gap: 8px;
+  padding: 14px;
+  background: rgba(255,255,255,.96);
+  border-bottom: 1px solid #ead8d8;
+  box-shadow: 0 4px 15px rgba(64,36,36,.08);
+}
+.menu a {
+  padding: 8px 15px; text-decoration: none;
+  border-radius: 30px; font-weight: 700;
+}
+.menu a:hover, .menu a[aria-current="page"] { color: white; background: #c47b87; }
+.container { width: min(1100px, calc(100% - 32px)); margin: auto; padding: 45px 0 70px; }
+section { margin-bottom: 50px; }
+section > h2 { padding-left: 14px; color: #8e515e; border-left: 5px solid #d89ba6; }
+.trip-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 25px; }
+.trip-card, .hotel-card, .notice, .day-card, .card {
+  padding: 28px; background: white;
+  border: 1px solid #f0dddd; border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(76,42,48,.08);
+}
+.trip-card h3, .hotel-card h3 { margin-top: 0; color: #8e515e; font-size: 26px; }
+.date { font-weight: 700; color: #b06473; }
+.button, .map-button {
+  display: inline-block; margin-top: 12px; padding: 10px 18px;
+  color: white; text-decoration: none; background: #b66877;
+  border-radius: 30px; transition: .2s;
+}
+.button:hover, .map-button:hover { transform: translateY(-2px); background: #965260; }
+.button-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.day-card { overflow: hidden; }
+.day-title {
+  display: flex; align-items: center; gap: 18px;
+  margin: -28px -28px 25px; padding: 25px 28px;
+  background: linear-gradient(135deg,#f9e4e8,#fff4ed);
+}
+.day-title span {
+  flex-shrink: 0; padding: 8px 13px; color: white;
+  font-weight: 800; background: #b66877; border-radius: 30px;
+}
+.day-title h2 { margin: 0; color: #75434d; }
+.day-title p { margin: 3px 0 0; }
+.timeline { position: relative; }
+.timeline::before {
+  content: ""; position: absolute; top: 5px; bottom: 5px; left: 88px;
+  width: 2px; background: #efcbd2;
+}
+.timeline-item {
+  position: relative; display: grid;
+  grid-template-columns: 75px 1fr; gap: 28px; padding: 12px 0 24px;
+}
+.timeline-item::before {
+  content: ""; position: absolute; top: 24px; left: 82px;
+  width: 14px; height: 14px; background: #c77b89;
+  border: 4px solid white; border-radius: 50%;
+  box-shadow: 0 0 0 2px #efcbd2;
+}
+.time { padding-top: 4px; color: #a15e6b; font-weight: 800; text-align: right; }
+.event { padding: 3px 0 0; }
+.event h3 { margin: 0 0 5px; color: #634047; }
+.event p { margin: 0; }
+.empty-plan { padding: 5px 15px; border-left: 4px solid #e3b6bf; background: #fff8f7; }
+.notice { background: #fff2df; border-color: #f1d5a8; }
+footer { padding: 35px 20px; text-align: center; color: white; background: #76525a; }
+footer p { margin: 4px; }
+@media (max-width: 720px) {
+  .hero { min-height: 430px; }
+  .hero p { font-size: 17px; }
+  .trip-grid { grid-template-columns: 1fr; }
+  .menu { overflow-x: auto; justify-content: flex-start; }
+  .menu a { flex-shrink: 0; }
+  .trip-card,.hotel-card,.notice,.day-card,.card { padding: 20px; border-radius: 15px; }
+  .day-title { align-items: flex-start; margin: -20px -20px 20px; padding: 20px; }
+  .timeline::before { left: 65px; }
+  .timeline-item { grid-template-columns: 55px 1fr; gap: 22px; }
+  .timeline-item::before { left: 59px; }
+  .time { font-size: 14px; }
+}
