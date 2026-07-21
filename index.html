@@ -138,6 +138,56 @@
       .planner-shell { min-height: auto; }
       .desktop-day-panel { height: auto; overflow: visible; }
     }
+  
+
+    /* Stable mobile sliders: scoped so desktop layout cannot shift */
+    #modules .feature-slider { display:grid; gap:20px; grid-template-columns:repeat(3,minmax(0,1fr)); }
+    #transport .travel-slider { display:grid; gap:24px; grid-template-columns:repeat(3,minmax(0,1fr)); }
+    #map .map-card-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    #map .map-card-grid .place-card { width:100%; min-width:0; }
+
+    @media (max-width: 639px) {
+      #modules .feature-slider {
+        display:flex;
+        gap:10px;
+        overflow-x:auto;
+        scroll-snap-type:x mandatory;
+        scrollbar-width:none;
+        padding:2px 2px 12px;
+      }
+      #modules .feature-slider::-webkit-scrollbar { display:none; }
+      #modules .feature-slider > .module-card {
+        flex:0 0 calc((100% - 20px)/3);
+        min-width:calc((100% - 20px)/3);
+        scroll-snap-align:start;
+        padding:14px 8px;
+        text-align:center;
+      }
+      #modules .feature-slider .module-icon { font-size:28px; }
+      #modules .feature-slider h3 { margin-top:8px; font-size:12px; line-height:1.35; }
+      #modules .feature-slider p { display:none; }
+
+      #transport .travel-slider {
+        display:flex;
+        gap:12px;
+        overflow-x:auto;
+        scroll-snap-type:x mandatory;
+        scrollbar-width:none;
+        padding:2px 2px 12px;
+      }
+      #transport .travel-slider::-webkit-scrollbar { display:none; }
+      #transport .travel-slider > article {
+        flex:0 0 86%;
+        min-width:86%;
+        scroll-snap-align:center;
+      }
+
+      #map .map-card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+      #map .map-card-grid .place-card { padding:10px; }
+      #map .map-card-grid .place-card p { display:none; }
+      #map .map-card-grid .place-card h3 { font-size:12px; white-space:normal; }
+    }
+
   </style>
 </head>
 
@@ -223,10 +273,9 @@
             <p class="text-xs font-bold tracking-[.18em] text-matcha">LIVE MAP</p>
             <h3 id="mapHeading" class="mt-1 font-black">今日行程地圖</h3>
           </div>
-          <div class="grid grid-cols-3 rounded-xl bg-stone-100 p-1 text-xs sm:text-sm">
-            <button class="map-tab rounded-lg bg-white px-2.5 py-2 font-bold shadow sm:px-3" data-type="spot">景點</button>
-            <button class="map-tab rounded-lg px-2.5 py-2 font-bold sm:px-3" data-type="food">美食</button>
-            <button class="map-tab rounded-lg px-2.5 py-2 font-bold sm:px-3" data-type="shopping">購物</button>
+          <div class="grid grid-cols-2 rounded-xl bg-stone-100 p-1 text-xs sm:text-sm">
+            <button class="map-tab rounded-lg bg-white px-3 py-2 font-bold shadow" data-type="spot">⛩️ 景點</button>
+            <button class="map-tab rounded-lg px-3 py-2 font-bold" data-type="food">🍱 美食</button>
           </div>
         </div>
 
@@ -234,7 +283,7 @@
           <div id="travelMap" class="planner-map"></div>
         </div>
 
-        <div id="placeList" class="map-place-strip mt-3 pb-1"></div>
+        <div id="placeList" class="map-card-grid mt-3 pb-1"></div>
       </div>
     </div>
   </section>
@@ -246,7 +295,7 @@
         <h2 class="mt-3 text-3xl font-black sm:text-4xl">六大旅遊功能</h2>
       </div>
 
-      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="feature-slider">
         <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
           <div class="module-icon text-4xl">📍</div><h3 class="mt-4 text-xl font-bold">點選地圖</h3>
           <p class="mt-2 text-stone-500">點擊景點或餐廳卡片，地圖會自動移動並顯示資訊。</p>
@@ -282,7 +331,7 @@
         <h2 class="mt-3 text-3xl font-black sm:text-4xl">航班、交通與住宿</h2>
       </div>
 
-      <div class="grid gap-6 lg:grid-cols-3">
+      <div class="travel-slider">
         <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up">
           <div class="text-3xl">✈️</div>
           <h3 class="mt-4 text-xl font-black">國際航班</h3>
@@ -741,7 +790,7 @@ let activeType = "spot";
 function renderPlaces(keyword = "") {
   const list = document.getElementById("placeList");
   const q = keyword.toLowerCase();
-  const filtered = places.filter(p => p.type === activeType && `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q));
+  const filtered = places.filter(p => p.type === activeType && `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q)).slice(0, 2);
 
   list.innerHTML = filtered.map(p => `
     <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" data-name="${p.name}"
