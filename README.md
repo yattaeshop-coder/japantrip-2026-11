@@ -17,8 +17,8 @@
 - 11/2 至 11/9 完整每日行程
 - 11/5 京都到東京整合行程卡
 - Leaflet 景點、美食與購物地圖
-- Google Maps 搜尋連結
+- 每個景點、餐廳與購物點皆有 Google Maps 導覽連結
 - 航班、新幹線與飯店資訊
 - LocalStorage 購物清單
-- 手機與桌機響應式排版
+- 手機響應式排版與卡片橫向滑動
 - Tailwind CSS、AOS 動畫與日系 Japandi 視覺

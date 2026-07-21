@@ -94,6 +94,59 @@
     .leaflet-popup-content { margin: 14px 16px; }
     .hide-scrollbar::-webkit-scrollbar { width: 7px; }
     .hide-scrollbar::-webkit-scrollbar-thumb { background: #c9c7bd; border-radius: 999px; }
+
+    /* 手機卡片橫向滑動 */
+    .mobile-card-row {
+      display: grid;
+      gap: 1rem;
+    }
+    .google-nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      margin-top: .45rem;
+      border-radius: .75rem;
+      background: #eff3eb;
+      padding: .48rem .75rem;
+      color: #5f7054;
+      font-size: .78rem;
+      font-weight: 800;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .google-nav-link:hover { transform: translateY(-1px); background: #e3eadf; }
+    .snap-card { scroll-snap-align: start; }
+    @media (max-width: 767px) {
+      .mobile-card-row {
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        overscroll-behavior-inline: contain;
+        gap: .9rem;
+        padding: .15rem .15rem 1rem;
+        scrollbar-width: none;
+      }
+      .mobile-card-row::-webkit-scrollbar { display: none; }
+      .mobile-card-row > * {
+        flex: 0 0 min(84vw, 330px);
+        scroll-snap-align: start;
+      }
+      #placeList {
+        display: flex;
+        max-height: none !important;
+        overflow-x: auto;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory;
+        gap: .8rem;
+        padding-bottom: .75rem;
+      }
+      #placeList > * {
+        flex: 0 0 min(82vw, 320px);
+        scroll-snap-align: start;
+      }
+      #travelMap { min-height: 360px; }
+      .timeline-item .google-nav-link { margin-left: 0; }
+    }
+
     @media (max-width: 1023px) {
       #travelMap { min-height: 420px; }
       .day-image { min-height: 190px; }
@@ -184,7 +237,7 @@
         <h2 class="mt-3 text-3xl font-black sm:text-4xl">六大旅遊功能</h2>
       </div>
 
-      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mobile-card-row grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
           <div class="module-icon text-4xl">📍</div><h3 class="mt-4 text-xl font-bold">點選地圖</h3>
           <p class="mt-2 text-stone-500">點擊景點或餐廳卡片，地圖會自動移動並顯示資訊。</p>
@@ -243,7 +296,7 @@
         <h2 class="mt-3 text-3xl font-black sm:text-4xl">航班、交通與住宿</h2>
       </div>
 
-      <div class="grid gap-6 lg:grid-cols-3">
+      <div class="mobile-card-row grid gap-6 lg:grid-cols-3">
         <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up">
           <div class="text-3xl">✈️</div>
           <h3 class="mt-4 text-xl font-black">國際航班</h3>
@@ -333,7 +386,7 @@
         <h2 class="mt-3 text-3xl font-black sm:text-4xl">日本旅遊實用工具</h2>
       </div>
 
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      <div class="mobile-card-row grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
         <a target="_blank" href="https://tabelog.com/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🍜</div><p class="mt-3 font-bold">Tabelog</p></a>
         <a target="_blank" href="https://papago.naver.com/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🈳</div><p class="mt-3 font-bold">Papago</p></a>
         <a target="_blank" href="https://tenki.jp/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🌦️</div><p class="mt-3 font-bold">Tenki</p></a>
@@ -504,6 +557,37 @@ function renderDayTabs() {
   `).join("");
 }
 
+const navigationRules = [
+  ["桃園國際機場", "桃園國際機場"], ["關西國際機場", "關西國際機場"],
+  ["京都車站", "京都車站"], ["京都站", "京都車站"], ["Hotel SUI", "Hotel SUI Kyoto Kiyomizu"],
+  ["先斗町", "先斗町 京都"], ["八坂神社", "八坂神社 京都"], ["清水寺", "清水寺 京都"],
+  ["二寧坂", "二寧坂 京都"], ["三寧坂", "三寧坂 京都"], ["錦市場", "錦市場 京都"],
+  ["新京極", "新京極商店街 京都"], ["河原町", "河原町 京都"], ["花見小路", "花見小路 京都"],
+  ["祇園白川", "祇園白川 京都"], ["鴨川", "鴨川 京都"], ["春日大社", "春日大社 奈良"],
+  ["東大寺", "東大寺 奈良"], ["奈良公園", "奈良公園"], ["奈良商店街", "東向商店街 奈良"],
+  ["三十三間堂", "三十三間堂 京都"], ["東京車站", "東京車站"], ["銀座七丁目", "銀座七丁目 東京"],
+  ["相鐵 Fresa Inn", "Sotetsu Fresa Inn Ginza Nanachome"], ["UNIQLO", "UNIQLO Ginza"],
+  ["GINZA SIX", "GINZA SIX"], ["KITTE", "KITTE 丸之內"], ["東京拉麵街", "東京拉麵街"],
+  ["唐吉訶德", "Don Quijote Ginza"], ["築地場外市場", "築地場外市場"], ["銀座", "銀座 東京"],
+  ["五代目花山烏冬", "五代目花山うどん 銀座店"], ["SHIBUYA SKY", "SHIBUYA SKY"],
+  ["六本木之丘", "六本木之丘"], ["毛利庭園", "毛利庭園"], ["東京鐵塔", "東京鐵塔"],
+  ["雷門", "雷門 淺草"], ["仲見世通", "仲見世商店街"], ["淺草寺", "淺草寺"],
+  ["東京晴空塔", "東京晴空塔"], ["Solamachi", "東京ソラマチ"], ["三村房", "三村房 淺草"],
+  ["合羽橋", "合羽橋道具街"], ["阿美橫町", "阿美橫町"], ["秋葉原", "秋葉原"],
+  ["Radio 會館", "秋葉原ラジオ会館"], ["Bic Camera", "Bic Camera AKIBA"],
+  ["成田機場", "成田國際機場"], ["Skyliner", "京成上野站"], ["銀座木村家", "銀座木村家"],
+  ["京都車站商圈", "京都車站"], ["飯店周邊", "Hotel SUI Kyoto Kiyomizu"]
+];
+
+function getNavigationQuery(description) {
+  const match = navigationRules.find(([keyword]) => description.includes(keyword));
+  return match ? match[1] : "";
+}
+
+function googleDirectionsUrl(query) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}&travelmode=transit`;
+}
+
 function renderActiveDay() {
   const d = itinerary[activeDayIndex];
   itineraryPanel.innerHTML = `
@@ -532,7 +616,10 @@ function renderActiveDay() {
                 <span class="timeline-dot"></span>
                 <div class="grid gap-1 sm:grid-cols-[76px_1fr]">
                   <p class="font-black text-matcha">${t[0]}</p>
-                  <p class="leading-7 text-stone-600">${t[1]}</p>
+                  <div>
+                    <p class="leading-7 text-stone-600">${t[1]}</p>
+                    ${getNavigationQuery(t[1]) ? `<a class="google-nav-link" target="_blank" rel="noopener" href="${googleDirectionsUrl(getNavigationQuery(t[1]))}">🧭 Google 導覽</a>` : ""}
+                  </div>
                 </div>
               </div>
             `).join("")}
@@ -626,7 +713,7 @@ places.forEach(place => {
       <span>${place.city}・${place.rating}</span>
       <p style="margin:8px 0">${place.desc}</p>
       <a target="_blank" style="font-weight:700;color:#78866B"
-         href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.city)}">
+         href="${googleDirectionsUrl(place.name + ' ' + place.city)}">
          Google Maps 導航
       </a>
     </div>
@@ -642,17 +729,23 @@ function renderPlaces(keyword = "") {
   const filtered = places.filter(p => p.type === activeType && `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q));
 
   list.innerHTML = filtered.map(p => `
-    <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" data-name="${p.name}"
+    <article data-name="${p.name}"
       class="place-card w-full rounded-2xl border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h3 class="font-bold">${p.name}</h3>
-          <p class="mt-1 text-xs font-semibold text-matcha">${p.city}</p>
+      <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="w-full text-left">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="font-bold">${p.name}</h3>
+            <p class="mt-1 text-xs font-semibold text-matcha">${p.city}</p>
+          </div>
+          <span class="whitespace-nowrap rounded-full bg-mist px-2.5 py-1 text-xs font-bold">${p.rating}</span>
         </div>
-        <span class="whitespace-nowrap rounded-full bg-mist px-2.5 py-1 text-xs font-bold">${p.rating}</span>
+        <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
+      </button>
+      <div class="mt-3 flex gap-2">
+        <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="rounded-xl border border-stone-200 px-3 py-2 text-xs font-bold hover:bg-mist">📍 地圖定位</button>
+        <a target="_blank" rel="noopener" href="${googleDirectionsUrl(p.name + ' ' + p.city)}" class="rounded-xl bg-matcha px-3 py-2 text-xs font-bold text-white hover:bg-ink">🧭 Google 導覽</a>
       </div>
-      <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
-    </button>
+    </article>
   `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">找不到符合資料。</p>`;
 }
 
