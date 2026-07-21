@@ -94,9 +94,49 @@
     .leaflet-popup-content { margin: 14px 16px; }
     .hide-scrollbar::-webkit-scrollbar { width: 7px; }
     .hide-scrollbar::-webkit-scrollbar-thumb { background: #c9c7bd; border-radius: 999px; }
+
+    .planner-shell { min-height: 690px; }
+    .planner-map { height: 590px; }
+    .desktop-day-panel { height: 590px; overflow-y: auto; }
+    .mobile-day-track {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      padding: 2px 3px 14px;
+    }
+    .mobile-day-track::-webkit-scrollbar { display: none; }
+    .mobile-day-card {
+      flex: 0 0 88%;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+    .compact-times {
+      max-height: 295px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    .map-place-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+    }
+    .map-place-strip::-webkit-scrollbar { display: none; }
+    .map-place-strip .place-card {
+      flex: 0 0 220px;
+      scroll-snap-align: start;
+    }
+
     @media (max-width: 1023px) {
-      #travelMap { min-height: 420px; }
-      .day-image { min-height: 190px; }
+      #travelMap { min-height: 360px; }
+      .planner-map { height: 360px; }
+      .day-image { min-height: 180px; }
+      .planner-shell { min-height: auto; }
+      .desktop-day-panel { height: auto; overflow: visible; }
     }
   </style>
 </head>
@@ -162,18 +202,40 @@
     </div>
   </section>
 
-  <section id="itinerary" class="mx-auto max-w-7xl px-5 py-20">
-    <div class="mb-10 text-center" data-aos="fade-up">
-      <p class="font-semibold tracking-[.2em] text-matcha">DAILY ITINERARY</p>
-      <h2 class="mt-3 text-3xl font-black sm:text-4xl">11/2－11/9 完整行程</h2>
-      <p class="mx-auto mt-3 max-w-3xl text-stone-500">
-        點選上方日期選單即可切換每天行程；畫面一次只顯示一天，不需要一直向下捲動。
-      </p>
+  <section id="itinerary" class="mx-auto max-w-[1500px] px-4 py-16 sm:px-5">
+    <div class="mb-7 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between" data-aos="fade-up">
+      <div>
+        <p class="font-semibold tracking-[.2em] text-matcha">TRIP PLANNER</p>
+        <h2 class="mt-2 text-3xl font-black sm:text-4xl">每日行程與即時地圖</h2>
+        <p class="mt-2 text-stone-500">桌機左側看行程、右側看地圖；手機左右滑動每日卡片。</p>
+      </div>
+      <div id="dayTabs" class="hide-scrollbar flex max-w-full gap-2 overflow-x-auto pb-1 lg:max-w-[760px]"></div>
     </div>
 
-    <div class="glass rounded-3xl p-4 shadow-soft sm:p-6">
-      <div id="dayTabs" class="hide-scrollbar flex gap-2 overflow-x-auto pb-3"></div>
-      <div id="itineraryPanel" class="mt-3"></div>
+    <div class="planner-shell grid gap-5 lg:grid-cols-[minmax(410px,42%)_1fr]">
+      <div class="glass rounded-3xl p-3 shadow-soft sm:p-4" data-aos="fade-right">
+        <div id="itineraryPanel"></div>
+      </div>
+
+      <div id="map" class="glass overflow-hidden rounded-3xl p-3 shadow-soft sm:p-4" data-aos="fade-left">
+        <div class="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <p class="text-xs font-bold tracking-[.18em] text-matcha">LIVE MAP</p>
+            <h3 id="mapHeading" class="mt-1 font-black">今日行程地圖</h3>
+          </div>
+          <div class="grid grid-cols-3 rounded-xl bg-stone-100 p-1 text-xs sm:text-sm">
+            <button class="map-tab rounded-lg bg-white px-2.5 py-2 font-bold shadow sm:px-3" data-type="spot">景點</button>
+            <button class="map-tab rounded-lg px-2.5 py-2 font-bold sm:px-3" data-type="food">美食</button>
+            <button class="map-tab rounded-lg px-2.5 py-2 font-bold sm:px-3" data-type="shopping">購物</button>
+          </div>
+        </div>
+
+        <div class="overflow-hidden rounded-2xl bg-white">
+          <div id="travelMap" class="planner-map"></div>
+        </div>
+
+        <div id="placeList" class="map-place-strip mt-3 pb-1"></div>
+      </div>
     </div>
   </section>
 
@@ -209,29 +271,6 @@
           <div class="module-icon text-4xl">🛍️</div><h3 class="mt-4 text-xl font-bold">購物清單</h3>
           <p class="mt-2 text-stone-500">新增、勾選、刪除商品，並自動換算台幣與永久儲存。</p>
         </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="map" class="mx-auto max-w-7xl px-5 py-20">
-    <div class="mb-10 text-center" data-aos="fade-up">
-      <p class="font-semibold tracking-[.2em] text-matcha">MAP & FOOD</p>
-      <h2 class="mt-3 text-3xl font-black sm:text-4xl">互動景點與美食地圖</h2>
-      <p class="mt-3 text-stone-500">手機為上下排列，桌機為左右分欄。餐廳可直接開啟 Google Maps 搜尋。</p>
-    </div>
-
-    <div class="grid gap-6 lg:grid-cols-[430px_1fr]">
-      <aside class="glass rounded-2xl p-4 shadow-soft" data-aos="fade-right">
-        <div class="grid grid-cols-3 rounded-xl bg-stone-100 p-1">
-          <button class="map-tab rounded-lg bg-white px-3 py-2.5 font-bold shadow" data-type="spot">⛩️ 景點</button>
-          <button class="map-tab rounded-lg px-3 py-2.5 font-bold" data-type="food">🍱 美食</button>
-          <button class="map-tab rounded-lg px-3 py-2.5 font-bold" data-type="shopping">🛍️ 購物</button>
-        </div>
-        <div id="placeList" class="hide-scrollbar mt-4 max-h-[520px] space-y-3 overflow-y-auto pr-1"></div>
-      </aside>
-
-      <div class="overflow-hidden rounded-2xl bg-white shadow-soft" data-aos="fade-left">
-        <div id="travelMap"></div>
       </div>
     </div>
   </section>
@@ -493,72 +532,134 @@ let activeDayIndex = 0;
 function renderDayTabs() {
   dayTabs.innerHTML = itinerary.map((d, index) => `
     <button onclick="selectDay(${index})"
-      class="day-tab shrink-0 rounded-xl px-4 py-3 text-left transition ${
+      class="day-tab shrink-0 rounded-xl px-3.5 py-2.5 text-left transition ${
         index === activeDayIndex
           ? "bg-matcha text-white shadow"
           : "bg-white text-stone-600 hover:bg-mist"
       }">
-      <span class="block text-xs font-bold opacity-75">${d.day}</span>
-      <span class="mt-0.5 block whitespace-nowrap font-black">${d.date}・${d.city}</span>
+      <span class="block text-[10px] font-bold opacity-75">${d.day}</span>
+      <span class="block whitespace-nowrap text-sm font-black">${d.date}・${d.city}</span>
     </button>
   `).join("");
 }
 
-function renderActiveDay() {
-  const d = itinerary[activeDayIndex];
-  itineraryPanel.innerHTML = `
-    <article class="overflow-hidden rounded-3xl border border-white/70 bg-white/80">
-      <div class="grid lg:grid-cols-[420px_1fr]">
-        <div class="day-image relative bg-cover bg-center" style="background-image:url('${d.image}')">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
-          <div class="absolute bottom-0 p-6 text-white">
-            <div class="flex flex-wrap gap-2">
-              <span class="rounded-full bg-white/18 px-3 py-1 text-xs font-bold backdrop-blur">${d.day}</span>
-              <span class="rounded-full bg-white/18 px-3 py-1 text-xs font-bold backdrop-blur">${d.date}</span>
-            </div>
-            <p class="mt-3 text-sm text-white/80">${d.city}</p>
-            <h3 class="mt-1 text-2xl font-black">${d.title}</h3>
+function desktopDayCard(d) {
+  return `
+    <article class="desktop-day-panel hide-scrollbar rounded-2xl bg-white">
+      <div class="relative h-48 overflow-hidden rounded-2xl bg-cover bg-center" style="background-image:url('${d.image}')">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5 text-white">
+          <div class="flex gap-2 text-xs font-bold">
+            <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur">${d.day}</span>
+            <span class="rounded-full bg-white/20 px-3 py-1 backdrop-blur">${d.date}</span>
           </div>
+          <p class="mt-2 text-xs text-white/75">${d.city}</p>
+          <h3 class="mt-1 text-xl font-black leading-snug">${d.title}</h3>
+        </div>
+      </div>
+
+      <div class="p-5">
+        <div class="hide-scrollbar flex gap-2 overflow-x-auto">
+          ${d.highlights.map(h => `<button onclick="focusPlace('${h.replace(/'/g, "\\'")}')" class="shrink-0 rounded-full bg-mist px-3 py-1.5 text-xs font-semibold text-stone-600">${h}</button>`).join("")}
         </div>
 
-        <div class="p-6 sm:p-7">
-          <div class="flex flex-wrap gap-2">
-            ${d.highlights.map(h => `<span class="rounded-full bg-mist px-3 py-1 text-xs font-semibold text-stone-600">${h}</span>`).join("")}
-          </div>
+        <div class="compact-times hide-scrollbar mt-5 space-y-3">
+          ${d.times.map(t => `
+            <div class="grid grid-cols-[64px_1fr] gap-2 rounded-xl bg-cream/70 p-3">
+              <p class="font-black text-matcha">${t[0]}</p>
+              <p class="text-sm leading-6 text-stone-600">${t[1]}</p>
+            </div>
+          `).join("")}
+        </div>
 
-          <div class="timeline-line relative mt-6 space-y-4">
-            ${d.times.map(t => `
-              <div class="timeline-item">
-                <span class="timeline-dot"></span>
-                <div class="grid gap-1 sm:grid-cols-[76px_1fr]">
-                  <p class="font-black text-matcha">${t[0]}</p>
-                  <p class="leading-7 text-stone-600">${t[1]}</p>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-
-          <div class="mt-7 flex flex-wrap gap-3">
-            <button onclick="focusPlace('${d.map}')" class="rounded-xl bg-matcha px-5 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">
-              📍 查看地圖
-            </button>
-            <button onclick="selectDay(activeDayIndex - 1)" class="rounded-xl border border-stone-200 bg-white px-5 py-3 font-bold transition hover:bg-mist ${activeDayIndex === 0 ? "pointer-events-none opacity-40" : ""}">
-              ← 前一天
-            </button>
-            <button onclick="selectDay(activeDayIndex + 1)" class="rounded-xl border border-stone-200 bg-white px-5 py-3 font-bold transition hover:bg-mist ${activeDayIndex === itinerary.length - 1 ? "pointer-events-none opacity-40" : ""}">
-              後一天 →
-            </button>
-          </div>
+        <div class="mt-4 flex gap-2">
+          <button onclick="focusPlace('${d.map}')" class="flex-1 rounded-xl bg-matcha px-4 py-3 font-bold text-white hover:bg-ink">📍 顯示今日地圖</button>
+          <button onclick="selectDay(activeDayIndex - 1)" class="rounded-xl border bg-white px-3 py-3 font-bold ${activeDayIndex === 0 ? "pointer-events-none opacity-30" : ""}">←</button>
+          <button onclick="selectDay(activeDayIndex + 1)" class="rounded-xl border bg-white px-3 py-3 font-bold ${activeDayIndex === itinerary.length - 1 ? "pointer-events-none opacity-30" : ""}">→</button>
         </div>
       </div>
     </article>
   `;
 }
 
+function mobileDayCards() {
+  return `
+    <div id="mobileDayTrack" class="mobile-day-track lg:hidden">
+      ${itinerary.map((d, index) => `
+        <article class="mobile-day-card overflow-hidden rounded-2xl bg-white shadow-sm" data-index="${index}">
+          <div class="relative h-44 bg-cover bg-center" style="background-image:url('${d.image}')">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 p-4 text-white">
+              <p class="text-xs font-bold">${d.day}・${d.date}・${d.city}</p>
+              <h3 class="mt-1 text-lg font-black leading-snug">${d.title}</h3>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="hide-scrollbar flex gap-2 overflow-x-auto">
+              ${d.highlights.map(h => `<span class="shrink-0 rounded-full bg-mist px-3 py-1 text-xs font-semibold">${h}</span>`).join("")}
+            </div>
+            <div class="mt-4 space-y-2">
+              ${d.times.slice(0,5).map(t => `
+                <div class="grid grid-cols-[58px_1fr] gap-2 text-sm">
+                  <b class="text-matcha">${t[0]}</b><span class="text-stone-600">${t[1]}</span>
+                </div>
+              `).join("")}
+            </div>
+            ${d.times.length > 5 ? `<details class="mt-3 rounded-xl bg-cream p-3"><summary class="cursor-pointer font-bold text-matcha">查看完整行程</summary><div class="mt-3 space-y-2">${d.times.slice(5).map(t => `<div class="grid grid-cols-[58px_1fr] gap-2 text-sm"><b class="text-matcha">${t[0]}</b><span>${t[1]}</span></div>`).join("")}</div></details>` : ""}
+            <button onclick="focusPlace('${d.map}')" class="mt-4 w-full rounded-xl bg-matcha px-4 py-3 font-bold text-white">📍 顯示地圖</button>
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderActiveDay() {
+  const d = itinerary[activeDayIndex];
+  itineraryPanel.innerHTML = `
+    <div class="hidden lg:block">${desktopDayCard(d)}</div>
+    ${mobileDayCards()}
+  `;
+
+  const track = document.getElementById("mobileDayTrack");
+  if (track) {
+    const target = track.querySelector(`[data-index="${activeDayIndex}"]`);
+    requestAnimationFrame(() => target?.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}));
+
+    let scrollTimer;
+    track.addEventListener("scroll", () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        const cards = [...track.querySelectorAll(".mobile-day-card")];
+        const center = track.scrollLeft + track.clientWidth / 2;
+        let closest = 0;
+        let distance = Infinity;
+        cards.forEach((card, i) => {
+          const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+          const d = Math.abs(center - cardCenter);
+          if (d < distance) { distance = d; closest = i; }
+        });
+        if (closest !== activeDayIndex) {
+          activeDayIndex = closest;
+          renderDayTabs();
+          focusItineraryDay(false);
+        }
+      }, 120);
+    }, {passive:true});
+  }
+}
+
+function focusItineraryDay(moveMap = true) {
+  const d = itinerary[activeDayIndex];
+  document.getElementById("mapHeading").textContent = `${d.date} ${d.city}行程地圖`;
+  if (moveMap && window.mapReady) focusPlace(d.map, false);
+}
+
 window.selectDay = function(index) {
   activeDayIndex = Math.max(0, Math.min(itinerary.length - 1, index));
   renderDayTabs();
   renderActiveDay();
+  focusItineraryDay(true);
 };
 
 renderDayTabs();
@@ -611,7 +712,8 @@ const places = [
   {name:"Tokyo Solamachi", type:"shopping", city:"晴空塔", lat:35.7100, lng:139.8107, rating:"購物", desc:"晴空塔大型購物商場。"}
 ];
 
-const map = L.map("travelMap").setView([35.4, 137.6], 6);
+const map = L.map("travelMap", {zoomControl:true}).setView([35.4, 137.6], 6);
+window.mapReady = true;
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution: "&copy; OpenStreetMap contributors"
@@ -643,15 +745,15 @@ function renderPlaces(keyword = "") {
 
   list.innerHTML = filtered.map(p => `
     <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" data-name="${p.name}"
-      class="place-card w-full rounded-2xl border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h3 class="font-bold">${p.name}</h3>
-          <p class="mt-1 text-xs font-semibold text-matcha">${p.city}</p>
+      class="place-card rounded-xl border border-stone-200 bg-white p-3 text-left transition hover:border-matcha">
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <h3 class="truncate text-sm font-bold">${p.name}</h3>
+          <p class="mt-1 truncate text-xs font-semibold text-matcha">${p.city}</p>
         </div>
-        <span class="whitespace-nowrap rounded-full bg-mist px-2.5 py-1 text-xs font-bold">${p.rating}</span>
+        <span class="shrink-0 rounded-full bg-mist px-2 py-1 text-[10px] font-bold">${p.rating}</span>
       </div>
-      <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
+      <p class="mt-2 line-clamp-2 text-xs leading-5 text-stone-500">${p.desc}</p>
     </button>
   `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">找不到符合資料。</p>`;
 }
@@ -664,7 +766,7 @@ function updateTabs() {
   });
 }
 
-window.focusPlace = function(name) {
+window.focusPlace = function(name, shouldScroll = true) {
   const place = places.find(p => p.name === name);
   if (!place) {
     const loose = places.find(p => p.name.includes(name) || name.includes(p.name));
@@ -679,7 +781,7 @@ window.focusPlace = function(name) {
     map.flyTo([place.lat, place.lng], place.city.includes("京都") || place.city.includes("奈良") ? 14 : 15, {duration:1.1});
     markers[place.name].openPopup();
     document.querySelectorAll(".place-card").forEach(card => card.classList.toggle("active", card.dataset.name === place.name));
-    document.getElementById("map").scrollIntoView({behavior:"smooth"});
+    if (shouldScroll && window.innerWidth < 1024) document.getElementById("map").scrollIntoView({behavior:"smooth", block:"start"});
   }, 80);
 };
 
