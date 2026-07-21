@@ -1,155 +1,732 @@
-<!doctype html><html lang="zh-Hant"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f7f3ec">
-<meta name="description" content="Family Japan Trip 2026 京都東京家庭旅遊網站">
-<title>Family Japan Trip 2026</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg">
-<link rel="preconnect" href="https://www.youtube.com">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/style.css?v=5.1"></head>
-<body>
-<div id="sakura" aria-hidden="true"></div>
-<header class="video-hero">
-  <div class="video-layer active" id="videoKyoto"><iframe src="https://www.youtube.com/embed/aSksCBrDKO8?autoplay=1&mute=1&controls=0&loop=1&playlist=aSksCBrDKO8&playsinline=1&rel=0&modestbranding=1" title="京都影片" allow="autoplay; encrypted-media"></iframe></div>
-  <div class="video-layer" id="videoTokyo"><iframe src="https://www.youtube.com/embed/8vvizjujnKY?autoplay=1&mute=1&controls=0&loop=1&playlist=8vvizjujnKY&playsinline=1&rel=0&modestbranding=1" title="東京影片" allow="autoplay; encrypted-media"></iframe></div>
-  <div class="video-overlay"></div>
-  <nav><a class="logo" href="#">JAPAN <b>2026</b></a><div><a href="#journey">每日行程</a><a href="#flight-hotel">航班住宿</a><a href="#rail">交通</a><a href="#food">美食</a><a href="#tools">工具</a></div><button id="installBtn" hidden>安裝 App</button></nav>
-  <div class="hero-copy"><p>KYOTO · TOKYO · FAMILY JOURNEY</p><h1>八天的日本<br><em>家庭旅行故事</em></h1><span>2026.11.02 — 11.09</span><a href="#journey">開始探索 ↓</a></div>
-  <div class="video-switch"><button class="active" data-video="kyoto">京都</button><button data-video="tokyo">東京</button></div>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6f7f62">
+  <meta name="description" content="Family Japan Trip 2026：京都、奈良、東京家庭旅遊行程、地圖、美食、住宿、航班與購物清單。">
+  <title>Family Japan Trip 2026</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            matcha: "#78866B",
+            sage: "#A9B29D",
+            sakura: "#DDB7B0",
+            cream: "#F7F3EC",
+            ink: "#2E332B",
+            clay: "#A9826B",
+            mist: "#ECEBE4"
+          },
+          boxShadow: {
+            soft: "0 18px 50px rgba(63,72,55,.11)",
+            lift: "0 24px 60px rgba(63,72,55,.17)"
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at 10% 10%, rgba(221,183,176,.22), transparent 24rem),
+        radial-gradient(circle at 90% 30%, rgba(169,178,157,.18), transparent 28rem),
+        #F7F3EC;
+    }
+    .glass {
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(255,255,255,.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .hero-overlay {
+      background: linear-gradient(110deg, rgba(26,31,26,.78) 0%, rgba(26,31,26,.45) 48%, rgba(26,31,26,.18) 100%);
+    }
+    .card-hover {
+      transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 24px 60px rgba(63,72,55,.17);
+    }
+    .day-image { min-height: 230px; }
+    .timeline-line::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      left: 9px;
+      width: 2px;
+      background: linear-gradient(#78866B, #DDB7B0);
+    }
+    .timeline-item { position: relative; padding-left: 34px; }
+    .timeline-dot {
+      position: absolute;
+      left: 2px;
+      top: 7px;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: #fff;
+      border: 4px solid #78866B;
+      z-index: 1;
+    }
+    .module-card .module-icon { transition: transform .25s ease; }
+    .module-card:hover .module-icon { transform: scale(1.12) rotate(-3deg); }
+    #travelMap { min-height: 560px; }
+    .place-card.active {
+      border-color: #78866B;
+      background: #eff3eb;
+      box-shadow: 0 14px 34px rgba(63,72,55,.13);
+    }
+    .leaflet-popup-content-wrapper { border-radius: 18px; }
+    .leaflet-popup-content { margin: 14px 16px; }
+    .hide-scrollbar::-webkit-scrollbar { width: 7px; }
+    .hide-scrollbar::-webkit-scrollbar-thumb { background: #c9c7bd; border-radius: 999px; }
+    @media (max-width: 1023px) {
+      #travelMap { min-height: 420px; }
+      .day-image { min-height: 190px; }
+    }
+  </style>
+</head>
+
+<body class="text-ink antialiased">
+
+<header class="fixed inset-x-0 top-0 z-[1000] px-3">
+  <nav class="glass mx-auto mt-3 max-w-7xl rounded-2xl px-4 py-3 shadow-soft sm:px-6">
+    <div class="flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3">
+        <div class="grid h-11 w-11 place-items-center rounded-2xl bg-sakura/35 text-2xl">🌸</div>
+        <div>
+          <p class="font-black tracking-tight">Family Japan Trip</p>
+          <p class="text-xs text-stone-500">Kyoto・Nara・Tokyo 2026</p>
+        </div>
+      </a>
+
+      <div class="hidden items-center gap-6 lg:flex">
+        <a href="#itinerary" class="text-sm font-semibold hover:text-matcha">每日行程</a>
+        <a href="#map" class="text-sm font-semibold hover:text-matcha">景點美食</a>
+        <a href="#transport" class="text-sm font-semibold hover:text-matcha">航班住宿</a>
+        <a href="#shopping" class="text-sm font-semibold hover:text-matcha">購物清單</a>
+        <a href="#tools" class="text-sm font-semibold hover:text-matcha">實用工具</a>
+      </div>
+
+      <button id="menuButton" class="rounded-xl border border-white/70 bg-white/80 px-3 py-2 lg:hidden" aria-label="開啟導覽列">
+        ☰
+      </button>
+    </div>
+
+    <div id="mobileMenu" class="hidden border-t border-stone-200/70 pt-3 lg:hidden">
+      <div class="grid gap-1">
+        <a href="#itinerary" class="rounded-xl px-3 py-2 hover:bg-white">每日行程</a>
+        <a href="#map" class="rounded-xl px-3 py-2 hover:bg-white">景點美食</a>
+        <a href="#transport" class="rounded-xl px-3 py-2 hover:bg-white">航班住宿</a>
+        <a href="#shopping" class="rounded-xl px-3 py-2 hover:bg-white">購物清單</a>
+        <a href="#tools" class="rounded-xl px-3 py-2 hover:bg-white">實用工具</a>
+      </div>
+    </div>
+  </nav>
 </header>
 
-<section class="quick-stats reveal" id="tools">
- <div><small>日本時間</small><b id="japanTime">--:--</b></div>
- <div><small>京都天氣</small><b id="kyotoWeather">--</b></div>
- <div><small>東京天氣</small><b id="tokyoWeather">--</b></div>
- <div><small>1 TWD 約兌</small><b id="fxRate">-- JPY</b></div>
- <div><small>旅行預算</small><b><span id="budgetTotal">0</span> 円</b></div>
-</section>
+<main>
+  <section id="home" class="relative flex min-h-screen items-center overflow-hidden bg-cover bg-center"
+    style="background-image:url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=2200&q=88')">
+    <div class="hero-overlay absolute inset-0"></div>
+    <div class="relative z-10 mx-auto w-full max-w-7xl px-5 pt-28">
+      <div class="max-w-3xl text-white" data-aos="fade-up">
+        <p class="font-semibold tracking-[.28em] text-white/75">FAMILY JAPAN TRIP 2026</p>
+        <h1 class="mt-4 text-5xl font-black leading-tight sm:text-6xl lg:text-7xl">探索日本之美</h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-white/85">
+          11/2 至 11/9，從京都古都、奈良小鹿，到東京銀座、淺草、晴空塔與上野，
+          一個網站整合全家人的每日行程、交通、住宿、美食、地圖與購物清單。
+        </p>
 
-<section class="journey-head reveal" id="journey"><p>DAILY ITINERARY</p><h2>每日行程與互動地圖</h2><span>點選 Day 或左側景點，右側地圖會即時更新。</span></section>
-<div class="day-selector"><button class="day-button active" data-day="day1"><b>DAY 1</b><span>11/2</span><small>抵達京都</small></button><button class="day-button" data-day="day2"><b>DAY 2</b><span>11/3</span><small>清水寺・和服・祇園</small></button><button class="day-button" data-day="day3"><b>DAY 3</b><span>11/4</span><small>奈良・三十三間堂</small></button><button class="day-button" data-day="day4"><b>DAY 4</b><span>11/5</span><small>京都 → 東京 → 銀座</small></button><button class="day-button" data-day="day5"><b>DAY 5</b><span>11/6</span><small>築地・淺草・晴空塔</small></button><button class="day-button" data-day="day6"><b>DAY 6</b><span>11/7</span><small>上野・阿美橫町・秋葉原</small></button><button class="day-button" data-day="day7"><b>DAY 7</b><span>11/8</span><small>六本木・東京鐵塔</small></button><button class="day-button" data-day="day8"><b>DAY 8</b><span>11/9</span><small>Skyliner・成田機場</small></button></div>
+        <form id="heroSearch" class="mt-9 flex max-w-2xl flex-col gap-3 rounded-2xl bg-white/92 p-3 shadow-2xl sm:flex-row">
+          <input id="heroSearchInput" class="min-w-0 flex-1 rounded-xl bg-white px-4 py-3 text-ink outline-none"
+            placeholder="搜尋清水寺、築地、銀座、美食…">
+          <button class="rounded-xl bg-matcha px-7 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">搜尋地圖</button>
+        </form>
 
-<main class="journey-layout">
- <aside class="timeline-column"><section class="day-panel active" id="day1">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85" alt="抵達京都" loading="lazy"><img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85" alt="抵達京都" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 1 · 11/2</span><h2>抵達京都</h2><p>京都</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day1" data-lat="25.0797" data-lng="121.2342" data-name="桃園國際機場">
-      <time>06:00</time><div><span class="type transport">transport</span><h3>機場接送</h3><p>桃園國際機場</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.4347" data-lng="135.244" data-name="關西國際機場">
-      <time>09:45–13:20</time><div><span class="type transport">transport</span><h3>中華航空 CI152</h3><p>桃園 → 關西國際機場</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.9858" data-lng="135.7588" data-name="京都車站">
-      <time>15:30</time><div><span class="type transport">transport</span><h3>HARUKA 特快</h3><p>京都車站</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.9854" data-lng="135.7578" data-name="京都車站拉麵小路">
-      <time>16:50</time><div><span class="type food">food</span><h3>京都拉麵小路</h3><p>京都車站拉麵小路</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="34.9933" data-lng="135.7715" data-name="Hotel SUI Kyoto Kiyomizu">
-      <time>17:40</time><div><span class="type hotel">hotel</span><h3>飯店 Check-in</h3><p>Hotel SUI Kyoto Kiyomizu</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="35.005" data-lng="135.7708" data-name="先斗町">
-      <time>18:30</time><div><span class="type food">food</span><h3>先斗町晚餐</h3><p>先斗町</p></div><i>↗</i></button><button class="stop-card" data-day="day1" data-lat="35.0037" data-lng="135.7785" data-name="八坂神社">
-      <time>20:00</time><div><span class="type sight">sight</span><h3>八坂神社夜景</h3><p>八坂神社</p></div><i>↗</i></button></div>
-    </section><section class="day-panel" id="day2">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85" alt="清水寺・和服・祇園" loading="lazy"><img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85" alt="清水寺・和服・祇園" loading="lazy"><img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85" alt="清水寺・和服・祇園" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 2 · 11/3</span><h2>清水寺・和服・祇園</h2><p>京都</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day2" data-lat="34.9949" data-lng="135.785" data-name="清水寺">
-      <time>08:00</time><div><span class="type sight">sight</span><h3>清水寺</h3><p>清水寺</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="34.998" data-lng="135.7814" data-name="二寧坂">
-      <time>09:00</time><div><span class="type sight">sight</span><h3>和服・二寧坂三寧坂</h3><p>二寧坂</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="35.005" data-lng="135.7649" data-name="錦市場">
-      <time>12:00</time><div><span class="type food">food</span><h3>錦市場</h3><p>錦市場</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="35.0034" data-lng="135.769" data-name="河原町">
-      <time>15:30</time><div><span class="type shopping">shopping</span><h3>河原町商圈</h3><p>河原町</p></div><i>↗</i></button><button class="stop-card" data-day="day2" data-lat="35.0053" data-lng="135.7753" data-name="祇園白川">
-      <time>20:30</time><div><span class="type sight">sight</span><h3>祇園白川散步</h3><p>祇園白川</p></div><i>↗</i></button></div>
-    </section><section class="day-panel" id="day3">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85" alt="奈良・三十三間堂" loading="lazy"><img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85" alt="奈良・三十三間堂" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 3 · 11/4</span><h2>奈良・三十三間堂</h2><p>奈良／京都</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day3" data-lat="34.6814" data-lng="135.8485" data-name="春日大社">
-      <time>09:15</time><div><span class="type sight">sight</span><h3>春日大社</h3><p>春日大社</p></div><i>↗</i></button><button class="stop-card" data-day="day3" data-lat="34.689" data-lng="135.8398" data-name="東大寺">
-      <time>10:00</time><div><span class="type sight">sight</span><h3>東大寺與小鹿</h3><p>東大寺</p></div><i>↗</i></button><button class="stop-card" data-day="day3" data-lat="34.6777" data-lng="135.832" data-name="奈良町">
-      <time>11:30</time><div><span class="type food">food</span><h3>奈良商店街午餐</h3><p>奈良町</p></div><i>↗</i></button><button class="stop-card" data-day="day3" data-lat="34.9879" data-lng="135.7717" data-name="三十三間堂">
-      <time>15:30</time><div><span class="type sight">sight</span><h3>三十三間堂</h3><p>三十三間堂</p></div><i>↗</i></button></div>
-    </section><section class="day-panel" id="day4">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85" alt="京都 → 東京 → 銀座" loading="lazy"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="京都 → 東京 → 銀座" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 4 · 11/5</span><h2>京都 → 東京 → 銀座</h2><p>東京</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day4" data-lat="34.9858" data-lng="135.7588" data-name="京都車站">
-      <time>14:01</time><div><span class="type transport">transport</span><h3>東海道新幹線</h3><p>京都車站</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6812" data-lng="139.7671" data-name="東京車站">
-      <time>16:15</time><div><span class="type transport">transport</span><h3>抵達東京</h3><p>東京車站</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6684" data-lng="139.7631" data-name="相鐵Fresa Inn銀座七丁目">
-      <time>17:00</time><div><span class="type hotel">hotel</span><h3>飯店 Check-in</h3><p>相鐵Fresa Inn銀座七丁目</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6697" data-lng="139.7643" data-name="GINZA SIX">
-      <time>傍晚</time><div><span class="type shopping">shopping</span><h3>銀座購物</h3><p>GINZA SIX</p></div><i>↗</i></button><button class="stop-card" data-day="day4" data-lat="35.6751" data-lng="139.7638" data-name="有樂町站">
-      <time>晚上</time><div><span class="type sight">sight</span><h3>有樂町散步</h3><p>有樂町站</p></div><i>↗</i></button></div>
-    </section><section class="day-panel" id="day5">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85" alt="築地・淺草・晴空塔" loading="lazy"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="築地・淺草・晴空塔" loading="lazy"><img src="https://images.unsplash.com/photo-1505069190533-da1c9af13346?auto=format&fit=crop&w=1600&q=85" alt="築地・淺草・晴空塔" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 5 · 11/6</span><h2>築地・淺草・晴空塔</h2><p>東京</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day5" data-lat="35.6655" data-lng="139.7707" data-name="築地場外市場">
-      <time>07:30</time><div><span class="type food">food</span><h3>築地市場早餐</h3><p>築地場外市場</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.7111" data-lng="139.7964" data-name="雷門">
-      <time>上午</time><div><span class="type sight">sight</span><h3>雷門</h3><p>雷門</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.7148" data-lng="139.7967" data-name="淺草寺">
-      <time>上午</time><div><span class="type sight">sight</span><h3>淺草寺</h3><p>淺草寺</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.71" data-lng="139.812" data-name="東京晴空街道">
-      <time>下午</time><div><span class="type shopping">shopping</span><h3>Solamachi 商場</h3><p>東京晴空街道</p></div><i>↗</i></button><button class="stop-card" data-day="day5" data-lat="35.7101" data-lng="139.8107" data-name="東京晴空塔">
-      <time>傍晚</time><div><span class="type sight">sight</span><h3>晴空塔展望台</h3><p>東京晴空塔</p></div><i>↗</i></button></div>
-    </section><section class="day-panel" id="day6">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1600&q=85" alt="上野・阿美橫町・秋葉原" loading="lazy"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="上野・阿美橫町・秋葉原" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 6 · 11/7</span><h2>上野・阿美橫町・秋葉原</h2><p>東京</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day6" data-lat="35.7148" data-lng="139.7732" data-name="上野公園">
-      <time>上午</time><div><span class="type sight">sight</span><h3>上野公園</h3><p>上野公園</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.7088" data-lng="139.7746" data-name="阿美橫町">
-      <time>中午前</time><div><span class="type shopping">shopping</span><h3>阿美橫町</h3><p>阿美橫町</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.7138" data-lng="139.7773" data-name="上野站">
-      <time>午餐</time><div><span class="type food">food</span><h3>上野午餐</h3><p>上野站</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.6984" data-lng="139.7731" data-name="秋葉原站">
-      <time>下午</time><div><span class="type shopping">shopping</span><h3>秋葉原購物</h3><p>秋葉原站</p></div><i>↗</i></button><button class="stop-card" data-day="day6" data-lat="35.6988" data-lng="139.7747" data-name="Yodobashi Akiba">
-      <time>下午</time><div><span class="type shopping">shopping</span><h3>BIC／Yodobashi</h3><p>Yodobashi Akiba</p></div><i>↗</i></button></div>
-    </section><section class="day-panel" id="day7">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1600&q=85" alt="六本木・東京鐵塔" loading="lazy"><img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85" alt="六本木・東京鐵塔" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 7 · 11/8</span><h2>六本木・東京鐵塔</h2><p>東京</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day7" data-lat="35.6605" data-lng="139.7292" data-name="六本木之丘">
-      <time>中午</time><div><span class="type sight">sight</span><h3>六本木 Hills</h3><p>六本木之丘</p></div><i>↗</i></button><button class="stop-card" data-day="day7" data-lat="35.6658" data-lng="139.731" data-name="Tokyo Midtown">
-      <time>下午</time><div><span class="type shopping">shopping</span><h3>Tokyo Midtown</h3><p>Tokyo Midtown</p></div><i>↗</i></button><button class="stop-card" data-day="day7" data-lat="35.6586" data-lng="139.7454" data-name="東京鐵塔">
-      <time>下午</time><div><span class="type sight">sight</span><h3>東京鐵塔</h3><p>東京鐵塔</p></div><i>↗</i></button><button class="stop-card" data-day="day7" data-lat="35.6717" data-lng="139.765" data-name="銀座">
-      <time>晚上</time><div><span class="type shopping">shopping</span><h3>銀座最後採買</h3><p>銀座</p></div><i>↗</i></button></div>
-    </section><section class="day-panel" id="day8">
-      <div class="photo-carousel"><div class="photo-track"><img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85" alt="Skyliner・成田機場" loading="lazy"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=85" alt="Skyliner・成田機場" loading="lazy"></div><button class="prev">‹</button><button class="next">›</button><div class="dots"></div>
-      <div class="photo-caption"><span>DAY 8 · 11/9</span><h2>Skyliner・成田機場</h2><p>東京／成田</p></div></div>
-      <div class="stops"><button class="stop-card" data-day="day8" data-lat="35.6684" data-lng="139.7631" data-name="相鐵Fresa Inn銀座七丁目">
-      <time>早上</time><div><span class="type hotel">hotel</span><h3>飯店退房</h3><p>相鐵Fresa Inn銀座七丁目</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.6812" data-lng="139.7671" data-name="東京車站">
-      <time>上午</time><div><span class="type shopping">shopping</span><h3>東京車站／KITTE</h3><p>東京車站</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.7113" data-lng="139.7732" data-name="京成上野站">
-      <time>中午前後</time><div><span class="type transport">transport</span><h3>京成上野站</h3><p>京成上野站</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.772" data-lng="140.3929" data-name="成田國際機場">
-      <time>之後</time><div><span class="type transport">transport</span><h3>Skyliner</h3><p>成田國際機場</p></div><i>↗</i></button><button class="stop-card" data-day="day8" data-lat="35.772" data-lng="140.3929" data-name="成田國際機場"><time>14:35–17:45</time><div><span class="type transport">transport</span><h3>中華航空 CI101</h3><p>成田 → 桃園國際機場</p></div><i>↗</i></button></div>
-    </section></aside>
- <section class="map-column">
-   <div class="map-sticky">
-     <div class="map-toolbar"><div><small>INTERACTIVE MAP</small><h2 id="mapTitle">Day 1 抵達京都</h2></div><a id="googleRoute" target="_blank">Google Maps 路線 ↗</a></div>
-     <div id="map"></div>
-     <div class="budget-box"><label>這一天預算 <input id="dayBudget" inputmode="numeric" placeholder="0"> 円</label><small>輸入後自動儲存在這台裝置</small></div>
-   </div>
- </section>
+        <div class="mt-7 flex flex-wrap gap-3 text-sm">
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">✈️ CI152 / CI101</span>
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">🚄 NOZOMI 14:01</span>
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">⛩️ 京都・奈良</span>
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">🗼 東京</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="itinerary" class="mx-auto max-w-7xl px-5 py-20">
+    <div class="mb-10 text-center" data-aos="fade-up">
+      <p class="font-semibold tracking-[.2em] text-matcha">DAILY ITINERARY</p>
+      <h2 class="mt-3 text-3xl font-black sm:text-4xl">11/2－11/9 完整行程</h2>
+      <p class="mx-auto mt-3 max-w-3xl text-stone-500">
+        11/5 已整合成一張跨城市卡片：京都退房、搭乘東海道新幹線、東京銀座入住與夜間行程。
+      </p>
+    </div>
+
+    <div id="itineraryGrid" class="grid gap-7"></div>
+  </section>
+
+  <section id="modules" class="bg-white/55 py-20">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="mb-10 text-center" data-aos="fade-up">
+        <p class="font-semibold tracking-[.2em] text-matcha">TRAVEL MODULES</p>
+        <h2 class="mt-3 text-3xl font-black sm:text-4xl">六大旅遊功能</h2>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
+          <div class="module-icon text-4xl">📍</div><h3 class="mt-4 text-xl font-bold">點選地圖</h3>
+          <p class="mt-2 text-stone-500">點擊景點或餐廳卡片，地圖會自動移動並顯示資訊。</p>
+        </a>
+        <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
+          <div class="module-icon text-4xl">🍱</div><h3 class="mt-4 text-xl font-bold">美食推薦</h3>
+          <p class="mt-2 text-stone-500">收錄京都、上野、新宿、淺草、銀座、六本木等餐廳。</p>
+        </a>
+        <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
+          <div class="module-icon text-4xl">⛩️</div><h3 class="mt-4 text-xl font-bold">必去景點</h3>
+          <p class="mt-2 text-stone-500">清水寺、奈良公園、淺草寺、晴空塔、SHIBUYA SKY。</p>
+        </a>
+        <a href="#tools" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
+          <div class="module-icon text-4xl">🧰</div><h3 class="mt-4 text-xl font-bold">實用工具</h3>
+          <p class="mt-2 text-stone-500">Tabelog、Papago、Tenki、乘換案內、GO Taxi。</p>
+        </a>
+        <a href="#transport" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
+          <div class="module-icon text-4xl">🏨</div><h3 class="mt-4 text-xl font-bold">住宿與航班</h3>
+          <p class="mt-2 text-stone-500">航班、新幹線、京都飯店與東京飯店集中查看。</p>
+        </a>
+        <a href="#shopping" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
+          <div class="module-icon text-4xl">🛍️</div><h3 class="mt-4 text-xl font-bold">購物清單</h3>
+          <p class="mt-2 text-stone-500">新增、勾選、刪除商品，並自動換算台幣與永久儲存。</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="map" class="mx-auto max-w-7xl px-5 py-20">
+    <div class="mb-10 text-center" data-aos="fade-up">
+      <p class="font-semibold tracking-[.2em] text-matcha">MAP & FOOD</p>
+      <h2 class="mt-3 text-3xl font-black sm:text-4xl">互動景點與美食地圖</h2>
+      <p class="mt-3 text-stone-500">手機為上下排列，桌機為左右分欄。餐廳可直接開啟 Google Maps 搜尋。</p>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[430px_1fr]">
+      <aside class="glass rounded-2xl p-4 shadow-soft" data-aos="fade-right">
+        <div class="grid grid-cols-3 rounded-xl bg-stone-100 p-1">
+          <button class="map-tab rounded-lg bg-white px-3 py-2.5 font-bold shadow" data-type="spot">⛩️ 景點</button>
+          <button class="map-tab rounded-lg px-3 py-2.5 font-bold" data-type="food">🍱 美食</button>
+          <button class="map-tab rounded-lg px-3 py-2.5 font-bold" data-type="shopping">🛍️ 購物</button>
+        </div>
+        <input id="placeSearch" class="mt-4 w-full rounded-xl border border-stone-200 bg-white px-4 py-3 outline-none focus:border-matcha" placeholder="搜尋名稱或地區">
+        <div id="placeList" class="hide-scrollbar mt-4 max-h-[520px] space-y-3 overflow-y-auto pr-1"></div>
+      </aside>
+
+      <div class="overflow-hidden rounded-2xl bg-white shadow-soft" data-aos="fade-left">
+        <div id="travelMap"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="transport" class="bg-white/55 py-20">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="mb-10 text-center">
+        <p class="font-semibold tracking-[.2em] text-matcha">FLIGHTS & STAYS</p>
+        <h2 class="mt-3 text-3xl font-black sm:text-4xl">航班、交通與住宿</h2>
+      </div>
+
+      <div class="grid gap-6 lg:grid-cols-3">
+        <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up">
+          <div class="text-3xl">✈️</div>
+          <h3 class="mt-4 text-xl font-black">國際航班</h3>
+          <div class="mt-5 space-y-3">
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">去程｜CI152</p>
+              <p class="mt-1 text-sm text-stone-600">11/2　09:45 桃園 → 13:20 關西</p>
+            </div>
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">回程｜CI101</p>
+              <p class="mt-1 text-sm text-stone-600">11/9　14:35 成田 → 17:45 桃園</p>
+            </div>
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">家人先行返台｜CI109</p>
+              <p class="mt-1 text-sm text-stone-600">11/8　19:30 成田 → 22:45 桃園</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up" data-aos-delay="100">
+          <div class="text-3xl">🚄</div>
+          <h3 class="mt-4 text-xl font-black">跨城市交通</h3>
+          <div class="mt-5 space-y-3">
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">HARUKA 關空特快</p>
+              <p class="mt-1 text-sm text-stone-600">11/2　15:30 關西機場 → 京都，約 80 分鐘</p>
+            </div>
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">東海道新幹線 NOZOMI</p>
+              <p class="mt-1 text-sm text-stone-600">11/5　14:01 京都 → 16:15 東京</p>
+            </div>
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">Skyliner</p>
+              <p class="mt-1 text-sm text-stone-600">11/9　約 10:00 前往成田機場</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up" data-aos-delay="200">
+          <div class="text-3xl">🏨</div>
+          <h3 class="mt-4 text-xl font-black">飯店資訊</h3>
+          <div class="mt-5 space-y-3">
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">Hotel SUI Kyoto Kiyomizu</p>
+              <p class="mt-1 text-sm text-stone-600">京都市東山區朱雀町423番</p>
+              <a class="mt-2 inline-block text-sm font-bold text-matcha hover:underline" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Hotel+SUI+Kyoto+Kiyomizu">開啟地圖</a>
+            </div>
+            <div class="rounded-xl bg-white p-4">
+              <p class="font-bold">相鐵 Fresa Inn 銀座七丁目</p>
+              <p class="mt-1 text-sm text-stone-600">東京都中央區銀座 7-11-12</p>
+              <a class="mt-2 inline-block text-sm font-bold text-matcha hover:underline" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Sotetsu+Fresa+Inn+Ginza+Nanachome">開啟地圖</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="shopping" class="mx-auto max-w-5xl px-5 py-20">
+    <div class="mb-10 text-center">
+      <p class="font-semibold tracking-[.2em] text-matcha">SHOPPING LIST</p>
+      <h2 class="mt-3 text-3xl font-black sm:text-4xl">日本旅遊購物清單</h2>
+      <p class="mt-3 text-stone-500">支援 LocalStorage，重新整理或下次開啟網站仍會保留資料。</p>
+    </div>
+
+    <div class="glass rounded-2xl p-5 shadow-soft sm:p-7">
+      <form id="shoppingForm" class="grid gap-3 md:grid-cols-[1fr_1fr_170px_auto]">
+        <input id="itemName" required class="rounded-xl border border-stone-200 bg-white px-4 py-3 outline-none focus:border-matcha" placeholder="商品名稱">
+        <input id="itemPlace" required class="rounded-xl border border-stone-200 bg-white px-4 py-3 outline-none focus:border-matcha" placeholder="購買地點">
+        <input id="itemPrice" required min="0" type="number" class="rounded-xl border border-stone-200 bg-white px-4 py-3 outline-none focus:border-matcha" placeholder="日幣價格">
+        <button class="rounded-xl bg-matcha px-6 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">新增</button>
+      </form>
+
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-stone-100 p-4">
+        <p class="text-sm text-stone-600">固定匯率：1 日圓 = 0.21 台幣</p>
+        <p class="font-bold">總額：<span id="totalJPY">¥0</span> ／ <span id="totalTWD">NT$0</span></p>
+      </div>
+
+      <div id="shoppingList" class="mt-5 space-y-3"></div>
+    </div>
+  </section>
+
+  <section id="tools" class="bg-white/55 py-20">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="mb-10 text-center">
+        <p class="font-semibold tracking-[.2em] text-matcha">USEFUL TOOLS</p>
+        <h2 class="mt-3 text-3xl font-black sm:text-4xl">日本旅遊實用工具</h2>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        <a target="_blank" href="https://tabelog.com/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🍜</div><p class="mt-3 font-bold">Tabelog</p></a>
+        <a target="_blank" href="https://papago.naver.com/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🈳</div><p class="mt-3 font-bold">Papago</p></a>
+        <a target="_blank" href="https://tenki.jp/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🌦️</div><p class="mt-3 font-bold">Tenki</p></a>
+        <a target="_blank" href="https://smart-ex.jp/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🚄</div><p class="mt-3 font-bold">SmartEX</p></a>
+        <a target="_blank" href="https://world.jorudan.co.jp/mln/zh-tw/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🚇</div><p class="mt-3 font-bold">乘換案內</p></a>
+        <a target="_blank" href="https://go.goinc.jp/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🚕</div><p class="mt-3 font-bold">GO Taxi</p></a>
+        <a target="_blank" href="https://www.google.com/maps" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🗺️</div><p class="mt-3 font-bold">Google Maps</p></a>
+      </div>
+    </div>
+  </section>
 </main>
 
-<section class="rail-section reveal" id="flight-hotel"><div class="section-title"><p>FLIGHT & HOTEL</p><h2>航班與住宿</h2></div>
- <div class="food-grid">
-  <article><div><span>去程航班 · 11/2</span><h3>中華航空 CI152</h3><p>09:45 桃園國際機場起飛</p><p>13:20 抵達關西國際機場</p></div></article>
-  <article><div><span>回程航班 · 11/9</span><h3>中華航空 CI101</h3><p>14:35 成田國際機場起飛</p><p>17:45 抵達桃園國際機場</p></div></article>
-  <article><div><span>京都住宿 · 11/2～11/5</span><h3>Hotel SUI Kyoto Kiyomizu</h3><p>京都府京都市東山區朱雀町423番</p><p>電話：075-532-3131</p></div></article>
-  <article><div><span>東京住宿 · 11/5～11/9</span><h3>相鐵 Fresa Inn 銀座七丁目</h3><p>7-11-12 Ginza, Chuo-ku, Tokyo 104-0061</p><p>電話：+81 3-6891-0203</p></div></article>
- </div>
-</section>
+<footer class="bg-ink px-5 py-10 text-center text-white/70">
+  <p class="font-bold text-white">Family Japan Trip 2026</p>
+  <p class="mt-2 text-sm">Kyoto・Nara・Tokyo｜11/2－11/9</p>
+</footer>
 
-<section class="rail-section reveal" id="rail"><div class="section-title"><p>RAIL JOURNEY</p><h2>主要鐵路路線</h2></div>
- <div class="rail-map">
-   <article><span class="rail-icon">✈</span><b>關西機場</b><small>抵達日本</small></article><i></i>
-   <article><span class="rail-icon">🚆</span><b>HARUKA</b><small>約80分鐘</small></article><i></i>
-   <article><span class="rail-icon">⛩</span><b>京都</b><small>11/2～11/5</small></article><i></i>
-   <article><span class="rail-icon">🚄</span><b>新幹線</b><small>京都 → 東京</small></article><i></i>
-   <article><span class="rail-icon">🗼</span><b>東京</b><small>11/5～11/9</small></article><i></i>
-   <article><span class="rail-icon">🚅</span><b>Skyliner</b><small>京成上野 → 成田</small></article><i></i>
-   <article><span class="rail-icon">✈</span><b>成田機場</b><small>返程</small></article>
- </div>
-</section>
+<script>
+AOS.init({ duration: 720, once: true, offset: 70 });
 
-<section class="food-section reveal" id="food"><div class="section-title"><p>FOOD GUIDE</p><h2>行程美食卡片</h2><span>評分與營業時間可能變動，出發前請再點地圖確認。</span></div>
- <div class="food-grid">
-  <article><img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=900&q=85"><div><span>築地／豐洲</span><h3>壽司大</h3><p class="rating">★ 4.4　熱門排隊店</p><p>參考營業：06:00～約14:00</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Sushi+Dai+Toyosu">查看地圖 ↗</a></div></article>
-  <article><img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85"><div><span>築地場外市場</span><h3>狐狸屋</h3><p class="rating">★ 4.2　牛丼／內臟丼</p><p>參考營業：06:30～13:30</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kitsuneya+Tsukiji">查看地圖 ↗</a></div></article>
-  <article><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=85"><div><span>京都車站</span><h3>京都拉麵小路</h3><p class="rating">★ 多家名店集合</p><p>通常約11:00～22:00，各店不同</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kyoto+Ramen+Koji">查看地圖 ↗</a></div></article>
-  <article><img src="https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=900&q=85"><div><span>東京晴空塔</span><h3>Solamachi 餐廳</h3><p class="rating">★ 選擇多、適合家庭</p><p>各餐廳營業時間不同</p><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Tokyo+Solamachi+Restaurants">查看地圖 ↗</a></div></article>
- </div>
-</section>
+const menuButton = document.getElementById("menuButton");
+const mobileMenu = document.getElementById("mobileMenu");
+menuButton.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.add("hidden")));
 
-<section class="tools-section reveal">
- <div class="section-title"><p>TRAVEL TOOLS</p><h2>旅行預算</h2></div>
- <div class="tools-grid">
-  <article><h3>每日預算</h3><div id="budgetList"></div><button id="clearBudget">清除全部預算</button></article>
- </div>
-</section>
+const itinerary = [
+  {
+    day: "DAY 1", date: "11/02", city: "京都", title: "啟程前往古都・京都夜間散步",
+    image: "https://images.unsplash.com/photo-1493780474015-ba834fd0ce2f?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["CI152 前往關西機場", "HARUKA 前往京都", "京都拉麵小路", "先斗町", "八坂神社"],
+    times: [
+      ["06:00", "機場接送出發"],
+      ["07:45", "抵達桃園國際機場，辦理登機與出境"],
+      ["09:45", "搭乘中華航空 CI152 前往關西國際機場"],
+      ["13:20", "抵達關西國際機場，辦理入境與領取交通票券"],
+      ["15:30", "搭乘 HARUKA 特快前往京都車站"],
+      ["17:00", "Hotel SUI Kyoto Kiyomizu 入住與休息"],
+      ["18:30", "先斗町漫步，挑選居酒屋享用晚餐"],
+      ["20:00", "八坂神社夜間散步"]
+    ],
+    map: "八坂神社"
+  },
+  {
+    day: "DAY 2", date: "11/03", city: "京都", title: "和服體驗・傳統老街與河原町商圈",
+    image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["清水寺", "和服體驗", "二寧坂・三寧坂", "錦市場", "河原町・祇園"],
+    times: [
+      ["08:00", "清水寺參拜，避開人潮"],
+      ["09:00", "和服換裝，漫步二寧坂與三寧坂"],
+      ["11:30", "歸還和服，前往錦市場"],
+      ["12:00", "錦市場、新京極商店街午餐與採買"],
+      ["13:30", "返回飯店休息"],
+      ["15:30", "河原町商圈、下午茶與甜點"],
+      ["19:00", "精選晚餐或和牛大餐"],
+      ["20:30", "花見小路、祇園白川與鴨川散步"]
+    ],
+    map: "清水寺"
+  },
+  {
+    day: "DAY 3", date: "11/04", city: "奈良・京都", title: "奈良萌鹿文化之旅・三十三間堂",
+    image: "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["春日大社", "東大寺", "奈良公園", "奈良商店街", "三十三間堂"],
+    times: [
+      ["08:30", "搭乘 JR／近鐵前往奈良"],
+      ["09:15", "搭公車前往春日大社"],
+      ["10:00", "步行至東大寺，餵小鹿並欣賞古寺庭園"],
+      ["11:30", "奈良商店街享用午餐"],
+      ["12:55", "返回京都飯店休息"],
+      ["15:30", "前往三十三間堂參觀 1001 尊千手觀音像"],
+      ["16:30", "返回飯店或前往商圈補貨"],
+      ["18:00", "特色居酒屋晚餐與河堤散步"]
+    ],
+    map: "奈良公園"
+  },
+  {
+    day: "DAY 4", date: "11/05", city: "京都 → 東京", title: "告別京都・新幹線移動・入住銀座",
+    image: "https://images.unsplash.com/photo-1549692520-acc6669e2f0c?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["京都退房", "NOZOMI 新幹線", "銀座入住", "東京車站夜景", "東京拉麵街"],
+    times: [
+      ["10:00", "京都飯店退房與行李寄放"],
+      ["10:30", "飯店周邊咖啡館或京都車站商圈午餐"],
+      ["14:01", "京都站搭乘東海道新幹線 NOZOMI 前往東京"],
+      ["16:15", "抵達東京車站"],
+      ["17:00", "入住相鐵 Fresa Inn 銀座七丁目"],
+      ["17:30", "銀座七丁目、UNIQLO、GU、GINZA SIX 與生活採買"],
+      ["19:15", "東京車站丸之內赤煉瓦夜景與 KITTE 屋頂庭園"],
+      ["20:30", "東京拉麵街晚餐；回程可逛唐吉訶德"]
+    ],
+    map: "銀座"
+  },
+  {
+    day: "DAY 5", date: "11/06", city: "東京", title: "築地海鮮・銀座名店街・六本木夜景",
+    image: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["築地場外市場", "銀座深度巡禮", "五代目花山烏冬", "SHIBUYA SKY", "六本木夜景"],
+    times: [
+      ["08:00", "築地場外市場品嚐海鮮丼、玉子燒與和牛串"],
+      ["10:30", "銀座步行者天國、百貨、蔦屋書店與咖啡"],
+      ["午餐", "安排五代目花山烏冬等銀座美食"],
+      ["16:00", "視訂票結果前往 SHIBUYA SKY"],
+      ["傍晚", "六本木之丘、毛利庭園與東京鐵塔夜景"],
+      ["晚餐", "六本木餐廳或拉麵店"],
+      ["宵夜", "居酒屋小酌"]
+    ],
+    map: "築地場外市場"
+  },
+  {
+    day: "DAY 6", date: "11/07", city: "東京", title: "淺草老街・晴空塔・合羽橋・銀座美食",
+    image: "https://images.unsplash.com/photo-1542931287-023b922fa89b?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["雷門", "淺草寺", "仲見世通", "東京晴空塔", "合羽橋道具街"],
+    times: [
+      ["09:00", "雷門、仲見世通與淺草寺"],
+      ["12:00", "前往東京晴空塔與 Solamachi 商場"],
+      ["午餐", "晴空塔周邊或三村房等特色美食"],
+      ["下午", "合羽橋道具街採買餐具、刀具與陶瓷"],
+      ["17:30", "返回銀座"],
+      ["晚餐", "和牛燒肉、高級居酒屋或 Sakura Marks Ginza"]
+    ],
+    map: "淺草寺"
+  },
+  {
+    day: "DAY 7", date: "11/08", city: "東京", title: "阿美橫町採買・秋葉原動漫電器",
+    image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["阿美橫町", "藥妝零食", "秋葉原", "Bic Camera", "居酒屋晚餐"],
+    times: [
+      ["09:00", "上野阿美橫町採買藥妝、零食、伴手禮與行李箱"],
+      ["12:30", "搭 JR 前往秋葉原"],
+      ["下午", "Radio 會館、動漫周邊、Bic Camera 與女僕咖啡廳"],
+      ["16:00", "先行返台家人取行李前往成田機場"],
+      ["17:00", "先行返台家人抵成田機場辦理退稅"],
+      ["17:30", "其餘家人返回銀座整理戰利品"],
+      ["晚餐", "日本橋、新宿爐端燒或牛舌口袋名單"],
+      ["19:30", "先行返台家人搭乘 CI109"]
+    ],
+    map: "阿美橫町"
+  },
+  {
+    day: "DAY 8", date: "11/09", city: "東京 → 台灣", title: "銀座最後採買・Skyliner 前往成田返程",
+    image: "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["銀座早餐", "最後採買", "Skyliner", "成田機場", "CI101 返台"],
+    times: [
+      ["上午", "飯店退房並寄放行李"],
+      ["早餐", "銀座木村家麵包、鬆餅或咖啡館"],
+      ["最後採買", "銀座周邊補齊伴手禮與免稅商品"],
+      ["10:00", "搭乘地鐵轉 Skyliner 前往成田機場"],
+      ["中午", "辦理出境、退稅並在機場享用午餐"],
+      ["14:35", "搭乘中華航空 CI101 返回桃園"],
+      ["17:45", "抵達桃園國際機場"]
+    ],
+    map: "銀座"
+  }
+];
 
-<footer><b>Family Japan Trip 2026</b><span>Kyoto · Tokyo · 11/2—11/9</span></footer>
-<script>window.TRIP_DAYS=[{"id": "day1", "date": "11/2", "title": "抵達京都", "city": "京都", "center": [35.0116, 135.7681], "photos": ["https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85"], "stops": [["06:00", "機場接送", "桃園國際機場", 25.0797, 121.2342, "transport"], ["09:45–13:20", "中華航空 CI152", "桃園 → 關西國際機場", 34.4347, 135.244, "transport"], ["15:30", "HARUKA 特快", "京都車站", 34.9858, 135.7588, "transport"], ["16:50", "京都拉麵小路", "京都車站拉麵小路", 34.9854, 135.7578, "food"], ["17:40", "飯店 Check-in", "Hotel SUI Kyoto Kiyomizu", 34.9933, 135.7715, "hotel"], ["18:30", "先斗町晚餐", "先斗町", 35.005, 135.7708, "food"], ["20:00", "八坂神社夜景", "八坂神社", 35.0037, 135.7785, "sight"]]}, {"id": "day2", "date": "11/3", "title": "清水寺・和服・祇園", "city": "京都", "center": [35.003, 135.776], "photos": ["https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85"], "stops": [["08:00", "清水寺", "清水寺", 34.9949, 135.785, "sight"], ["09:00", "和服・二寧坂三寧坂", "二寧坂", 34.998, 135.7814, "sight"], ["12:00", "錦市場", "錦市場", 35.005, 135.7649, "food"], ["15:30", "河原町商圈", "河原町", 35.0034, 135.769, "shopping"], ["20:30", "祇園白川散步", "祇園白川", 35.0053, 135.7753, "sight"]]}, {"id": "day3", "date": "11/4", "title": "奈良・三十三間堂", "city": "奈良／京都", "center": [34.6851, 135.8048], "photos": ["https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=85"], "stops": [["09:15", "春日大社", "春日大社", 34.6814, 135.8485, "sight"], ["10:00", "東大寺與小鹿", "東大寺", 34.689, 135.8398, "sight"], ["11:30", "奈良商店街午餐", "奈良町", 34.6777, 135.832, "food"], ["15:30", "三十三間堂", "三十三間堂", 34.9879, 135.7717, "sight"]]}, {"id": "day4", "date": "11/5", "title": "京都 → 東京 → 銀座", "city": "東京", "center": [35.6812, 139.7671], "photos": ["https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85"], "stops": [["14:01", "東海道新幹線", "京都車站", 34.9858, 135.7588, "transport"], ["16:15", "抵達東京", "東京車站", 35.6812, 139.7671, "transport"], ["17:00", "飯店 Check-in", "相鐵Fresa Inn銀座七丁目", 35.6684, 139.7631, "hotel"], ["傍晚", "銀座購物", "GINZA SIX", 35.6697, 139.7643, "shopping"], ["晚上", "有樂町散步", "有樂町站", 35.6751, 139.7638, "sight"]]}, {"id": "day5", "date": "11/6", "title": "築地・淺草・晴空塔", "city": "東京", "center": [35.7101, 139.8107], "photos": ["https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1505069190533-da1c9af13346?auto=format&fit=crop&w=1600&q=85"], "stops": [["07:30", "築地市場早餐", "築地場外市場", 35.6655, 139.7707, "food"], ["上午", "雷門", "雷門", 35.7111, 139.7964, "sight"], ["上午", "淺草寺", "淺草寺", 35.7148, 139.7967, "sight"], ["下午", "Solamachi 商場", "東京晴空街道", 35.71, 139.812, "shopping"], ["傍晚", "晴空塔展望台", "東京晴空塔", 35.7101, 139.8107, "sight"]]}, {"id": "day6", "date": "11/7", "title": "上野・阿美橫町・秋葉原", "city": "東京", "center": [35.7077, 139.7745], "photos": ["https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85"], "stops": [["上午", "上野公園", "上野公園", 35.7148, 139.7732, "sight"], ["中午前", "阿美橫町", "阿美橫町", 35.7088, 139.7746, "shopping"], ["午餐", "上野午餐", "上野站", 35.7138, 139.7773, "food"], ["下午", "秋葉原購物", "秋葉原站", 35.6984, 139.7731, "shopping"], ["下午", "BIC／Yodobashi", "Yodobashi Akiba", 35.6988, 139.7747, "shopping"]]}, {"id": "day7", "date": "11/8", "title": "六本木・東京鐵塔", "city": "東京", "center": [35.6586, 139.7454], "photos": ["https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=85"], "stops": [["中午", "六本木 Hills", "六本木之丘", 35.6605, 139.7292, "sight"], ["下午", "Tokyo Midtown", "Tokyo Midtown", 35.6658, 139.731, "shopping"], ["下午", "東京鐵塔", "東京鐵塔", 35.6586, 139.7454, "sight"], ["晚上", "銀座最後採買", "銀座", 35.6717, 139.765, "shopping"]]}, {"id": "day8", "date": "11/9", "title": "Skyliner・成田機場", "city": "東京／成田", "center": [35.772, 140.3929], "photos": ["https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1600&q=85", "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=85"], "stops": [["早上", "飯店退房", "相鐵Fresa Inn銀座七丁目", 35.6684, 139.7631, "hotel"], ["上午", "東京車站／KITTE", "東京車站", 35.6812, 139.7671, "shopping"], ["中午前後", "京成上野站", "京成上野站", 35.7113, 139.7732, "transport"], ["之後", "Skyliner", "成田國際機場", 35.772, 140.3929, "transport"], ["14:35–17:45", "中華航空 CI101", "成田 → 桃園國際機場", 35.772, 140.3929, "transport"]]}];</script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="js/app.js?v=5.1"></script></body></html>
+const itineraryGrid = document.getElementById("itineraryGrid");
+itineraryGrid.innerHTML = itinerary.map((d, index) => `
+  <article class="card-hover glass overflow-hidden rounded-3xl shadow-soft" data-aos="fade-up">
+    <div class="grid lg:grid-cols-[390px_1fr]">
+      <div class="day-image relative bg-cover bg-center" style="background-image:url('${d.image}')">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent"></div>
+        <div class="absolute bottom-0 p-6 text-white">
+          <div class="flex flex-wrap gap-2">
+            <span class="rounded-full bg-white/18 px-3 py-1 text-xs font-bold backdrop-blur">${d.day}</span>
+            <span class="rounded-full bg-white/18 px-3 py-1 text-xs font-bold backdrop-blur">${d.date}</span>
+          </div>
+          <p class="mt-3 text-sm text-white/80">${d.city}</p>
+          <h3 class="mt-1 text-2xl font-black">${d.title}</h3>
+        </div>
+      </div>
+
+      <div class="p-6 sm:p-7">
+        <div class="flex flex-wrap gap-2">
+          ${d.highlights.map(h => `<span class="rounded-full bg-mist px-3 py-1 text-xs font-semibold text-stone-600">${h}</span>`).join("")}
+        </div>
+
+        <div class="timeline-line relative mt-6 space-y-4">
+          ${d.times.map(t => `
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div class="grid gap-1 sm:grid-cols-[76px_1fr]">
+                <p class="font-black text-matcha">${t[0]}</p>
+                <p class="leading-7 text-stone-600">${t[1]}</p>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="mt-7">
+          <button onclick="focusPlace('${d.map}')" class="rounded-xl bg-matcha px-5 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">
+            📍 查看地圖
+          </button>
+        </div>
+      </div>
+    </div>
+  </article>
+`).join("");
+
+const places = [
+  {name:"清水寺", type:"spot", city:"京都", lat:34.9949, lng:135.7850, rating:"4.6", desc:"京都代表性古寺，可順遊二寧坂與三寧坂。"},
+  {name:"八坂神社", type:"spot", city:"京都", lat:35.0037, lng:135.7785, rating:"4.5", desc:"祇園重要神社，適合夜間散步。"},
+  {name:"錦市場", type:"spot", city:"京都", lat:35.0050, lng:135.7649, rating:"4.3", desc:"京都傳統市場與在地美食集中地。"},
+  {name:"春日大社", type:"spot", city:"奈良", lat:34.6814, lng:135.8484, rating:"4.6", desc:"奈良著名神社，可搭配奈良公園行程。"},
+  {name:"奈良公園", type:"spot", city:"奈良", lat:34.6851, lng:135.8430, rating:"4.7", desc:"與小鹿互動，步行可達東大寺。"},
+  {name:"三十三間堂", type:"spot", city:"京都", lat:34.9879, lng:135.7717, rating:"4.6", desc:"以千手觀音像群聞名。"},
+  {name:"銀座", type:"spot", city:"東京", lat:35.6717, lng:139.7650, rating:"4.5", desc:"精品百貨、咖啡、美食與夜景集中地。"},
+  {name:"東京車站", type:"spot", city:"東京", lat:35.6812, lng:139.7671, rating:"4.6", desc:"丸之內赤煉瓦建築與東京拉麵街。"},
+  {name:"築地場外市場", type:"spot", city:"東京", lat:35.6654, lng:139.7707, rating:"4.4", desc:"海鮮丼、玉子燒、和牛串與市場美食。"},
+  {name:"SHIBUYA SKY", type:"spot", city:"東京", lat:35.6585, lng:139.7016, rating:"4.7", desc:"東京熱門高空展望台，需提前訂票。"},
+  {name:"六本木之丘", type:"spot", city:"東京", lat:35.6605, lng:139.7292, rating:"4.5", desc:"觀賞東京鐵塔夜景的經典地點。"},
+  {name:"淺草寺", type:"spot", city:"東京", lat:35.7148, lng:139.7967, rating:"4.6", desc:"雷門、仲見世通與下町文化。"},
+  {name:"東京晴空塔", type:"spot", city:"東京", lat:35.7101, lng:139.8107, rating:"4.5", desc:"東京地標與 Solamachi 購物商場。"},
+  {name:"合羽橋道具街", type:"spot", city:"東京", lat:35.7132, lng:139.7880, rating:"4.4", desc:"餐具、廚具、刀具與陶瓷採買天堂。"},
+  {name:"阿美橫町", type:"spot", city:"東京", lat:35.7101, lng:139.7744, rating:"4.3", desc:"藥妝、零食、伴手禮與市場小吃。"},
+  {name:"秋葉原", type:"spot", city:"東京", lat:35.6984, lng:139.7731, rating:"4.4", desc:"動漫、電器、Radio 會館與 Bic Camera。"},
+
+  {name:"ひとめぼれ 京都店", type:"food", city:"京都・河原町", lat:35.0043, lng:135.7680, rating:"推薦", desc:"豪華海鮮丼、生蛋黃海鮮丼。"},
+  {name:"鶏のとりこ 京都河原町店", type:"food", city:"京都・河原町", lat:35.0048, lng:135.7694, rating:"推薦", desc:"雞肉串、雞皮與雞肉丸。"},
+  {name:"炭櫻堂", type:"food", city:"京都車站", lat:34.9858, lng:135.7587, rating:"推薦", desc:"炭火燒烤與串燒居酒屋。"},
+  {name:"鰻と鶏 四條烏丸店", type:"food", city:"京都・四條烏丸", lat:35.0038, lng:135.7594, rating:"推薦", desc:"鰻魚串、雞肉串。"},
+  {name:"WAGYU ICHINONE", type:"food", city:"京都・祇園", lat:35.0032, lng:135.7756, rating:"推薦", desc:"A5 和牛壽喜燒。"},
+  {name:"京都市役所前鐵板料理", type:"food", city:"京都・河原町", lat:35.0116, lng:135.7681, rating:"推薦", desc:"玉子燒與牛排鐵板料理。"},
+
+  {name:"おでん to おさかな ますだ", type:"food", city:"東京・上野", lat:35.7108, lng:139.7748, rating:"推薦", desc:"鮪魚丼、海膽丼與鮭魚卵丼。"},
+  {name:"おちょこ丼 Lunch", type:"food", city:"東京・上野", lat:35.7112, lng:139.7752, rating:"推薦", desc:"六種迷你丼套餐。"},
+  {name:"ペこ東京居酒屋", type:"food", city:"東京・上野", lat:35.7096, lng:139.7750, rating:"推薦", desc:"肉刺身拼盤、牛舌與生牛肉。"},
+  {name:"本格焼鳥 とら屋", type:"food", city:"東京・新宿", lat:35.6938, lng:139.7034, rating:"推薦", desc:"超大雞肉丸與雞腿串。"},
+  {name:"炉端 小寳", type:"food", city:"東京・新宿", lat:35.6933, lng:139.7042, rating:"推薦", desc:"和牛、海鮮與炭烤料理。"},
+  {name:"新宿壽司酒場", type:"food", city:"東京・新宿", lat:35.6929, lng:139.7046, rating:"推薦", desc:"壽喜燒手毬壽司與和牛壽司。"},
+  {name:"三村房", type:"food", city:"東京・淺草", lat:35.7136, lng:139.7960, rating:"推薦", desc:"厚切豬五花與燒魚。"},
+  {name:"牛舌日", type:"food", city:"東京・淺草橋", lat:35.6976, lng:139.7856, rating:"推薦", desc:"厚切牛舌套餐。"},
+  {name:"日本橋 すし釣りきん", type:"food", city:"東京・日本橋", lat:35.6839, lng:139.7745, rating:"推薦", desc:"16 貫握壽司套餐。"},
+  {name:"Sakura Marks Ginza", type:"food", city:"東京・銀座", lat:35.6706, lng:139.7638, rating:"推薦", desc:"海鮮義大利麵與 Pizza。"},
+  {name:"TOKYO STATION CAFE THE NORTH DOME", type:"food", city:"東京車站", lat:35.6812, lng:139.7671, rating:"推薦", desc:"咖啡與甜點。"},
+  {name:"鮪のだり半", type:"food", city:"東京・代代木", lat:35.6830, lng:139.7021, rating:"推薦", desc:"巨大鮪魚頭與鮪魚生魚片。"},
+  {name:"牛富屋", type:"food", city:"東京・澀谷", lat:35.6595, lng:139.7005, rating:"推薦", desc:"和牛小丼、牛舌與海鮮丼。"},
+  {name:"TEBAPS", type:"food", city:"東京・吉祥寺", lat:35.7033, lng:139.5797, rating:"推薦", desc:"牛排與義大利麵。"},
+
+  {name:"UNIQLO 銀座旗艦店", type:"shopping", city:"銀座", lat:35.6702, lng:139.7639, rating:"購物", desc:"大型旗艦店，服飾採買。"},
+  {name:"GINZA SIX", type:"shopping", city:"銀座", lat:35.6696, lng:139.7644, rating:"購物", desc:"百貨、精品與屋頂花園。"},
+  {name:"唐吉訶德 銀座本館", type:"shopping", city:"銀座", lat:35.6679, lng:139.7640, rating:"24H", desc:"零食、藥妝與生活用品。"},
+  {name:"Bic Camera AKIBA", type:"shopping", city:"秋葉原", lat:35.6983, lng:139.7735, rating:"購物", desc:"家電、3C、相機與免稅商品。"},
+  {name:"Tokyo Solamachi", type:"shopping", city:"晴空塔", lat:35.7100, lng:139.8107, rating:"購物", desc:"晴空塔大型購物商場。"}
+];
+
+const map = L.map("travelMap").setView([35.4, 137.6], 6);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+
+const markers = {};
+places.forEach(place => {
+  const marker = L.marker([place.lat, place.lng]).addTo(map);
+  marker.bindPopup(`
+    <div style="min-width:210px">
+      <strong style="font-size:16px">${place.name}</strong><br>
+      <span>${place.city}・${place.rating}</span>
+      <p style="margin:8px 0">${place.desc}</p>
+      <a target="_blank" style="font-weight:700;color:#78866B"
+         href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.city)}">
+         Google Maps 導航
+      </a>
+    </div>
+  `);
+  markers[place.name] = marker;
+});
+
+let activeType = "spot";
+
+function renderPlaces(keyword = "") {
+  const list = document.getElementById("placeList");
+  const q = keyword.toLowerCase();
+  const filtered = places.filter(p => p.type === activeType && `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q));
+
+  list.innerHTML = filtered.map(p => `
+    <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" data-name="${p.name}"
+      class="place-card w-full rounded-2xl border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="font-bold">${p.name}</h3>
+          <p class="mt-1 text-xs font-semibold text-matcha">${p.city}</p>
+        </div>
+        <span class="whitespace-nowrap rounded-full bg-mist px-2.5 py-1 text-xs font-bold">${p.rating}</span>
+      </div>
+      <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
+    </button>
+  `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">找不到符合資料。</p>`;
+}
+
+function updateTabs() {
+  document.querySelectorAll(".map-tab").forEach(btn => {
+    const active = btn.dataset.type === activeType;
+    btn.classList.toggle("bg-white", active);
+    btn.classList.toggle("shadow", active);
+  });
+}
+
+window.focusPlace = function(name) {
+  const place = places.find(p => p.name === name);
+  if (!place) {
+    const loose = places.find(p => p.name.includes(name) || name.includes(p.name));
+    if (!loose) return;
+    return focusPlace(loose.name);
+  }
+  activeType = place.type;
+  updateTabs();
+  renderPlaces(document.getElementById("placeSearch").value);
+  setTimeout(() => {
+    map.invalidateSize();
+    map.flyTo([place.lat, place.lng], place.city.includes("京都") || place.city.includes("奈良") ? 14 : 15, {duration:1.1});
+    markers[place.name].openPopup();
+    document.querySelectorAll(".place-card").forEach(card => card.classList.toggle("active", card.dataset.name === place.name));
+    document.getElementById("map").scrollIntoView({behavior:"smooth"});
+  }, 80);
+};
+
+document.querySelectorAll(".map-tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    activeType = btn.dataset.type;
+    updateTabs();
+    renderPlaces(document.getElementById("placeSearch").value);
+  });
+});
+
+document.getElementById("placeSearch").addEventListener("input", e => renderPlaces(e.target.value));
+renderPlaces();
+
+document.getElementById("heroSearch").addEventListener("submit", e => {
+  e.preventDefault();
+  const q = document.getElementById("heroSearchInput").value.trim();
+  const match = places.find(p => `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q.toLowerCase()));
+  if (match) focusPlace(match.name);
+  else {
+    document.getElementById("map").scrollIntoView({behavior:"smooth"});
+    document.getElementById("placeSearch").value = q;
+    renderPlaces(q);
+  }
+});
+
+const STORAGE_KEY = "familyJapanTrip2026Shopping";
+const exchangeRate = 0.21;
+let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+function saveItems() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+function renderItems() {
+  const list = document.getElementById("shoppingList");
+  list.innerHTML = items.map(item => `
+    <div class="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-4 sm:flex-row sm:items-center">
+      <button onclick="toggleItem('${item.id}')" class="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 ${item.done ? 'border-matcha bg-matcha text-white' : 'border-stone-300'}">
+        ${item.done ? '✓' : ''}
+      </button>
+      <div class="min-w-0 flex-1 ${item.done ? 'opacity-45 line-through' : ''}">
+        <h3 class="font-bold">${escapeHTML(item.name)}</h3>
+        <p class="mt-1 text-sm text-stone-500">購買地點：${escapeHTML(item.place)}</p>
+      </div>
+      <div class="sm:text-right">
+        <p class="font-bold">¥${Number(item.price).toLocaleString()}</p>
+        <p class="text-sm text-stone-500">約 NT$${Math.round(item.price * exchangeRate).toLocaleString()}</p>
+      </div>
+      <button onclick="deleteItem('${item.id}')" class="rounded-lg px-3 py-2 font-bold text-red-500 hover:bg-red-50">刪除</button>
+    </div>
+  `).join("") || `<p class="rounded-xl border border-dashed border-stone-300 p-8 text-center text-stone-500">尚未加入購物商品。</p>`;
+
+  const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
+  document.getElementById("totalJPY").textContent = `¥${total.toLocaleString()}`;
+  document.getElementById("totalTWD").textContent = `NT$${Math.round(total * exchangeRate).toLocaleString()}`;
+}
+window.toggleItem = function(id) {
+  items = items.map(i => i.id === id ? {...i, done:!i.done} : i);
+  saveItems(); renderItems();
+}
+window.deleteItem = function(id) {
+  items = items.filter(i => i.id !== id);
+  saveItems(); renderItems();
+}
+document.getElementById("shoppingForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = document.getElementById("itemName").value.trim();
+  const place = document.getElementById("itemPlace").value.trim();
+  const price = Number(document.getElementById("itemPrice").value);
+  if (!name || !place || price < 0) return;
+  items.unshift({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`, name, place, price, done:false});
+  saveItems(); renderItems(); e.target.reset();
+});
+renderItems();
+window.addEventListener("resize", () => map.invalidateSize());
+</script>
+</body>
+</html>
