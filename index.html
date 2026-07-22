@@ -124,35 +124,59 @@
     .google-nav-link:hover { transform: translateY(-1px); background: #e3eadf; }
     .snap-card { scroll-snap-align: start; }
     @media (max-width: 767px) {
+      body { overflow-x: hidden; }
+      section { scroll-margin-top: 88px; }
+      #itinerary, #map, #shopping { padding-left: 12px !important; padding-right: 12px !important; }
+      #itinerary > .glass { padding: 12px !important; border-radius: 20px; }
+      #itineraryPanel article { border-radius: 20px; }
+      #itineraryPanel .day-image { min-height: 220px; }
+      #itineraryPanel .day-image + div { padding: 18px 15px !important; }
+      .timeline-item { padding-left: 28px; }
+      .timeline-line::before { left: 7px; }
+      .timeline-dot { left: 0; }
+      .detail-note { font-size: .84rem; padding-left: .6rem; }
+      .google-nav-link { width: 100%; justify-content: center; padding: .7rem .8rem; font-size: .84rem; }
+
       .mobile-card-row {
         display: flex !important;
+        width: 100%;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         overscroll-behavior-inline: contain;
-        gap: .9rem;
-        padding: .15rem .15rem 1rem;
+        gap: .8rem;
+        padding: .15rem 0 1rem;
         scrollbar-width: none;
       }
       .mobile-card-row::-webkit-scrollbar { display: none; }
       .mobile-card-row > * {
-        flex: 0 0 min(84vw, 330px);
-        scroll-snap-align: start;
+        flex: 0 0 calc(100vw - 40px);
+        max-width: none;
+        scroll-snap-align: center;
       }
+      #map .grid.lg\:grid-cols-\[430px_1fr\] { display: block; }
+      #map aside { padding: 12px; margin-bottom: 14px; }
+      #map aside > .grid.grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
       #placeList {
         display: flex;
+        width: 100%;
         max-height: none !important;
         overflow-x: auto;
         overflow-y: hidden !important;
         scroll-snap-type: x mandatory;
-        gap: .8rem;
+        gap: .75rem;
         padding-bottom: .75rem;
       }
       #placeList > * {
-        flex: 0 0 min(82vw, 320px);
-        scroll-snap-align: start;
+        flex: 0 0 calc(100vw - 54px);
+        max-width: none;
+        scroll-snap-align: center;
       }
-      #travelMap { min-height: 360px; }
+      #travelMap { min-height: 410px; width: 100%; }
       .timeline-item .google-nav-link { margin-left: 0; }
+      #shoppingForm { grid-template-columns: 1fr !important; }
+      header nav { margin-top: 8px; padding: 10px 12px; }
+      header nav > div a > div:last-child p:first-child { font-size: .92rem; }
+      header nav > div a > div:last-child p:last-child { font-size: .66rem; }
     }
 
     @media (max-width: 1023px) {
