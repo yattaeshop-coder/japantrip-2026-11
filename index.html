@@ -262,42 +262,6 @@
     </div>
   </section>
 
-  <section id="modules" class="bg-white/55 py-20">
-    <div class="mx-auto max-w-7xl px-5">
-      <div class="mb-10 text-center" data-aos="fade-up">
-        <p class="font-semibold tracking-[.2em] text-matcha">TRAVEL MODULES</p>
-        <h2 class="mt-3 text-3xl font-black sm:text-4xl">六大旅遊功能</h2>
-      </div>
-
-      <div class="mobile-card-row grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
-          <div class="module-icon text-4xl">📍</div><h3 class="mt-4 text-xl font-bold">點選地圖</h3>
-          <p class="mt-2 text-stone-500">點擊景點或餐廳卡片，地圖會自動移動並顯示資訊。</p>
-        </a>
-        <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
-          <div class="module-icon text-4xl">🍱</div><h3 class="mt-4 text-xl font-bold">美食推薦</h3>
-          <p class="mt-2 text-stone-500">收錄京都、上野、新宿、淺草、銀座、六本木等餐廳。</p>
-        </a>
-        <a href="#map" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
-          <div class="module-icon text-4xl">⛩️</div><h3 class="mt-4 text-xl font-bold">必去景點</h3>
-          <p class="mt-2 text-stone-500">清水寺、奈良公園、淺草寺、晴空塔、SHIBUYA SKY。</p>
-        </a>
-        <a href="#tools" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
-          <div class="module-icon text-4xl">🧰</div><h3 class="mt-4 text-xl font-bold">實用工具</h3>
-          <p class="mt-2 text-stone-500">Tabelog、Papago、Tenki、乘換案內、GO Taxi。</p>
-        </a>
-        <a href="#transport" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
-          <div class="module-icon text-4xl">🏨</div><h3 class="mt-4 text-xl font-bold">住宿與航班</h3>
-          <p class="mt-2 text-stone-500">航班、新幹線、京都飯店與東京飯店集中查看。</p>
-        </a>
-        <a href="#shopping" class="module-card card-hover glass rounded-2xl p-6 shadow-soft" data-aos="zoom-in">
-          <div class="module-icon text-4xl">🛍️</div><h3 class="mt-4 text-xl font-bold">購物清單</h3>
-          <p class="mt-2 text-stone-500">新增、勾選、刪除商品，並自動換算台幣與永久儲存。</p>
-        </a>
-      </div>
-    </div>
-  </section>
-
   <section id="map" class="mx-auto max-w-7xl px-5 py-20">
     <div class="mb-10 text-center" data-aos="fade-up">
       <p class="font-semibold tracking-[.2em] text-matcha">MAP & FOOD</p>
@@ -327,67 +291,47 @@
   </section>
 
   <section id="transport" class="bg-white/55 py-20">
-    <div class="mx-auto max-w-7xl px-5">
+    <div class="mx-auto max-w-5xl px-5">
       <div class="mb-10 text-center">
-        <p class="font-semibold tracking-[.2em] text-matcha">FLIGHTS & STAYS</p>
+        <p class="font-semibold tracking-[.2em] text-matcha">FLIGHTS・TRANSPORT・STAYS</p>
         <h2 class="mt-3 text-3xl font-black sm:text-4xl">航班、交通與住宿</h2>
+        <p class="mx-auto mt-3 max-w-2xl text-stone-500">三項資訊整合於同一張卡片，點選上方選單即可切換查看。</p>
       </div>
 
-      <div class="mobile-card-row grid gap-6 lg:grid-cols-3">
-        <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up">
-          <div class="text-3xl">✈️</div>
-          <h3 class="mt-4 text-xl font-black">國際航班</h3>
-          <div class="mt-5 space-y-3">
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">去程｜CI152</p>
-              <p class="mt-1 text-sm text-stone-600">11/2　09:45 桃園 → 13:20 關西</p>
-            </div>
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">回程｜CI101</p>
-              <p class="mt-1 text-sm text-stone-600">11/9　14:35 成田 → 17:45 桃園</p>
-            </div>
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">家人先行返台｜CI109</p>
-              <p class="mt-1 text-sm text-stone-600">11/8　19:30 成田 → 22:45 桃園</p>
-            </div>
-          </div>
-        </article>
+      <div class="glass rounded-3xl p-4 shadow-soft sm:p-6" data-aos="fade-up">
+        <div class="grid grid-cols-3 gap-2 rounded-2xl bg-stone-100 p-1.5" role="tablist" aria-label="航班交通住宿選單">
+          <button class="transport-tab rounded-xl bg-white px-3 py-3 text-sm font-black shadow sm:text-base" data-panel="flight" role="tab" aria-selected="true">✈️ 航班</button>
+          <button class="transport-tab rounded-xl px-3 py-3 text-sm font-black sm:text-base" data-panel="rail" role="tab" aria-selected="false">🚄 交通</button>
+          <button class="transport-tab rounded-xl px-3 py-3 text-sm font-black sm:text-base" data-panel="stay" role="tab" aria-selected="false">🏨 住宿</button>
+        </div>
 
-        <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up" data-aos-delay="100">
-          <div class="text-3xl">🚄</div>
-          <h3 class="mt-4 text-xl font-black">跨城市交通</h3>
-          <div class="mt-5 space-y-3">
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">HARUKA 關空特快</p>
-              <p class="mt-1 text-sm text-stone-600">11/2　15:30 關西機場 → 京都，約 80 分鐘</p>
-            </div>
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">東海道新幹線 NOZOMI</p>
-              <p class="mt-1 text-sm text-stone-600">11/5　14:01 京都 → 16:15 東京</p>
-            </div>
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">Skyliner</p>
-              <p class="mt-1 text-sm text-stone-600">11/9　約 10:00 前往成田機場</p>
+        <div class="mt-5 overflow-hidden rounded-2xl border border-white/70 bg-white/80">
+          <div id="transport-flight" class="transport-panel p-5 sm:p-7">
+            <div class="mb-5 flex items-center gap-3"><span class="text-3xl">✈️</span><h3 class="text-xl font-black">國際航班</h3></div>
+            <div class="grid gap-3 md:grid-cols-3">
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">去程｜CI152</p><p class="mt-2 text-sm leading-6 text-stone-600">11/2　09:45 桃園出發<br>13:20 抵達關西機場</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">家人先行返台｜CI109</p><p class="mt-2 text-sm leading-6 text-stone-600">11/8　19:30 成田出發<br>22:45 抵達桃園</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">回程｜CI101</p><p class="mt-2 text-sm leading-6 text-stone-600">11/9　14:35 成田出發<br>17:45 抵達桃園</p></div>
             </div>
           </div>
-        </article>
 
-        <article class="card-hover glass rounded-2xl p-6 shadow-soft" data-aos="fade-up" data-aos-delay="200">
-          <div class="text-3xl">🏨</div>
-          <h3 class="mt-4 text-xl font-black">飯店資訊</h3>
-          <div class="mt-5 space-y-3">
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">Hotel SUI Kyoto Kiyomizu</p>
-              <p class="mt-1 text-sm text-stone-600">京都市東山區朱雀町423番</p>
-              <a class="mt-2 inline-block text-sm font-bold text-matcha hover:underline" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Hotel+SUI+Kyoto+Kiyomizu">開啟地圖</a>
-            </div>
-            <div class="rounded-xl bg-white p-4">
-              <p class="font-bold">相鐵 Fresa Inn 銀座七丁目</p>
-              <p class="mt-1 text-sm text-stone-600">東京都中央區銀座 7-11-12</p>
-              <a class="mt-2 inline-block text-sm font-bold text-matcha hover:underline" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Sotetsu+Fresa+Inn+Ginza+Nanachome">開啟地圖</a>
+          <div id="transport-rail" class="transport-panel hidden p-5 sm:p-7">
+            <div class="mb-5 flex items-center gap-3"><span class="text-3xl">🚄</span><h3 class="text-xl font-black">跨城市交通</h3></div>
+            <div class="grid gap-3 md:grid-cols-3">
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">HARUKA 關空特快</p><p class="mt-2 text-sm leading-6 text-stone-600">11/2　15:30 關西機場 → 京都<br>車程約 80 分鐘</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">東海道新幹線 NOZOMI</p><p class="mt-2 text-sm leading-6 text-stone-600">11/5　14:01 京都 → 東京<br>預計 16:15 抵達</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">京成 Skyliner</p><p class="mt-2 text-sm leading-6 text-stone-600">11/9　約 10:00 前往成田機場<br>請預留轉乘與行李時間</p></div>
             </div>
           </div>
-        </article>
+
+          <div id="transport-stay" class="transport-panel hidden p-5 sm:p-7">
+            <div class="mb-5 flex items-center gap-3"><span class="text-3xl">🏨</span><h3 class="text-xl font-black">飯店資訊</h3></div>
+            <div class="grid gap-3 md:grid-cols-2">
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">Hotel SUI Kyoto Kiyomizu</p><p class="mt-2 text-sm leading-6 text-stone-600">京都市東山區朱雀町423番</p><a class="mt-3 inline-flex rounded-xl bg-matcha px-4 py-2 text-sm font-bold text-white hover:bg-ink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Hotel+SUI+Kyoto+Kiyomizu">📍 開啟地圖</a></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">相鐵 Fresa Inn 銀座七丁目</p><p class="mt-2 text-sm leading-6 text-stone-600">東京都中央區銀座 7-11-12</p><a class="mt-3 inline-flex rounded-xl bg-matcha px-4 py-2 text-sm font-bold text-white hover:bg-ink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Sotetsu+Fresa+Inn+Ginza+Nanachome">📍 開啟地圖</a></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -448,6 +392,21 @@ const menuButton = document.getElementById("menuButton");
 const mobileMenu = document.getElementById("mobileMenu");
 menuButton.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
 mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.add("hidden")));
+
+const transportTabs = document.querySelectorAll(".transport-tab");
+const transportPanels = document.querySelectorAll(".transport-panel");
+transportTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    const target = tab.dataset.panel;
+    transportTabs.forEach(btn => {
+      const active = btn === tab;
+      btn.classList.toggle("bg-white", active);
+      btn.classList.toggle("shadow", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    transportPanels.forEach(panel => panel.classList.toggle("hidden", panel.id !== `transport-${target}`));
+  });
+});
 
 const itinerary = [
   {
