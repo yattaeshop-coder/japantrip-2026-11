@@ -692,7 +692,7 @@ function renderActiveDay() {
                   <div>
                     <p class="font-semibold leading-7 text-stone-700">${t[1]}</p>
                     <p class="detail-note">${getItineraryDetail(t[1])}</p>
-                    ${getNavigationQuery(t[1]) ? `<a class="google-nav-link" target="_blank" rel="noopener" href="${googleDirectionsUrl(getNavigationQuery(t[1]))}">🧭 Google 導覽</a>` : ""}
+                    ${getNavigationQuery(t[1]) ? `<button type="button" class="google-nav-link" onclick="showDayOnMap(activeDayIndex)">📍 同步顯示今日地圖</button>` : ""}
                   </div>
                 </div>
               </div>
