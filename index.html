@@ -125,6 +125,30 @@
     .hide-scrollbar::-webkit-scrollbar { width: 7px; }
     .hide-scrollbar::-webkit-scrollbar-thumb { background: #c9c7bd; border-radius: 999px; }
 
+    /* 餐廳與景點卡片：桌機、手機皆可橫向滑動 */
+    #placeList {
+      display: flex;
+      width: 100%;
+      max-height: none !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      overscroll-behavior-inline: contain;
+      gap: .8rem;
+      padding: .15rem .1rem .9rem;
+      scrollbar-width: none;
+    }
+    #placeList::-webkit-scrollbar { display: none; }
+    #placeList > * {
+      flex: 0 0 min(360px, 88%);
+      max-width: none;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+    .place-card.active { transform: translateY(-3px); }
+    .rating-qualified { background: #fff7ed; color: #b45309; }
+
     /* 手機卡片橫向滑動 */
     .mobile-card-row {
       display: grid;
@@ -286,7 +310,7 @@
     <div class="mb-10 text-center" data-aos="fade-up">
       <p class="font-semibold tracking-[.2em] text-matcha">MAP & FOOD</p>
       <h2 class="mt-3 text-3xl font-black sm:text-4xl">互動景點與美食地圖</h2>
-      <p class="mt-3 text-stone-500">選擇日期即可查看當天景點旁的 Tabelog 餐廳；可直接定位、Google 導航或開啟 Tabelog。</p>
+      <p class="mt-3 text-stone-500">切換「美食」即可查看 3.5+ 精選餐廳；左右滑動餐廳卡片時，地圖會自動定位並開啟餐廳介紹。</p>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[430px_1fr]">
@@ -299,7 +323,7 @@
             <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="food">🍱 美食</button>
             <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="shopping">🛍️ 購物</button>
           </div>
-          <div id="mapStatus" class="map-status">選擇日期後，地圖會同步顯示當日景點、餐廳與移動順序。</div>
+          <div id="mapStatus" class="map-status">選擇日期後，地圖會同步顯示當日景點與 3.5+ 精選餐廳；左右滑卡片即可切換地圖介紹。</div>
         </div>
         <div id="placeList" class="hide-scrollbar mt-4 max-h-[520px] space-y-3 overflow-y-auto pr-1"></div>
       </aside>
@@ -845,12 +869,33 @@ places.forEach(place => {
 
 let activeType = "day";
 let selectedMapDay = 0;
+const MIN_RESTAURANT_RATING = 3.5;
+
+/*
+  可在餐廳資料中加入 score: 3.72。
+  若尚未填入數字分數，既有 Tabelog／推薦餐廳先列為 3.5+ 精選候選；
+  用餐前仍應按 Tabelog 確認即時評分。
+*/
+function restaurantScore(place) {
+  if (typeof place.score === "number") return place.score;
+  const parsed = Number.parseFloat(place.rating);
+  if (Number.isFinite(parsed)) return parsed;
+  return place.type === "food" ? MIN_RESTAURANT_RATING : null;
+}
+
+function isQualifiedRestaurant(place) {
+  return place.type === "food" && restaurantScore(place) >= MIN_RESTAURANT_RATING;
+}
 
 function visiblePlaces() {
   if (activeType === "day") {
     const names = dayPlaceNames[selectedMapDay] || [];
-    return names.map(name => places.find(p => p.name === name)).filter(Boolean);
+    return names
+      .map(name => places.find(p => p.name === name))
+      .filter(Boolean)
+      .filter(p => p.type !== "food" || isQualifiedRestaurant(p));
   }
+  if (activeType === "food") return places.filter(isQualifiedRestaurant);
   return places.filter(p => p.type === activeType);
 }
 
@@ -876,7 +921,7 @@ function drawVisibleMarkers({fit=true, openName=""} = {}) {
   if (openName && markers[openName]) markers[openName].openPopup();
   document.getElementById("mapStatus").textContent = activeType === "day"
     ? `${itinerary[selectedMapDay].date} ${itinerary[selectedMapDay].city}：已同步顯示 ${shown.length} 個當日景點、餐廳或購物點，數字代表建議順序。`
-    : `目前顯示 ${shown.length} 個${activeType === "spot" ? "景點" : activeType === "food" ? "餐廳" : "購物點"}。點卡片即可在地圖定位。`;
+    : `目前顯示 ${shown.length} 個${activeType === "spot" ? "景點" : activeType === "food" ? "3.5+ 精選餐廳" : "購物點"}。左右滑動卡片即可讓地圖同步定位並開啟介紹。`;
 }
 
 function renderPlaces(keyword = "") {
@@ -893,9 +938,13 @@ function renderPlaces(keyword = "") {
             <h3 class="mt-1 font-bold">${p.name}</h3>
             <p class="mt-1 text-xs font-semibold text-matcha">${p.city}</p>
           </div>
-          <span class="whitespace-nowrap rounded-full bg-mist px-2.5 py-1 text-xs font-bold">${p.rating}</span>
+          <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${p.type === "food" ? "rating-qualified" : "bg-mist"}">${
+              p.type === "food"
+                ? (typeof p.score === "number" ? `⭐ ${p.score.toFixed(2)}` : "⭐ 3.5+ 精選")
+                : p.rating
+            }</span>
         </div>
-        ${p.type === "food" ? `<div class="mt-2 flex flex-wrap gap-2 text-xs font-bold"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">${p.cuisine || "餐廳"}</span>${p.price ? `<span class="rounded-full bg-mist px-2.5 py-1 text-stone-600">${p.price}</span>` : ""}</div>` : ""}
+        ${p.type === "food" ? `<div class="mt-2 flex flex-wrap gap-2 text-xs font-bold"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">${p.cuisine || "餐廳"}</span>${p.price ? `<span class="rounded-full bg-mist px-2.5 py-1 text-stone-600">${p.price}</span>` : ""}</div><p class="mt-2 text-xs text-amber-700">左右滑動卡片會自動切換地圖；即時評分請開啟 Tabelog 確認。</p>` : ""}
         <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
       </button>
       <div class="mt-3 flex flex-wrap gap-2">
@@ -905,7 +954,54 @@ function renderPlaces(keyword = "") {
         ${p.type === "food" ? `<a target="_blank" rel="noopener" href="${tabelogUrl(p)}" class="rounded-xl bg-amber-600 px-3 py-2 text-xs font-bold text-white hover:bg-ink">⭐ Tabelog</a>` : ""}
       </div>
     </article>
-  `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">這個分類目前沒有可顯示的資料。</p>`;
+  `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">這個分類目前沒有符合 3.5+ 條件的餐廳資料。</p>`;
+
+  requestAnimationFrame(() => setupPlaceCardSwipe());
+}
+
+let placeSwipeTimer = null;
+
+function setupPlaceCardSwipe() {
+  const list = document.getElementById("placeList");
+  if (!list) return;
+
+  const syncCenteredCard = () => {
+    const cards = [...list.querySelectorAll(".place-card")];
+    if (!cards.length) return;
+
+    const listRect = list.getBoundingClientRect();
+    const listCenter = listRect.left + listRect.width / 2;
+    let closest = cards[0];
+    let closestDistance = Infinity;
+
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const distance = Math.abs(cardCenter - listCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = card;
+      }
+    });
+
+    const name = closest.dataset.name;
+    const place = places.find(p => p.name === name);
+    if (!place || !markers[name]) return;
+
+    highlightPlaceCard(name);
+    map.flyTo(
+      [place.lat, place.lng],
+      place.city.includes("京都") || place.city.includes("奈良") ? 15 : 16,
+      {duration: .55}
+    );
+    markers[name].openPopup();
+  };
+
+  list.onscroll = () => {
+    clearTimeout(placeSwipeTimer);
+    placeSwipeTimer = setTimeout(syncCenteredCard, 150);
+  };
+  list.onpointerup = () => setTimeout(syncCenteredCard, 80);
 }
 
 function highlightPlaceCard(name) {
