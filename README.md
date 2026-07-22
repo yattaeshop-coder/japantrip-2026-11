@@ -1,24 +1,16 @@
-# Family Japan Trip 2026
+# Family Japan Trip 2026｜地圖同步修正版
 
-這個資料夾可直接上傳到 GitHub Pages。
+## GitHub Pages 上傳方式
+1. 解壓縮 ZIP。
+2. 進入 GitHub Repository，選 `Add file` → `Upload files`。
+3. 上傳解壓縮後的 `index.html` 與 `README.md`，覆蓋舊檔。
+4. 按 `Commit changes`。
+5. 約 1–3 分鐘後重新整理 GitHub Pages 網站。
 
-## 上傳方式
-
-1. 在 GitHub 建立新的 Repository。
-2. 點選 `Add file` → `Upload files`。
-3. 將本資料夾內的 `index.html` 上傳。
-4. 進入 `Settings` → `Pages`。
-5. Source 選擇 `Deploy from a branch`。
-6. Branch 選擇 `main` 與 `/root`，按下 Save。
-7. 等待 GitHub 產生網站網址。
-
-## 網站功能
-
-- 11/2 至 11/9 完整每日行程
-- 11/5 京都到東京整合行程卡
-- Leaflet 景點、美食與購物地圖
-- 每個景點、餐廳與購物點皆有 Google Maps 導覽連結
-- 航班、新幹線與飯店資訊
-- LocalStorage 購物清單
-- 手機響應式排版與卡片橫向滑動
-- Tailwind CSS、AOS 動畫與日系 Japandi 視覺
+## 本版修正
+- 每日行程可同步切換地圖。
+- 當日景點、餐廳、購物點以編號及路線顯示。
+- 景點／美食／購物分類會同步更新圖釘與清單。
+- 每張卡片提供網頁地圖定位、Google 導覽及 Google 地圖搜尋。
+- 每日行程新增景點特色、移動提醒與家庭旅遊注意事項。
+- 支援手機左右滑動與桌機左右分欄。

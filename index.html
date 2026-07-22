@@ -92,6 +92,14 @@
     }
     .leaflet-popup-content-wrapper { border-radius: 18px; }
     .leaflet-popup-content { margin: 14px 16px; }
+    .map-control-select {
+      width: 100%; border: 1px solid #e7e5e4; border-radius: .85rem;
+      background: white; padding: .7rem .85rem; font-weight: 800; color: #44403c;
+    }
+    .map-status { border-radius: .85rem; background: #eff3eb; padding: .7rem .85rem; font-size: .8rem; color: #5f7054; }
+    .detail-note { margin-top: .35rem; border-left: 3px solid #DDB7B0; padding-left: .75rem; font-size: .88rem; line-height: 1.65; color: #78716c; }
+    .leaflet-tooltip.trip-order { background:#2E332B; color:white; border:0; border-radius:999px; font-weight:900; box-shadow:none; }
+    .leaflet-tooltip.trip-order::before { display:none; }
     .hide-scrollbar::-webkit-scrollbar { width: 7px; }
     .hide-scrollbar::-webkit-scrollbar-thumb { background: #c9c7bd; border-radius: 999px; }
 
@@ -275,10 +283,15 @@
 
     <div class="grid gap-6 lg:grid-cols-[430px_1fr]">
       <aside class="glass rounded-2xl p-4 shadow-soft" data-aos="fade-right">
-        <div class="grid grid-cols-3 rounded-xl bg-stone-100 p-1">
-          <button class="map-tab rounded-lg bg-white px-3 py-2.5 font-bold shadow" data-type="spot">⛩️ 景點</button>
-          <button class="map-tab rounded-lg px-3 py-2.5 font-bold" data-type="food">🍱 美食</button>
-          <button class="map-tab rounded-lg px-3 py-2.5 font-bold" data-type="shopping">🛍️ 購物</button>
+        <div class="grid gap-3">
+          <select id="mapDaySelect" class="map-control-select" aria-label="選擇每日行程地圖"></select>
+          <div class="grid grid-cols-4 rounded-xl bg-stone-100 p-1">
+            <button class="map-tab rounded-lg bg-white px-2 py-2.5 text-sm font-bold shadow" data-type="day">🗓 今日</button>
+            <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="spot">⛩️ 景點</button>
+            <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="food">🍱 美食</button>
+            <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="shopping">🛍️ 購物</button>
+          </div>
+          <div id="mapStatus" class="map-status">選擇日期後，地圖會同步顯示當日景點、餐廳與移動順序。</div>
         </div>
         <div id="placeList" class="hide-scrollbar mt-4 max-h-[520px] space-y-3 overflow-y-auto pr-1"></div>
       </aside>
@@ -579,6 +592,66 @@ const navigationRules = [
   ["京都車站商圈", "京都車站"], ["飯店周邊", "Hotel SUI Kyoto Kiyomizu"]
 ];
 
+const itineraryDetails = {
+  "機場接送出發":"預留足夠時間前往桃園機場，建議出發前再次確認護照、網路、交通票券與行李件數。",
+  "桃園國際機場":"抵達後先辦理報到與託運，七人同行建議集中保管護照與登機證，並預留安檢及早餐時間。",
+  "關西國際機場":"完成入境、領行李與交通票券後前往 JR 車站；若同行長者較疲累，可先在機場補充水分再移動。",
+  "HARUKA":"HARUKA 是關西機場直達京都的重要特急列車，車廂舒適且有行李空間，適合家庭旅客。",
+  "Hotel SUI":"飯店位於京都東山區，鄰近清水五條，方便前往清水寺、祇園與京都車站。",
+  "先斗町":"沿鴨川旁延伸的狹長花街，聚集居酒屋、京料理與小酒館，夜間燈籠氣氛最有京都風情。",
+  "八坂神社":"祇園地區代表神社，夜間仍可參拜，朱紅樓門與點燈景色適合晚餐後悠閒散步。",
+  "清水寺":"京都最具代表性的世界文化遺產之一，以懸空木造清水舞台聞名，可俯瞰東山與京都市景。",
+  "和服":"換裝後步行二寧坂、三寧坂最有古都氛圍；石板坡道較多，鞋子不宜過高並注意長者行走速度。",
+  "二寧坂":"保存完整的京都町家與石板坡道，沿途有甜點、陶器、伴手禮與特色咖啡店。",
+  "三寧坂":"清水寺周邊最經典老街之一，傳統木造街景非常適合拍照，但坡道及階梯需注意腳步。",
+  "錦市場":"有京都廚房之稱，集結漬物、玉子燒、海鮮、豆乳甜點與京料理食材，適合少量多樣品嚐。",
+  "河原町":"京都最熱鬧的購物區之一，百貨、藥妝、咖啡與餐廳密集，可依體力彈性調整停留時間。",
+  "花見小路":"祇園最具代表性的花街，兩側町家與石板路呈現傳統京都景觀，拍照時應避免打擾住戶。",
+  "祇園白川":"白川河道、柳樹與町家構成優雅夜景，遊客較花見小路少，適合慢慢散步。",
+  "鴨川":"京都市民日常休憩河岸，傍晚可看夕陽與納涼床，行程結尾安排散步很放鬆。",
+  "春日大社":"以朱紅社殿、石燈籠與森林參道著名，是奈良重要世界文化遺產，沿途常可遇見小鹿。",
+  "東大寺":"寺內大佛殿規模宏偉，供奉奈良大佛，是理解奈良古都歷史與佛教文化的重要景點。",
+  "奈良公園":"可近距離與梅花鹿互動；購買鹿仙貝時需收好紙袋，並避免在鹿群密集處奔跑。",
+  "奈良商店街":"近鐵奈良站周邊商店街適合用餐與採買奈良漬、柿葉壽司及小鹿伴手禮。",
+  "三十三間堂":"以整齊排列的 1001 尊千手觀音像聞名，室內氣氛莊嚴，參觀時不可拍照。",
+  "京都飯店退房":"退房後可寄放行李，午餐與採買盡量安排在京都車站周邊，避免拖著行李長距離移動。",
+  "新幹線":"東海道新幹線連接京都與東京，建議提早到月台並確認車廂與座位，富士山座位視天候而定。",
+  "東京車站":"丸之內紅磚站舍是東京代表建築，站內地下街、拉麵街與伴手禮店規模龐大。",
+  "相鐵 Fresa Inn":"飯店位於銀座七丁目，鄰近新橋與東銀座，前往築地、東京站和各購物區都方便。",
+  "銀座":"東京高級商業區，精品百貨、老字號點心、建築與咖啡文化集中，晚上街景也很精緻。",
+  "KITTE":"由舊東京中央郵便局改建，屋頂庭園可免費眺望東京車站丸之內站舍與列車進出。",
+  "築地場外市場":"雖然批發市場已遷往豐洲，場外市場仍保留大量海鮮丼、玉子燒、乾貨與街頭小吃。",
+  "SHIBUYA SKY":"位於澀谷 Scramble Square 樓頂，360 度視野可眺望東京市區，熱門時段需事先預約。",
+  "六本木之丘":"集結美術館、商場與展望設施，傍晚至夜間可觀賞東京鐵塔與都心燈光。",
+  "毛利庭園":"六本木之丘內的小型日式庭園，適合在看夜景前短暫休息與散步。",
+  "雷門":"淺草最具辨識度的入口，大紅燈籠後方連接仲見世商店街，是經典拍照地點。",
+  "仲見世":"東京歷史悠久的商店街，販售人形燒、雷米花糖、和風小物與淺草限定伴手禮。",
+  "淺草寺":"東京最古老寺院，寶藏門、五重塔與本堂構成下町代表景觀，上午較容易避開人潮。",
+  "東京晴空塔":"高 634 公尺的東京地標，展望台可看遼闊市景，下方 Solamachi 適合用餐與購物。",
+  "合羽橋":"專門販售餐具、刀具、陶器、食品模型與餐飲用品，適合挑選實用又有日本特色的紀念品。",
+  "阿美橫町":"上野熱鬧露天商圈，藥妝、零食、海產與服飾價格選擇多，人潮密集需留意隨身物品。",
+  "秋葉原":"日本動漫、模型、電器與遊戲文化中心，Radio 會館與大型家電賣場適合集中採買。",
+  "成田機場":"國際航班建議至少提前三小時抵達，預留退稅、托運、安檢與航廈內移動時間。",
+  "Skyliner":"京成電鐵機場快線，從上野或日暮里前往成田速度快，指定席可事先劃位。",
+  "銀座木村家":"日本紅豆麵包名店，以酒種麵包聞名，適合最後一天購買早餐或伴手禮。"
+};
+
+const dayPlaceNames = [
+  ["京都車站","Hotel SUI Kyoto Kiyomizu","先斗町","八坂神社"],
+  ["清水寺","二寧坂","三寧坂","錦市場","河原町","花見小路","祇園白川","WAGYU ICHINONE"],
+  ["春日大社","東大寺","奈良公園","東向商店街","三十三間堂"],
+  ["京都車站","東京車站","相鐵 Fresa Inn 銀座七丁目","銀座","UNIQLO 銀座旗艦店","GINZA SIX","KITTE 丸之內","唐吉訶德 銀座本館"],
+  ["築地場外市場","銀座","Sakura Marks Ginza","SHIBUYA SKY","六本木之丘","毛利庭園","東京鐵塔"],
+  ["雷門","仲見世商店街","淺草寺","東京晴空塔","東京ソラマチ","三村房","合羽橋道具街"],
+  ["阿美橫町","おでん to おさかな ますだ","おちょこ丼 Lunch","秋葉原","Bic Camera AKIBA"],
+  ["相鐵 Fresa Inn 銀座七丁目","銀座木村家","銀座"]
+];
+
+function getItineraryDetail(description) {
+  const entry = Object.entries(itineraryDetails).find(([keyword]) => description.includes(keyword));
+  return entry ? entry[1] : "依現場人潮與同行家人體力彈性調整，並預留移動、休息及排隊時間。";
+}
+
 function getNavigationQuery(description) {
   const match = navigationRules.find(([keyword]) => description.includes(keyword));
   return match ? match[1] : "";
@@ -617,7 +690,8 @@ function renderActiveDay() {
                 <div class="grid gap-1 sm:grid-cols-[76px_1fr]">
                   <p class="font-black text-matcha">${t[0]}</p>
                   <div>
-                    <p class="leading-7 text-stone-600">${t[1]}</p>
+                    <p class="font-semibold leading-7 text-stone-700">${t[1]}</p>
+                    <p class="detail-note">${getItineraryDetail(t[1])}</p>
                     ${getNavigationQuery(t[1]) ? `<a class="google-nav-link" target="_blank" rel="noopener" href="${googleDirectionsUrl(getNavigationQuery(t[1]))}">🧭 Google 導覽</a>` : ""}
                   </div>
                 </div>
@@ -626,8 +700,8 @@ function renderActiveDay() {
           </div>
 
           <div class="mt-7 flex flex-wrap gap-3">
-            <button onclick="focusPlace('${d.map}')" class="rounded-xl bg-matcha px-5 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">
-              📍 查看地圖
+            <button onclick="showDayOnMap(activeDayIndex)" class="rounded-xl bg-matcha px-5 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">
+              🗺️ 同步顯示今日地圖
             </button>
             <button onclick="selectDay(activeDayIndex - 1)" class="rounded-xl border border-stone-200 bg-white px-5 py-3 font-bold transition hover:bg-mist ${activeDayIndex === 0 ? "pointer-events-none opacity-40" : ""}">
               ← 前一天
@@ -646,6 +720,8 @@ window.selectDay = function(index) {
   activeDayIndex = Math.max(0, Math.min(itinerary.length - 1, index));
   renderDayTabs();
   renderActiveDay();
+  selectedMapDay = activeDayIndex;
+  if (document.getElementById("mapDaySelect")) document.getElementById("mapDaySelect").value = String(activeDayIndex);
 };
 
 renderDayTabs();
@@ -668,6 +744,24 @@ const places = [
   {name:"合羽橋道具街", type:"spot", city:"東京", lat:35.7132, lng:139.7880, rating:"4.4", desc:"餐具、廚具、刀具與陶瓷採買天堂。"},
   {name:"阿美橫町", type:"spot", city:"東京", lat:35.7101, lng:139.7744, rating:"4.3", desc:"藥妝、零食、伴手禮與市場小吃。"},
   {name:"秋葉原", type:"spot", city:"東京", lat:35.6984, lng:139.7731, rating:"4.4", desc:"動漫、電器、Radio 會館與 Bic Camera。"},
+  {name:"京都車站", type:"spot", city:"京都", lat:34.9858, lng:135.7588, rating:"交通", desc:"京都主要交通樞紐，連接 HARUKA、新幹線、地鐵與巴士。"},
+  {name:"Hotel SUI Kyoto Kiyomizu", type:"spot", city:"京都・東山", lat:34.9922, lng:135.7726, rating:"住宿", desc:"京都住宿據點，鄰近清水五條與東山景點。"},
+  {name:"先斗町", type:"spot", city:"京都・河原町", lat:35.0052, lng:135.7712, rating:"4.4", desc:"鴨川旁的京都花街，夜間居酒屋與町家氣氛迷人。"},
+  {name:"二寧坂", type:"spot", city:"京都・東山", lat:34.9981, lng:135.7808, rating:"4.5", desc:"清水寺周邊傳統石板老街，甜點與伴手禮店密集。"},
+  {name:"三寧坂", type:"spot", city:"京都・東山", lat:34.9965, lng:135.7813, rating:"4.5", desc:"京都經典坡道街景，連接清水寺與二寧坂。"},
+  {name:"河原町", type:"spot", city:"京都", lat:35.0037, lng:135.7690, rating:"商圈", desc:"京都百貨、藥妝、美食與咖啡最集中的購物區。"},
+  {name:"花見小路", type:"spot", city:"京都・祇園", lat:35.0036, lng:135.7754, rating:"4.4", desc:"祇園代表性花街，傳統町家與石板路景觀優雅。"},
+  {name:"祇園白川", type:"spot", city:"京都・祇園", lat:35.0054, lng:135.7746, rating:"4.5", desc:"白川、柳樹與町家構成的京都散步名所。"},
+  {name:"東大寺", type:"spot", city:"奈良", lat:34.6890, lng:135.8398, rating:"4.7", desc:"以大佛殿與奈良大佛聞名的世界文化遺產。"},
+  {name:"東向商店街", type:"spot", city:"奈良", lat:34.6831, lng:135.8278, rating:"商圈", desc:"近鐵奈良站旁的有蓋商店街，適合午餐與伴手禮採買。"},
+  {name:"相鐵 Fresa Inn 銀座七丁目", type:"spot", city:"東京・銀座", lat:35.6684, lng:139.7639, rating:"住宿", desc:"東京住宿據點，方便前往銀座、築地、新橋與東京站。"},
+  {name:"KITTE 丸之內", type:"spot", city:"東京・丸之內", lat:35.6796, lng:139.7648, rating:"4.3", desc:"屋頂庭園可免費欣賞東京車站紅磚站舍與列車。"},
+  {name:"東京鐵塔", type:"spot", city:"東京・芝公園", lat:35.6586, lng:139.7454, rating:"4.5", desc:"東京經典紅白地標，六本木方向可欣賞優美夜景。"},
+  {name:"毛利庭園", type:"spot", city:"東京・六本木", lat:35.6600, lng:139.7302, rating:"4.2", desc:"六本木之丘內的日式庭園，適合夜景前休息散步。"},
+  {name:"雷門", type:"spot", city:"東京・淺草", lat:35.7111, lng:139.7964, rating:"4.5", desc:"淺草寺入口的大紅燈籠，是東京下町代表地標。"},
+  {name:"仲見世商店街", type:"spot", city:"東京・淺草", lat:35.7124, lng:139.7965, rating:"4.3", desc:"連接雷門與淺草寺的老字號商店街。"},
+  {name:"東京ソラマチ", type:"shopping", city:"東京・晴空塔", lat:35.7100, lng:139.8107, rating:"購物", desc:"晴空塔下方大型商場，餐廳、伴手禮與角色商店齊全。"},
+  {name:"銀座木村家", type:"food", city:"東京・銀座", lat:35.6716, lng:139.7655, rating:"老字號", desc:"以酒種紅豆麵包聞名的銀座百年麵包店。"},
 
   {name:"ひとめぼれ 京都店", type:"food", city:"京都・河原町", lat:35.0043, lng:135.7680, rating:"推薦", desc:"豪華海鮮丼、生蛋黃海鮮丼。"},
   {name:"鶏のとりこ 京都河原町店", type:"food", city:"京都・河原町", lat:35.0048, lng:135.7694, rating:"推薦", desc:"雞肉串、雞皮與雞肉丸。"},
@@ -698,55 +792,101 @@ const places = [
   {name:"Tokyo Solamachi", type:"shopping", city:"晴空塔", lat:35.7100, lng:139.8107, rating:"購物", desc:"晴空塔大型購物商場。"}
 ];
 
-const map = L.map("travelMap").setView([35.4, 137.6], 6);
+const map = L.map("travelMap", { zoomControl: true }).setView([35.4, 137.6], 6);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution: "&copy; OpenStreetMap contributors"
 }).addTo(map);
 
+const markerLayer = L.layerGroup().addTo(map);
+const routeLayer = L.layerGroup().addTo(map);
 const markers = {};
-places.forEach(place => {
-  const marker = L.marker([place.lat, place.lng]).addTo(map);
-  marker.bindPopup(`
-    <div style="min-width:210px">
-      <strong style="font-size:16px">${place.name}</strong><br>
-      <span>${place.city}・${place.rating}</span>
-      <p style="margin:8px 0">${place.desc}</p>
-      <a target="_blank" style="font-weight:700;color:#78866B"
-         href="${googleDirectionsUrl(place.name + ' ' + place.city)}">
-         Google Maps 導航
-      </a>
+
+function popupHtml(place) {
+  return `<div style="min-width:220px">
+    <strong style="font-size:16px">${place.name}</strong><br>
+    <span>${place.city}・${place.rating}</span>
+    <p style="margin:8px 0;line-height:1.55">${place.desc}</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a target="_blank" rel="noopener" style="font-weight:800;color:#78866B" href="${googleDirectionsUrl(place.name + ' ' + place.city)}">🧭 Google 導覽</a>
+      <a target="_blank" rel="noopener" style="font-weight:800;color:#A9826B" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.city)}">🔎 Google 地圖</a>
     </div>
-  `);
+  </div>`;
+}
+
+places.forEach(place => {
+  const marker = L.marker([place.lat, place.lng]).bindPopup(popupHtml(place));
+  marker.on("click", () => highlightPlaceCard(place.name));
   markers[place.name] = marker;
 });
 
-let activeType = "spot";
+let activeType = "day";
+let selectedMapDay = 0;
+
+function visiblePlaces() {
+  if (activeType === "day") {
+    const names = dayPlaceNames[selectedMapDay] || [];
+    return names.map(name => places.find(p => p.name === name)).filter(Boolean);
+  }
+  return places.filter(p => p.type === activeType);
+}
+
+function drawVisibleMarkers({fit=true, openName=""} = {}) {
+  markerLayer.clearLayers();
+  routeLayer.clearLayers();
+  const shown = visiblePlaces();
+  shown.forEach((place, index) => {
+    const marker = markers[place.name];
+    marker.addTo(markerLayer);
+    if (activeType === "day") marker.bindTooltip(String(index + 1), {permanent:true, direction:"top", className:"trip-order", offset:[0,-12]});
+    else marker.unbindTooltip();
+  });
+
+  if (activeType === "day" && shown.length > 1) {
+    L.polyline(shown.map(p => [p.lat, p.lng]), {color:"#78866B", weight:4, opacity:.72, dashArray:"8 8"}).addTo(routeLayer);
+  }
+
+  if (fit && shown.length) {
+    const bounds = L.latLngBounds(shown.map(p => [p.lat, p.lng]));
+    map.fitBounds(bounds.pad(.18), {maxZoom:14});
+  }
+  if (openName && markers[openName]) markers[openName].openPopup();
+  document.getElementById("mapStatus").textContent = activeType === "day"
+    ? `${itinerary[selectedMapDay].date} ${itinerary[selectedMapDay].city}：已同步顯示 ${shown.length} 個當日景點、餐廳或購物點，數字代表建議順序。`
+    : `目前顯示 ${shown.length} 個${activeType === "spot" ? "景點" : activeType === "food" ? "餐廳" : "購物點"}。點卡片即可在地圖定位。`;
+}
 
 function renderPlaces(keyword = "") {
   const list = document.getElementById("placeList");
   const q = keyword.toLowerCase();
-  const filtered = places.filter(p => p.type === activeType && `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q));
+  const filtered = visiblePlaces().filter(p => `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q));
 
-  list.innerHTML = filtered.map(p => `
-    <article data-name="${p.name}"
-      class="place-card w-full rounded-2xl border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow">
+  list.innerHTML = filtered.map((p, index) => `
+    <article data-name="${p.name}" class="place-card w-full rounded-2xl border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow">
       <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="w-full text-left">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <h3 class="font-bold">${p.name}</h3>
+            <p class="text-xs font-black text-sakura">${activeType === "day" ? `第 ${index + 1} 站` : p.type === "spot" ? "景點" : p.type === "food" ? "美食" : "購物"}</p>
+            <h3 class="mt-1 font-bold">${p.name}</h3>
             <p class="mt-1 text-xs font-semibold text-matcha">${p.city}</p>
           </div>
           <span class="whitespace-nowrap rounded-full bg-mist px-2.5 py-1 text-xs font-bold">${p.rating}</span>
         </div>
         <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
       </button>
-      <div class="mt-3 flex gap-2">
-        <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="rounded-xl border border-stone-200 px-3 py-2 text-xs font-bold hover:bg-mist">📍 地圖定位</button>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="rounded-xl border border-stone-200 px-3 py-2 text-xs font-bold hover:bg-mist">📍 網頁地圖定位</button>
         <a target="_blank" rel="noopener" href="${googleDirectionsUrl(p.name + ' ' + p.city)}" class="rounded-xl bg-matcha px-3 py-2 text-xs font-bold text-white hover:bg-ink">🧭 Google 導覽</a>
+        <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + p.city)}" class="rounded-xl bg-clay px-3 py-2 text-xs font-bold text-white hover:bg-ink">🔎 Google 地圖</a>
       </div>
     </article>
-  `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">找不到符合資料。</p>`;
+  `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">這個分類目前沒有可顯示的資料。</p>`;
+}
+
+function highlightPlaceCard(name) {
+  document.querySelectorAll(".place-card").forEach(card => card.classList.toggle("active", card.dataset.name === name));
+  const card = document.querySelector(`.place-card[data-name="${CSS.escape(name)}"]`);
+  if (card) card.scrollIntoView({behavior:"smooth", block:"nearest", inline:"nearest"});
 }
 
 function updateTabs() {
@@ -754,37 +894,57 @@ function updateTabs() {
     const active = btn.dataset.type === activeType;
     btn.classList.toggle("bg-white", active);
     btn.classList.toggle("shadow", active);
+    btn.classList.toggle("text-matcha", active);
   });
 }
 
 window.focusPlace = function(name) {
-  const place = places.find(p => p.name === name);
+  let place = places.find(p => p.name === name) || places.find(p => p.name.includes(name) || name.includes(p.name));
   if (!place) {
-    const loose = places.find(p => p.name.includes(name) || name.includes(p.name));
-    if (!loose) return;
-    return focusPlace(loose.name);
+    const query = getNavigationQuery(name) || name;
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, "_blank", "noopener");
+    return;
   }
-  activeType = place.type;
-  updateTabs();
-  renderPlaces();
+  if (!visiblePlaces().some(p => p.name === place.name)) {
+    activeType = place.type;
+    updateTabs();
+    renderPlaces();
+    drawVisibleMarkers({fit:false});
+  }
   setTimeout(() => {
     map.invalidateSize();
-    map.flyTo([place.lat, place.lng], place.city.includes("京都") || place.city.includes("奈良") ? 14 : 15, {duration:1.1});
+    map.flyTo([place.lat, place.lng], place.city.includes("京都") || place.city.includes("奈良") ? 14 : 15, {duration:1.0});
     markers[place.name].openPopup();
-    document.querySelectorAll(".place-card").forEach(card => card.classList.toggle("active", card.dataset.name === place.name));
+    highlightPlaceCard(place.name);
     document.getElementById("map").scrollIntoView({behavior:"smooth"});
   }, 80);
 };
+
+window.showDayOnMap = function(index) {
+  selectedMapDay = Math.max(0, Math.min(itinerary.length - 1, index));
+  activeType = "day";
+  document.getElementById("mapDaySelect").value = String(selectedMapDay);
+  updateTabs();
+  renderPlaces();
+  setTimeout(() => { map.invalidateSize(); drawVisibleMarkers(); document.getElementById("map").scrollIntoView({behavior:"smooth"}); }, 80);
+};
+
+const mapDaySelect = document.getElementById("mapDaySelect");
+mapDaySelect.innerHTML = itinerary.map((d, i) => `<option value="${i}">${d.date}・${d.city}｜${d.title}</option>`).join("");
+mapDaySelect.addEventListener("change", e => showDayOnMap(Number(e.target.value)));
 
 document.querySelectorAll(".map-tab").forEach(btn => {
   btn.addEventListener("click", () => {
     activeType = btn.dataset.type;
     updateTabs();
     renderPlaces();
+    drawVisibleMarkers();
   });
 });
 
+updateTabs();
 renderPlaces();
+setTimeout(() => { map.invalidateSize(); drawVisibleMarkers(); }, 120);
 
 
 const STORAGE_KEY = "familyJapanTrip2026Shopping";
