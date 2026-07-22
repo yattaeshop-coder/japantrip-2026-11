@@ -100,6 +100,30 @@
     .detail-note { margin-top: .35rem; border-left: 3px solid #DDB7B0; padding-left: .75rem; font-size: .88rem; line-height: 1.65; color: #78716c; }
     .leaflet-tooltip.trip-order { background:#2E332B; color:white; border:0; border-radius:999px; font-weight:900; box-shadow:none; }
     .leaflet-tooltip.trip-order::before { display:none; }
+    .food-map-marker {
+      width: 34px !important;
+      height: 34px !important;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 3px solid #fff;
+      background: #A9826B;
+      color: #fff;
+      font-size: 17px;
+      box-shadow: 0 6px 18px rgba(46,51,43,.28);
+    }
+    .spot-map-marker {
+      width: 32px !important;
+      height: 32px !important;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 3px solid #fff;
+      background: #78866B;
+      color: #fff;
+      font-size: 16px;
+      box-shadow: 0 6px 18px rgba(46,51,43,.25);
+    }
     .hide-scrollbar::-webkit-scrollbar { width: 7px; }
     .hide-scrollbar::-webkit-scrollbar-thumb { background: #c9c7bd; border-radius: 999px; }
 
@@ -266,7 +290,7 @@
     <div class="mb-10 text-center" data-aos="fade-up">
       <p class="font-semibold tracking-[.2em] text-matcha">MAP & FOOD</p>
       <h2 class="mt-3 text-3xl font-black sm:text-4xl">互動景點與美食地圖</h2>
-      <p class="mt-3 text-stone-500">手機為上下排列，桌機為左右分欄。餐廳可直接開啟 Google Maps 搜尋。</p>
+      <p class="mt-3 text-stone-500">選擇日期即可查看當天景點旁的 Tabelog 餐廳；可直接定位、Google 導航或開啟 Tabelog。</p>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[430px_1fr]">
@@ -621,14 +645,14 @@ const itineraryDetails = {
 };
 
 const dayPlaceNames = [
-  ["京都車站","Hotel SUI Kyoto Kiyomizu","先斗町","八坂神社"],
-  ["清水寺","二寧坂","三寧坂","錦市場","河原町","花見小路","祇園白川","WAGYU ICHINONE"],
-  ["春日大社","東大寺","奈良公園","東向商店街","三十三間堂"],
-  ["京都車站","東京車站","相鐵 Fresa Inn 銀座七丁目","銀座","UNIQLO 銀座旗艦店","GINZA SIX","KITTE 丸之內","唐吉訶德 銀座本館"],
-  ["築地場外市場","銀座","Sakura Marks Ginza","SHIBUYA SKY","六本木之丘","毛利庭園","東京鐵塔"],
-  ["雷門","仲見世商店街","淺草寺","東京晴空塔","東京ソラマチ","三村房","合羽橋道具街"],
-  ["阿美橫町","おでん to おさかな ますだ","おちょこ丼 Lunch","秋葉原","Bic Camera AKIBA"],
-  ["相鐵 Fresa Inn 銀座七丁目","銀座木村家","銀座"]
+  ["京都車站","本家 第一旭 たかばし本店","新福菜館 本店","Hotel SUI Kyoto Kiyomizu","先斗町","先斗町 魯ビン","八坂神社"],
+  ["清水寺","二寧坂","三寧坂","奥丹 清水","錦市場","京極かねよ","麺屋 猪一","河原町","花見小路","祇園白川","WAGYU ICHINONE"],
+  ["春日大社","東大寺","奈良公園","吉野本葛 天極堂 奈良本店","東向商店街","柿の葉すし本舗たなか なら本店","三十三間堂"],
+  ["京都車站","はしたて","東京車站","六厘舎 東京駅店","相鐵 Fresa Inn 銀座七丁目","銀座","銀座 篝 本店","UNIQLO 銀座旗艦店","GINZA SIX","KITTE 丸之內","唐吉訶德 銀座本館"],
+  ["築地場外市場","築地虎杖 魚河岸千両","銀座","五代目 花山うどん 銀座店","銀座 八五","Sakura Marks Ginza","SHIBUYA SKY","牛かつ もと村 渋谷店","六本木之丘","AFURI 六本木交差点","毛利庭園","東京鐵塔"],
+  ["雷門","仲見世商店街","淺草寺","並木藪蕎麦","駒形どぜう 本店","東京晴空塔","東京ソラマチ","遠藤利三郎商店","三村房","合羽橋道具街"],
+  ["阿美橫町","肉の大山","鴨to葱","おでん to おさかな ますだ","おちょこ丼 Lunch","秋葉原","麺処 ほん田 秋葉原本店","Bic Camera AKIBA"],
+  ["相鐵 Fresa Inn 銀座七丁目","銀座木村家","CENTRE THE BAKERY","銀座"]
 ];
 
 function getItineraryDetail(description) {
@@ -769,6 +793,31 @@ const places = [
   {name:"牛富屋", type:"food", city:"東京・澀谷", lat:35.6595, lng:139.7005, rating:"推薦", desc:"和牛小丼、牛舌與海鮮丼。"},
   {name:"TEBAPS", type:"food", city:"東京・吉祥寺", lat:35.7033, lng:139.5797, rating:"推薦", desc:"牛排與義大利麵。"},
 
+  /* Tabelog 沿途餐廳：評分與營業資訊會變動，請由卡片按鈕開啟 Tabelog 再確認 */
+  {name:"本家 第一旭 たかばし本店", type:"food", city:"京都車站", lat:34.9855, lng:135.7613, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"京都車站附近老字號拉麵，推薦特製拉麵與叉燒麵。", tabelog:"https://tabelog.com/keywords/本家第一旭/kyoto/kwdLst/"},
+  {name:"新福菜館 本店", type:"food", city:"京都車站", lat:34.9854, lng:135.7610, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"京都代表性黑湯拉麵，亦可搭配炒飯。", tabelog:"https://tabelog.com/keywords/新福菜館/kyoto/kwdLst/"},
+  {name:"先斗町 魯ビン", type:"food", city:"京都・先斗町", lat:35.0054, lng:135.7714, rating:"Tabelog", cuisine:"京料理・居酒屋", price:"¥5,000–7,999", desc:"鴨川旁町家餐廳，適合先斗町夜間散步時用餐。", tabelog:"https://tabelog.com/keywords/先斗町%20魯ビン/kyoto/kwdLst/"},
+  {name:"奥丹 清水", type:"food", city:"京都・清水寺", lat:34.9983, lng:135.7811, rating:"Tabelog", cuisine:"湯豆腐", price:"¥3,000–4,999", desc:"清水寺老街附近的京都湯豆腐料理，適合午餐。", tabelog:"https://tabelog.com/keywords/奥丹清水/kyoto/kwdLst/"},
+  {name:"京極かねよ", type:"food", city:"京都・新京極", lat:35.0071, lng:135.7673, rating:"Tabelog", cuisine:"鰻魚", price:"¥3,000–4,999", desc:"京都老字號鰻魚店，招牌為鋪上厚蛋的金絲丼。", tabelog:"https://tabelog.com/keywords/京極かねよ/kyoto/kwdLst/"},
+  {name:"麺屋 猪一", type:"food", city:"京都・河原町", lat:35.0009, lng:135.7658, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"以清澈出汁及白醬油系拉麵聞名，河原町散步可順路。", tabelog:"https://tabelog.com/keywords/麺屋猪一/kyoto/kwdLst/"},
+  {name:"吉野本葛 天極堂 奈良本店", type:"food", city:"奈良・東大寺", lat:34.6870, lng:135.8393, rating:"Tabelog", cuisine:"葛料理・甜點", price:"¥1,000–2,999", desc:"東大寺附近，可品嚐葛切、葛餅及葛料理。", tabelog:"https://tabelog.com/keywords/天極堂奈良本店/nara/kwdLst/"},
+  {name:"柿の葉すし本舗たなか なら本店", type:"food", city:"奈良・近鐵奈良", lat:34.6831, lng:135.8279, rating:"Tabelog", cuisine:"柿葉壽司", price:"¥1,000–1,999", desc:"奈良代表性柿葉壽司，適合午餐或購買外帶。", tabelog:"https://tabelog.com/keywords/柿の葉すし本舗たなか/nara/kwdLst/"},
+  {name:"はしたて", type:"food", city:"京都車站", lat:34.9856, lng:135.7585, rating:"Tabelog", cuisine:"丼飯・麵食", price:"¥2,000–2,999", desc:"位於京都車站內，適合搭新幹線前快速用餐。", tabelog:"https://tabelog.com/keywords/はしたて/kyoto/kwdLst/"},
+  {name:"六厘舎 東京駅店", type:"food", city:"東京車站", lat:35.6813, lng:139.7670, rating:"Tabelog", cuisine:"沾麵", price:"¥1,000–1,999", desc:"東京拉麵街熱門濃厚沾麵，常需排隊。", tabelog:"https://tabelog.com/keywords/六厘舎東京駅/tokyo/kwdLst/"},
+  {name:"銀座 篝 本店", type:"food", city:"東京・銀座", lat:35.6716, lng:139.7650, rating:"Tabelog", cuisine:"雞白湯拉麵", price:"¥1,000–1,999", desc:"銀座人氣雞白湯拉麵，可作為入住銀座後的晚餐選項。", tabelog:"https://tabelog.com/keywords/銀座篝/tokyo/kwdLst/"},
+  {name:"築地虎杖 魚河岸千両", type:"food", city:"東京・築地", lat:35.6658, lng:139.7703, rating:"Tabelog", cuisine:"海鮮丼", price:"¥2,000–3,999", desc:"築地場外市場海鮮丼選擇，推薦海鮮ひつまぶし。", tabelog:"https://tabelog.com/keywords/魚河岸千両/tokyo/kwdLst/"},
+  {name:"五代目 花山うどん 銀座店", type:"food", city:"東京・銀座", lat:35.6709, lng:139.7658, rating:"Tabelog", cuisine:"烏龍麵", price:"¥1,000–2,999", desc:"招牌為寬版鬼ひも川烏龍麵，午餐時段常排隊。", tabelog:"https://tabelog.com/keywords/五代目花山うどん銀座/tokyo/kwdLst/"},
+  {name:"銀座 八五", type:"food", city:"東京・銀座", lat:35.6699, lng:139.7720, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"銀座東側知名中華そば，建議事先確認現場候位方式。", tabelog:"https://tabelog.com/keywords/銀座八五/tokyo/kwdLst/"},
+  {name:"牛かつ もと村 渋谷店", type:"food", city:"東京・澀谷", lat:35.6581, lng:139.7017, rating:"Tabelog", cuisine:"炸牛排", price:"¥2,000–2,999", desc:"SHIBUYA SKY 周邊可自行烤熟度的炸牛排套餐。", tabelog:"https://tabelog.com/keywords/牛かつもと村渋谷/tokyo/kwdLst/"},
+  {name:"AFURI 六本木交差点", type:"food", city:"東京・六本木", lat:35.6635, lng:139.7310, rating:"Tabelog", cuisine:"柚子鹽拉麵", price:"¥1,000–1,999", desc:"六本木夜景行程後可吃的清爽柚子鹽拉麵。", tabelog:"https://tabelog.com/keywords/AFURI六本木/tokyo/kwdLst/"},
+  {name:"並木藪蕎麦", type:"food", city:"東京・淺草", lat:35.7098, lng:139.7954, rating:"Tabelog", cuisine:"蕎麥麵", price:"¥1,000–1,999", desc:"雷門附近老字號江戶前蕎麥麵店。", tabelog:"https://tabelog.com/keywords/並木藪蕎麦/tokyo/kwdLst/"},
+  {name:"駒形どぜう 本店", type:"food", city:"東京・淺草", lat:35.7074, lng:139.7952, rating:"Tabelog", cuisine:"泥鰍鍋", price:"¥3,000–4,999", desc:"淺草傳統江戶料理，可體驗特色泥鰍鍋。", tabelog:"https://tabelog.com/keywords/駒形どぜう/tokyo/kwdLst/"},
+  {name:"遠藤利三郎商店", type:"food", city:"東京・押上", lat:35.7105, lng:139.8146, rating:"Tabelog", cuisine:"法式小酒館", price:"¥5,000–7,999", desc:"晴空塔與押上附近的葡萄酒餐廳，適合晚餐。", tabelog:"https://tabelog.com/keywords/遠藤利三郎商店/tokyo/kwdLst/"},
+  {name:"肉の大山", type:"food", city:"東京・上野", lat:35.7107, lng:139.7747, rating:"Tabelog", cuisine:"炸肉餅・洋食", price:"¥1,000–1,999", desc:"阿美橫町附近，可吃炸肉餅、可樂餅或店內套餐。", tabelog:"https://tabelog.com/keywords/肉の大山/tokyo/kwdLst/"},
+  {name:"鴨to葱", type:"food", city:"東京・御徒町", lat:35.7083, lng:139.7749, rating:"Tabelog", cuisine:"鴨肉拉麵", price:"¥1,000–1,999", desc:"阿美橫町旁人氣鴨肉拉麵，適合購物途中用餐。", tabelog:"https://tabelog.com/keywords/鴨to葱/tokyo/kwdLst/"},
+  {name:"麺処 ほん田 秋葉原本店", type:"food", city:"東京・秋葉原", lat:35.6991, lng:139.7745, rating:"Tabelog", cuisine:"拉麵・沾麵", price:"¥1,000–1,999", desc:"秋葉原車站附近的人氣拉麵與沾麵。", tabelog:"https://tabelog.com/keywords/麺処ほん田秋葉原/tokyo/kwdLst/"},
+  {name:"CENTRE THE BAKERY", type:"food", city:"東京・銀座一丁目", lat:35.6750, lng:139.7670, rating:"Tabelog", cuisine:"吐司・三明治", price:"¥1,000–2,999", desc:"最後一天銀座早餐選擇，主打吐司與三明治。", tabelog:"https://tabelog.com/keywords/CENTRE%20THE%20BAKERY/tokyo/kwdLst/"},
+
   {name:"UNIQLO 銀座旗艦店", type:"shopping", city:"銀座", lat:35.6702, lng:139.7639, rating:"購物", desc:"大型旗艦店，服飾採買。"},
   {name:"GINZA SIX", type:"shopping", city:"銀座", lat:35.6696, lng:139.7644, rating:"購物", desc:"百貨、精品與屋頂花園。"},
   {name:"唐吉訶德 銀座本館", type:"shopping", city:"銀座", lat:35.6679, lng:139.7640, rating:"24H", desc:"零食、藥妝與生活用品。"},
@@ -786,20 +835,33 @@ const markerLayer = L.layerGroup().addTo(map);
 const routeLayer = L.layerGroup().addTo(map);
 const markers = {};
 
+function tabelogUrl(place) {
+  return place.tabelog || `https://tabelog.com/rstLst/?vs=1&sa=&sk=${encodeURIComponent(place.name)}`;
+}
+
 function popupHtml(place) {
-  return `<div style="min-width:220px">
-    <strong style="font-size:16px">${place.name}</strong><br>
+  return `<div style="min-width:230px">
+    <strong style="font-size:16px">${place.type === "food" ? "🍜 " : ""}${place.name}</strong><br>
     <span>${place.city}・${place.rating}</span>
+    ${place.type === "food" ? `<p style="margin:7px 0 0;font-weight:800;color:#78866B">${place.cuisine || "餐廳"}${place.price ? `・${place.price}` : ""}</p>` : ""}
     <p style="margin:8px 0;line-height:1.55">${place.desc}</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <a target="_blank" rel="noopener" style="font-weight:800;color:#78866B" href="${googleDirectionsUrl(place.name + ' ' + place.city)}">🧭 Google 導覽</a>
       <a target="_blank" rel="noopener" style="font-weight:800;color:#A9826B" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.city)}">🔎 Google 地圖</a>
+      ${place.type === "food" ? `<a target="_blank" rel="noopener" style="font-weight:800;color:#b45309" href="${tabelogUrl(place)}">⭐ Tabelog</a>` : ""}
     </div>
   </div>`;
 }
 
 places.forEach(place => {
-  const marker = L.marker([place.lat, place.lng]).bindPopup(popupHtml(place));
+  const markerIcon = L.divIcon({
+    className: "",
+    html: `<div class="${place.type === "food" ? "food-map-marker" : "spot-map-marker"}">${place.type === "food" ? "🍜" : place.type === "shopping" ? "🛍️" : "📍"}</div>`,
+    iconSize: [34,34],
+    iconAnchor: [17,17],
+    popupAnchor: [0,-15]
+  });
+  const marker = L.marker([place.lat, place.lng], {icon: markerIcon}).bindPopup(popupHtml(place));
   marker.on("click", () => highlightPlaceCard(place.name));
   markers[place.name] = marker;
 });
@@ -843,7 +905,7 @@ function drawVisibleMarkers({fit=true, openName=""} = {}) {
 function renderPlaces(keyword = "") {
   const list = document.getElementById("placeList");
   const q = keyword.toLowerCase();
-  const filtered = visiblePlaces().filter(p => `${p.name}${p.city}${p.desc}`.toLowerCase().includes(q));
+  const filtered = visiblePlaces().filter(p => `${p.name}${p.city}${p.desc}${p.cuisine || ''}${p.price || ''}`.toLowerCase().includes(q));
 
   list.innerHTML = filtered.map((p, index) => `
     <article data-name="${p.name}" class="place-card w-full rounded-2xl border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow">
@@ -856,12 +918,14 @@ function renderPlaces(keyword = "") {
           </div>
           <span class="whitespace-nowrap rounded-full bg-mist px-2.5 py-1 text-xs font-bold">${p.rating}</span>
         </div>
+        ${p.type === "food" ? `<div class="mt-2 flex flex-wrap gap-2 text-xs font-bold"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">${p.cuisine || "餐廳"}</span>${p.price ? `<span class="rounded-full bg-mist px-2.5 py-1 text-stone-600">${p.price}</span>` : ""}</div>` : ""}
         <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
       </button>
       <div class="mt-3 flex flex-wrap gap-2">
         <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="rounded-xl border border-stone-200 px-3 py-2 text-xs font-bold hover:bg-mist">📍 網頁地圖定位</button>
         <a target="_blank" rel="noopener" href="${googleDirectionsUrl(p.name + ' ' + p.city)}" class="rounded-xl bg-matcha px-3 py-2 text-xs font-bold text-white hover:bg-ink">🧭 Google 導覽</a>
         <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + p.city)}" class="rounded-xl bg-clay px-3 py-2 text-xs font-bold text-white hover:bg-ink">🔎 Google 地圖</a>
+        ${p.type === "food" ? `<a target="_blank" rel="noopener" href="${tabelogUrl(p)}" class="rounded-xl bg-amber-600 px-3 py-2 text-xs font-bold text-white hover:bg-ink">⭐ Tabelog</a>` : ""}
       </div>
     </article>
   `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">這個分類目前沒有可顯示的資料。</p>`;
