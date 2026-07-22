@@ -82,8 +82,6 @@
       border: 4px solid #78866B;
       z-index: 1;
     }
-    .module-card .module-icon { transition: transform .25s ease; }
-    .module-card:hover .module-icon { transform: scale(1.12) rotate(-3deg); }
     #travelMap { min-height: 560px; }
     .place-card.active {
       border-color: #78866B;
@@ -228,7 +226,6 @@
         <a href="#map" class="text-sm font-semibold hover:text-matcha">景點美食</a>
         <a href="#transport" class="text-sm font-semibold hover:text-matcha">航班住宿</a>
         <a href="#shopping" class="text-sm font-semibold hover:text-matcha">購物清單</a>
-        <a href="#tools" class="text-sm font-semibold hover:text-matcha">實用工具</a>
       </div>
 
       <button id="menuButton" class="rounded-xl border border-white/70 bg-white/80 px-3 py-2 lg:hidden" aria-label="開啟導覽列">
@@ -242,7 +239,6 @@
         <a href="#map" class="rounded-xl px-3 py-2 hover:bg-white">景點美食</a>
         <a href="#transport" class="rounded-xl px-3 py-2 hover:bg-white">航班住宿</a>
         <a href="#shopping" class="rounded-xl px-3 py-2 hover:bg-white">購物清單</a>
-        <a href="#tools" class="rounded-xl px-3 py-2 hover:bg-white">實用工具</a>
       </div>
     </div>
   </nav>
@@ -382,25 +378,6 @@
       </div>
 
       <div id="shoppingList" class="mt-5 space-y-3"></div>
-    </div>
-  </section>
-
-  <section id="tools" class="bg-white/55 py-20">
-    <div class="mx-auto max-w-7xl px-5">
-      <div class="mb-10 text-center">
-        <p class="font-semibold tracking-[.2em] text-matcha">USEFUL TOOLS</p>
-        <h2 class="mt-3 text-3xl font-black sm:text-4xl">日本旅遊實用工具</h2>
-      </div>
-
-      <div class="mobile-card-row grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-        <a target="_blank" href="https://tabelog.com/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🍜</div><p class="mt-3 font-bold">Tabelog</p></a>
-        <a target="_blank" href="https://papago.naver.com/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🈳</div><p class="mt-3 font-bold">Papago</p></a>
-        <a target="_blank" href="https://tenki.jp/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🌦️</div><p class="mt-3 font-bold">Tenki</p></a>
-        <a target="_blank" href="https://smart-ex.jp/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🚄</div><p class="mt-3 font-bold">SmartEX</p></a>
-        <a target="_blank" href="https://world.jorudan.co.jp/mln/zh-tw/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🚇</div><p class="mt-3 font-bold">乘換案內</p></a>
-        <a target="_blank" href="https://go.goinc.jp/" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🚕</div><p class="mt-3 font-bold">GO Taxi</p></a>
-        <a target="_blank" href="https://www.google.com/maps" class="card-hover glass rounded-2xl p-5 text-center shadow-soft"><div class="text-3xl">🗺️</div><p class="mt-3 font-bold">Google Maps</p></a>
-      </div>
     </div>
   </section>
 </main>
