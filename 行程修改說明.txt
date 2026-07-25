@@ -1,0 +1,34 @@
+Family Japan Trip 2026｜行程修改說明
+
+網站現在拆成：
+1. index.html：網站版型、地圖、美食、購物等功能
+2. itinerary.js：11/02～11/09 每日行程
+
+【平常要改行程】
+直接開啟 itinerary.js。
+
+例如：
+["08:00", "清水寺參拜，避開人潮"],
+
+可改成：
+["09:00", "清水寺參拜"],
+["11:00", "前往二寧坂散步"],
+
+每一筆格式都是：
+["時間", "行程內容"],
+
+也可以修改：
+day       DAY 1
+date      11/02
+city      京都
+title     當天標題
+image     當天圖片網址
+highlights 重點標籤
+times     當天時間與行程
+map       當天主要地圖位置
+
+【GitHub】
+index.html、itinerary.js 必須放在同一個資料夾。
+修改 itinerary.js 後 Commit changes，重新整理 GitHub Pages 即可看到更新。
+
+注意：最後一筆行程後面有沒有逗號都可以；文字請保留在雙引號內。
