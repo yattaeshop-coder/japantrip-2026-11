@@ -230,7 +230,6 @@
       .day-image { min-height: 190px; }
     }
   </style>
-  <script src="itinerary.js"></script>
 </head>
 
 <body class="text-ink antialiased">
@@ -820,56 +819,33 @@ const places = [
   {name:"麺処 ほん田 秋葉原本店", type:"food", city:"東京・秋葉原", lat:35.6991, lng:139.7745, rating:"Tabelog", cuisine:"拉麵・沾麵", price:"¥1,000–1,999", desc:"秋葉原車站附近的人氣拉麵與沾麵。", tabelog:"https://tabelog.com/keywords/麺処ほん田秋葉原/tokyo/kwdLst/"},
   {name:"CENTRE THE BAKERY", type:"food", city:"東京・銀座一丁目", lat:35.6750, lng:139.7670, rating:"Tabelog", cuisine:"吐司・三明治", price:"¥1,000–2,999", desc:"最後一天銀座早餐選擇，主打吐司與三明治。", tabelog:"https://tabelog.com/keywords/CENTRE%20THE%20BAKERY/tokyo/kwdLst/"},
 
-
-  /* 2026-07-26：由 restaurants-instructions-v2 文字檔整合的美食地圖餐廳。
-     不加入每日行程站序；Marker 為區域定位，Google 地圖按鈕用店名搜尋精確位置。 */
-  {name:"居酒屋 三村", type:"food", city:"東京・淺草", lat:35.712823, lng:139.795478, rating:"文字檔", cuisine:"居酒屋・烤魚", desc:"圖片推薦為淺草美食。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"六本木拉麵店（店名待核對）", type:"food", city:"東京・六本木", lat:35.663445, lng:139.731479, rating:"文字檔", cuisine:"拉麵", desc:"原始圖片未清楚顯示完整店名。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"鮨のだり半", type:"food", city:"東京・代代木", lat:35.683211, lng:139.701038, rating:"文字檔", cuisine:"壽司・海鮮・居酒屋", desc:"JR代代木站附近海鮮料理。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"炉端 小寅 新宿店", type:"food", city:"東京・新宿", lat:35.692804, lng:139.70246, rating:"文字檔", cuisine:"爐端燒・居酒屋", desc:"新宿站周邊爐端燒。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"東上野居酒屋（店名待核對）", type:"food", city:"東京・上野", lat:35.710687, lng:139.774064, rating:"文字檔", cuisine:"居酒屋・內臟料理", desc:"原始圖片未清楚顯示完整店名。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"牛舌日 淺草橋分店", type:"food", city:"東京・淺草橋", lat:35.697663, lng:139.784892, rating:"文字檔", cuisine:"牛舌料理", desc:"淺草橋牛舌料理。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"伊豆榮 本店", type:"food", city:"東京・上野", lat:35.710032, lng:139.774004, rating:"文字檔", cuisine:"鰻魚飯", desc:"江戶時代老字號、日式庭園氛圍。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"牛かつ もと村 上野店", type:"food", city:"東京・上野", lat:35.711257, lng:139.774642, rating:"文字檔", cuisine:"炸牛排", desc:"外酥內嫩，可自行加熱熟度。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"らーめん 鴨to葱 上野御徒町本店", type:"food", city:"東京・上野", lat:35.71124, lng:139.773409, rating:"文字檔", cuisine:"鴨湯拉麵", desc:"上野御徒町人氣鴨湯拉麵。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"月島もんじゃ 玉屋 上野店", type:"food", city:"東京・上野", lat:35.710489, lng:139.774875, rating:"文字檔", cuisine:"文字燒", desc:"東京下町代表美食。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"みはし 上野本店", type:"food", city:"東京・上野", lat:35.709669, lng:139.774962, rating:"文字檔", cuisine:"日式甘味", desc:"老字號甘味店、あんみつ。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"上野藪そば", type:"food", city:"東京・上野", lat:35.710023, lng:139.775419, rating:"文字檔", cuisine:"蕎麥麵", desc:"老東京風格蕎麥麵。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"上野大統領", type:"food", city:"東京・上野", lat:35.710955, lng:139.774849, rating:"文字檔", cuisine:"居酒屋・串燒", desc:"昭和氛圍、燒鳥與居酒屋料理。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"韻松亭 Inshotei", type:"food", city:"東京・上野", lat:35.710584, lng:139.773978, rating:"文字檔", cuisine:"日式料理・懷石", desc:"傳統料理亭與日式庭園。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"天寿々 Tensuzu", type:"food", city:"東京・上野", lat:35.710058, lng:139.773719, rating:"文字檔", cuisine:"天婦羅", desc:"江戶前風格天婦羅。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"井泉 本店", type:"food", city:"東京・上野", lat:35.710964, lng:139.775384, rating:"文字檔", cuisine:"炸豬排", desc:"厚切炸豬排、昭和風格。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"喫茶YOU", type:"food", city:"東京・銀座", lat:35.670978, lng:139.765306, rating:"文字檔", cuisine:"蛋包飯・喫茶店", desc:"東銀座滑嫩蛋包飯名店。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"Tonkatsu Hasegawa 東銀座店", type:"food", city:"東京・銀座", lat:35.671487, lng:139.765902, rating:"文字檔", cuisine:"炸豬排", desc:"厚切炸豬排。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"麺処 銀笹", type:"food", city:"東京・銀座", lat:35.671841, lng:139.764262, rating:"文字檔", cuisine:"鹽味拉麵・鯛魚飯", desc:"鹽味拉麵搭配鯛魚飯。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"銀座 篝", type:"food", city:"東京・銀座", lat:35.670573, lng:139.765401, rating:"文字檔", cuisine:"雞白湯拉麵", desc:"濃郁雞白湯。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"煉瓦亭", type:"food", city:"東京・銀座", lat:35.669969, lng:139.765746, rating:"文字檔", cuisine:"洋食・蛋包飯", desc:"1895年創業經典洋食老店。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"銀之塔", type:"food", city:"東京・銀座", lat:35.671764, lng:139.765522, rating:"文字檔", cuisine:"燉菜", desc:"銀座經典燉菜老店。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"HIRAGI 銀座本店", type:"food", city:"東京・銀座", lat:35.671332, lng:139.76516, rating:"文字檔", cuisine:"鯛魚燒・刨冰", desc:"現烤鯛魚燒與刨冰，店名拼寫建議再核對。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"竹葉亭 本店", type:"food", city:"東京・銀座", lat:35.66996, lng:139.765824, rating:"文字檔", cuisine:"江戶前鰻魚", desc:"江戶末期創立老字號鰻魚店。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"銀座 木村家", type:"food", city:"東京・銀座", lat:35.670167, lng:139.764659, rating:"文字檔", cuisine:"麵包・紅豆麵包", desc:"酒種紅豆麵包老店。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"銀座 朧月", type:"food", city:"東京・銀座", lat:35.671643, lng:139.764159, rating:"文字檔", cuisine:"沾麵", desc:"濃郁魚介沾麵。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"京沾麵 鶴亀 本店", type:"food", city:"京都・河原町", lat:35.003486, lng:135.76954, rating:"文字檔", cuisine:"沾麵", desc:"魚介醬油、京味噌風格。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"天丼まきの 京都寺町店", type:"food", city:"京都・河原町", lat:35.004496, lng:135.768125, rating:"文字檔", cuisine:"天婦羅丼", desc:"現炸天婦羅。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"肉料理 荒川", type:"food", city:"京都・河原町", lat:35.005203, lng:135.769039, rating:"文字檔", cuisine:"燒肉・肉料理", desc:"河原町肉料理。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"おにまる 京都四条河原町店", type:"food", city:"京都・河原町", lat:35.005522, lng:135.76866, rating:"文字檔", cuisine:"炭烤飯糰", desc:"四條河原町炭烤飯糰。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"かつくら 四条寺町店", type:"food", city:"京都・河原町", lat:35.00403, lng:135.769315, rating:"文字檔", cuisine:"炸豬排", desc:"京都炸豬排。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"koé Donuts Kyoto", type:"food", city:"京都・河原町", lat:35.005384, lng:135.767616, rating:"文字檔", cuisine:"甜甜圈・甜點", desc:"新京極／河原町甜點。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"名代おめん 四条先斗町店", type:"food", city:"京都・河原町", lat:35.004573, lng:135.768522, rating:"文字檔", cuisine:"京都烏龍麵", desc:"先斗町附近京都烏龍麵。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"佛蘭西屋", type:"food", city:"京都・河原町", lat:35.004927, lng:135.768539, rating:"文字檔", cuisine:"喫茶店・咖啡・甜點", desc:"復古咖啡店；正式分店建議再核對。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"和栗専門 紗織", type:"food", city:"京都・河原町", lat:35.003486, lng:135.768987, rating:"文字檔", cuisine:"和栗甜點・蒙布朗", desc:"現擠和栗蒙布朗。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"もりもり寿し 四条河原町店", type:"food", city:"京都・河原町", lat:35.003598, lng:135.76822, rating:"文字檔", cuisine:"迴轉壽司", desc:"北陸迴轉壽司。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"旭川 Gyoza 中島餃子", type:"food", city:"京都・祇園", lat:35.004857, lng:135.774649, rating:"文字檔", cuisine:"餃子", desc:"祇園四條站周邊餃子。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"Taisho Romance Cafe & Studio", type:"food", city:"京都・河原町", lat:35.003417, lng:135.768815, rating:"文字檔", cuisine:"咖啡・洋食", desc:"大正時代風格洋食與復古喫茶。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"Menya Edition Honten", type:"food", city:"京都・東山", lat:34.999471, lng:135.779789, rating:"文字檔", cuisine:"拉麵", desc:"豚旨味系湯頭；正式日文店名與地址建議再核對。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"小梅澀谷", type:"food", city:"東京・澀谷", lat:35.658038, lng:139.701056, rating:"文字檔", cuisine:"日式料理・小鉢", desc:"澀谷宮益坂口周邊；正式日文店名與地址建議再核對。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-  {name:"THE BELCOMO", type:"food", city:"東京・青山", lat:35.671522, lng:139.718056, rating:"文字檔", cuisine:"餐廳・Cafe・早餐", desc:"THE AOYAMA GRAND HOTEL 4F，名物 Pancake。；Marker 依所屬區域配置，精確位置請按 Google 地圖／導航確認。"},
-
-  {name:"UNIQLO 銀座旗艦店", type:"shopping", city:"銀座", lat:35.6702, lng:139.7639, rating:"購物", desc:"大型旗艦店，服飾採買。"},
-  {name:"GINZA SIX", type:"shopping", city:"銀座", lat:35.6696, lng:139.7644, rating:"購物", desc:"百貨、精品與屋頂花園。"},
-  {name:"唐吉訶德 銀座本館", type:"shopping", city:"銀座", lat:35.6679, lng:139.7640, rating:"24H", desc:"零食、藥妝與生活用品。"},
-  {name:"Bic Camera AKIBA", type:"shopping", city:"秋葉原", lat:35.6983, lng:139.7735, rating:"購物", desc:"家電、3C、相機與免稅商品。"},
-  {name:"Tokyo Solamachi", type:"shopping", city:"晴空塔", lat:35.7100, lng:139.8107, rating:"購物", desc:"晴空塔大型購物商場。"}
+  /* 東京購物地圖：獨立購物圖層，不改動每日行程 */
+  {name:"UNIQLO 銀座旗艦店", type:"shopping", city:"東京・銀座", lat:35.6702, lng:139.7639, rating:"服飾", desc:"大型旗艦店，適合集中採買 UNIQLO 服飾與日本限定商品。"},
+  {name:"GU 銀座店", type:"shopping", city:"東京・銀座", lat:35.6703, lng:139.7640, rating:"服飾", desc:"平價流行服飾，與 UNIQLO 銀座商圈可一起逛。"},
+  {name:"GINZA SIX", type:"shopping", city:"東京・銀座", lat:35.6696, lng:139.7644, rating:"百貨", desc:"銀座大型複合商場，精品、生活選物、餐飲與屋頂空間集中。"},
+  {name:"銀座三越", type:"shopping", city:"東京・銀座", lat:35.6715, lng:139.7651, rating:"百貨", desc:"銀座代表百貨，適合精品、化妝品、食品與伴手禮採買。"},
+  {name:"松屋銀座", type:"shopping", city:"東京・銀座", lat:35.6721, lng:139.7661, rating:"百貨", desc:"銀座老牌百貨，服飾、美妝、生活用品與地下食品區齊全。"},
+  {name:"無印良品 銀座", type:"shopping", city:"東京・銀座", lat:35.6741, lng:139.7667, rating:"生活", desc:"大型 MUJI 店舖，生活用品、文具、服飾與食品選擇完整。"},
+  {name:"銀座 伊東屋 本店", type:"shopping", city:"東京・銀座", lat:35.6726, lng:139.7680, rating:"文具", desc:"銀座知名文具專門店，適合購買筆記本、鋼筆、紙品與設計文具。"},
+  {name:"Bic Camera 有樂町店", type:"shopping", city:"東京・有樂町", lat:35.6752, lng:139.7630, rating:"3C", desc:"大型家電量販店，家電、3C、相機與免稅商品選擇多。"},
+  {name:"唐吉訶德 銀座本館", type:"shopping", city:"東京・銀座", lat:35.6679, lng:139.7640, rating:"24H", desc:"零食、藥妝、生活用品與伴手禮，適合回飯店前補貨。"},
+  {name:"東京站一番街", type:"shopping", city:"東京・東京車站", lat:35.6811, lng:139.7681, rating:"伴手禮", desc:"角色商店、東京拉麵街與伴手禮集中，可搭配東京車站行程。"},
+  {name:"GRANSTA 東京", type:"shopping", city:"東京・東京車站", lat:35.6813, lng:139.7668, rating:"伴手禮", desc:"東京站內大型商業區，甜點、便當、伴手禮與限定商品豐富。"},
+  {name:"KITTE 丸之內", type:"shopping", city:"東京・丸之內", lat:35.6796, lng:139.7648, rating:"商場", desc:"東京車站旁複合商場，可逛選物店並順遊屋頂庭園。"},
+  {name:"阿美橫町", type:"shopping", city:"東京・上野", lat:35.7101, lng:139.7744, rating:"藥妝", desc:"藥妝、零食、伴手禮、服飾與行李箱集中，適合大量採買。"},
+  {name:"二木菓子 第一營業所", type:"shopping", city:"東京・上野", lat:35.7096, lng:139.7736, rating:"零食", desc:"阿美橫町人氣零食店，適合一次採買日本餅乾、糖果與伴手禮。"},
+  {name:"松坂屋 上野店", type:"shopping", city:"東京・上野", lat:35.7075, lng:139.7732, rating:"百貨", desc:"御徒町站旁百貨，食品、美妝與服飾採買方便。"},
+  {name:"Bic Camera AKIBA", type:"shopping", city:"東京・秋葉原", lat:35.6983, lng:139.7735, rating:"3C", desc:"家電、3C、相機、玩具與免稅商品集中。"},
+  {name:"秋葉原 Radio 會館", type:"shopping", city:"東京・秋葉原", lat:35.6979, lng:139.7715, rating:"動漫", desc:"模型、卡牌、動漫周邊與收藏商品集中，適合動漫採買。"},
+  {name:"SHIBUYA PARCO", type:"shopping", city:"東京・澀谷", lat:35.6620, lng:139.6987, rating:"潮流", desc:"潮流品牌、Nintendo TOKYO、動漫與設計選物集中。"},
+  {name:"SHIBUYA SCRAMBLE SQUARE", type:"shopping", city:"東京・澀谷", lat:35.6585, lng:139.7020, rating:"百貨", desc:"澀谷站直結商場，可與 SHIBUYA SKY 同區安排。"},
+  {name:"澀谷 Loft", type:"shopping", city:"東京・澀谷", lat:35.6608, lng:139.6999, rating:"雜貨", desc:"文具、美妝、旅行用品與生活雜貨選擇豐富。"},
+  {name:"Hands 澀谷店", type:"shopping", city:"東京・澀谷", lat:35.6615, lng:139.6979, rating:"生活", desc:"生活用品、DIY、文具、旅行小物與日本特色商品齊全。"},
+  {name:"MIYASHITA PARK", type:"shopping", city:"東京・澀谷", lat:35.6617, lng:139.7015, rating:"潮流", desc:"潮流商店、餐飲與屋頂公園結合的澀谷複合設施。"},
+  {name:"伊勢丹 新宿店", type:"shopping", city:"東京・新宿", lat:35.6916, lng:139.7046, rating:"百貨", desc:"東京代表性百貨之一，精品、美妝、服飾與食品館完整。"},
+  {name:"NEWoMan 新宿", type:"shopping", city:"東京・新宿", lat:35.6886, lng:139.7005, rating:"商場", desc:"新宿站南口商場，時尚、甜點、餐飲與伴手禮集中。"},
+  {name:"LUMINE EST 新宿", type:"shopping", city:"東京・新宿", lat:35.6910, lng:139.7017, rating:"服飾", desc:"年輕流行服飾、美妝與餐飲品牌集中。"},
+  {name:"Tokyo Solamachi", type:"shopping", city:"東京・晴空塔", lat:35.7100, lng:139.8107, rating:"商場", desc:"晴空塔下方大型購物商場，角色商店、伴手禮、餐廳與生活品牌齊全。"}
 ];
 
 const map = L.map("travelMap", { zoomControl: true }).setView([35.4, 137.6], 6);
@@ -992,7 +968,7 @@ function drawVisibleMarkers({fit=true, openName=""} = {}) {
       `${itinerary[selectedMapDay].date} ${itinerary[selectedMapDay].city}：${routePlaces.length} 個行程站點依序編號，另顯示 ${foodCount} 家附近餐廳作為用餐參考；餐廳不列入第幾站。`;
   } else {
     document.getElementById("mapStatus").textContent =
-      `目前顯示 ${shown.length} 個${activeType === "spot" ? "景點" : activeType === "food" ? "3.5+ 精選餐廳" : "購物點"}。左右滑動卡片即可讓地圖同步定位並開啟介紹。`;
+      `目前顯示 ${shown.length} 個${activeType === "spot" ? "景點" : activeType === "food" ? "3.5+ 精選餐廳" : "東京購物點"}。左右滑動卡片即可讓地圖同步定位並開啟介紹。`;
   }
 }
 
