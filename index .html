@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6f7f62">
+  <meta name="description" content="Family Japan Trip 2026：京都、奈良、東京家庭旅遊行程、地圖、美食、住宿、航班與購物清單。">
+  <title>Family Japan Trip 2026</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            matcha: "#78866B",
+            sage: "#A9B29D",
+            sakura: "#DDB7B0",
+            cream: "#F7F3EC",
+            ink: "#2E332B",
+            clay: "#A9826B",
+            mist: "#ECEBE4"
+          },
+          boxShadow: {
+            soft: "0 18px 50px rgba(63,72,55,.11)",
+            lift: "0 24px 60px rgba(63,72,55,.17)"
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at 10% 10%, rgba(221,183,176,.22), transparent 24rem),
+        radial-gradient(circle at 90% 30%, rgba(169,178,157,.18), transparent 28rem),
+        #F7F3EC;
+    }
+    .glass {
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(255,255,255,.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .hero-overlay {
+      background: linear-gradient(110deg, rgba(26,31,26,.78) 0%, rgba(26,31,26,.45) 48%, rgba(26,31,26,.18) 100%);
+    }
+    .card-hover {
+      transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 24px 60px rgba(63,72,55,.17);
+    }
+    .day-image { min-height: 230px; }
+    .timeline-line::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      left: 9px;
+      width: 2px;
+      background: linear-gradient(#78866B, #DDB7B0);
+    }
+    .timeline-item { position: relative; padding-left: 34px; }
+    .timeline-dot {
+      position: absolute;
+      left: 2px;
+      top: 7px;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: #fff;
+      border: 4px solid #78866B;
+      z-index: 1;
+    }
+    #travelMap { min-height: 560px; }
+    .place-card.active {
+      border-color: #78866B;
+      background: #eff3eb;
+      box-shadow: 0 14px 34px rgba(63,72,55,.13);
+    }
+    .leaflet-popup-content-wrapper { border-radius: 18px; }
+    .leaflet-popup-content { margin: 14px 16px; }
+    .map-control-select {
+      width: 100%; border: 1px solid #e7e5e4; border-radius: .85rem;
+      background: white; padding: .7rem .85rem; font-weight: 800; color: #44403c;
+    }
+    .map-status { border-radius: .85rem; background: #eff3eb; padding: .7rem .85rem; font-size: .8rem; color: #5f7054; }
+    .detail-note { margin-top: .35rem; border-left: 3px solid #DDB7B0; padding-left: .75rem; font-size: .88rem; line-height: 1.65; color: #78716c; }
+    .leaflet-tooltip.trip-order { background:#2E332B; color:white; border:0; border-radius:999px; font-weight:900; box-shadow:none; }
+    .leaflet-tooltip.trip-order::before { display:none; }
+    .food-map-marker {
+      width: 34px !important;
+      height: 34px !important;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 3px solid #fff;
+      background: #A9826B;
+      color: #fff;
+      font-size: 17px;
+      box-shadow: 0 6px 18px rgba(46,51,43,.28);
+    }
+    .spot-map-marker {
+      width: 32px !important;
+      height: 32px !important;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 3px solid #fff;
+      background: #78866B;
+      color: #fff;
+      font-size: 16px;
+      box-shadow: 0 6px 18px rgba(46,51,43,.25);
+    }
+    .hide-scrollbar::-webkit-scrollbar { width: 7px; }
+    .hide-scrollbar::-webkit-scrollbar-thumb { background: #c9c7bd; border-radius: 999px; }
+
+    /* 餐廳與景點卡片：桌機、手機皆可橫向滑動 */
+    #placeList {
+      display: flex;
+      width: 100%;
+      max-height: none !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      overscroll-behavior-inline: contain;
+      gap: .8rem;
+      padding: .15rem .1rem .9rem;
+      scrollbar-width: none;
+    }
+    #placeList::-webkit-scrollbar { display: none; }
+    #placeList > * {
+      flex: 0 0 min(360px, 88%);
+      max-width: none;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+    .place-card.active { transform: translateY(-3px); }
+    .rating-qualified { background: #fff7ed; color: #b45309; }
+
+    /* 手機卡片橫向滑動 */
+    .mobile-card-row {
+      display: grid;
+      gap: 1rem;
+    }
+    .google-nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      margin-top: .45rem;
+      border-radius: .75rem;
+      background: #eff3eb;
+      padding: .48rem .75rem;
+      color: #5f7054;
+      font-size: .78rem;
+      font-weight: 800;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .google-nav-link:hover { transform: translateY(-1px); background: #e3eadf; }
+    .snap-card { scroll-snap-align: start; }
+    @media (max-width: 767px) {
+      body { overflow-x: hidden; }
+      section { scroll-margin-top: 88px; }
+      #itinerary, #map, #shopping { padding-left: 12px !important; padding-right: 12px !important; }
+      #itinerary > .glass { padding: 12px !important; border-radius: 20px; }
+      #itineraryPanel article { border-radius: 20px; }
+      #itineraryPanel .day-image { min-height: 220px; }
+      #itineraryPanel .day-image + div { padding: 18px 15px !important; }
+      .timeline-item { padding-left: 28px; }
+      .timeline-line::before { left: 7px; }
+      .timeline-dot { left: 0; }
+      .detail-note { font-size: .84rem; padding-left: .6rem; }
+      .google-nav-link { width: 100%; justify-content: center; padding: .7rem .8rem; font-size: .84rem; }
+
+      .mobile-card-row {
+        display: flex !important;
+        width: 100%;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        overscroll-behavior-inline: contain;
+        gap: .8rem;
+        padding: .15rem 0 1rem;
+        scrollbar-width: none;
+      }
+      .mobile-card-row::-webkit-scrollbar { display: none; }
+      .mobile-card-row > * {
+        flex: 0 0 calc(100vw - 40px);
+        max-width: none;
+        scroll-snap-align: center;
+      }
+      #map .grid.lg\:grid-cols-\[430px_1fr\] { display: block; }
+      #map aside { padding: 12px; margin-bottom: 14px; }
+      #map aside > .grid.grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+      #placeList {
+        display: flex;
+        width: 100%;
+        max-height: none !important;
+        overflow-x: auto;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory;
+        gap: .75rem;
+        padding-bottom: .75rem;
+      }
+      #placeList > * {
+        flex: 0 0 calc(100vw - 54px);
+        max-width: none;
+        scroll-snap-align: center;
+      }
+      #travelMap { min-height: 410px; width: 100%; }
+      .timeline-item .google-nav-link { margin-left: 0; }
+      #shoppingForm { grid-template-columns: 1fr !important; }
+      header nav { margin-top: 8px; padding: 10px 12px; }
+      header nav > div a > div:last-child p:first-child { font-size: .92rem; }
+      header nav > div a > div:last-child p:last-child { font-size: .66rem; }
+    }
+
+    @media (max-width: 1023px) {
+      #travelMap { min-height: 420px; }
+      .day-image { min-height: 190px; }
+    }
+  </style>
+</head>
+
+<body class="text-ink antialiased">
+
+<header class="fixed inset-x-0 top-0 z-[1000] px-3">
+  <nav class="glass mx-auto mt-3 max-w-7xl rounded-2xl px-4 py-3 shadow-soft sm:px-6">
+    <div class="flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3">
+        <div class="grid h-11 w-11 place-items-center rounded-2xl bg-sakura/35 text-2xl">🌸</div>
+        <div>
+          <p class="font-black tracking-tight">Family Japan Trip</p>
+          <p class="text-xs text-stone-500">Kyoto・Nara・Tokyo 2026</p>
+        </div>
+      </a>
+
+      <div class="hidden items-center gap-6 lg:flex">
+        <a href="#itinerary" class="text-sm font-semibold hover:text-matcha">每日行程</a>
+        <a href="#map" class="text-sm font-semibold hover:text-matcha">景點美食</a>
+        <a href="#transport" class="text-sm font-semibold hover:text-matcha">航班住宿</a>
+        <a href="#shopping" class="text-sm font-semibold hover:text-matcha">購物清單</a>
+      </div>
+
+      <button id="menuButton" class="rounded-xl border border-white/70 bg-white/80 px-3 py-2 lg:hidden" aria-label="開啟導覽列">
+        ☰
+      </button>
+    </div>
+
+    <div id="mobileMenu" class="hidden border-t border-stone-200/70 pt-3 lg:hidden">
+      <div class="grid gap-1">
+        <a href="#itinerary" class="rounded-xl px-3 py-2 hover:bg-white">每日行程</a>
+        <a href="#map" class="rounded-xl px-3 py-2 hover:bg-white">景點美食</a>
+        <a href="#transport" class="rounded-xl px-3 py-2 hover:bg-white">航班住宿</a>
+        <a href="#shopping" class="rounded-xl px-3 py-2 hover:bg-white">購物清單</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section id="home" class="relative flex min-h-screen items-center overflow-hidden bg-cover bg-center"
+    style="background-image:url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=2200&q=88')">
+    <div class="hero-overlay absolute inset-0"></div>
+    <div class="relative z-10 mx-auto w-full max-w-7xl px-5 pt-28">
+      <div class="max-w-3xl text-white" data-aos="fade-up">
+        <p class="font-semibold tracking-[.28em] text-white/75">FAMILY JAPAN TRIP 2026</p>
+        <h1 class="mt-4 text-5xl font-black leading-tight sm:text-6xl lg:text-7xl">探索日本之美</h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-white/85">
+          11/2 至 11/9，從京都古都、奈良小鹿，到東京銀座、淺草、晴空塔與上野，
+          一個網站整合全家人的每日行程、交通、住宿、美食、地圖與購物清單。
+        </p>
+
+        <div class="mt-7 flex flex-wrap gap-3 text-sm">
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">✈️ CI152 / CI108 / CI109 / CI101</span>
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">🚄 NOZOMI 14:01</span>
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">⛩️ 京都・奈良</span>
+          <span class="rounded-full bg-white/16 px-4 py-2 backdrop-blur">🗼 東京</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="itinerary" class="mx-auto max-w-7xl px-5 py-20">
+    <div class="mb-10 text-center" data-aos="fade-up">
+      <p class="font-semibold tracking-[.2em] text-matcha">DAILY ITINERARY</p>
+      <h2 class="mt-3 text-3xl font-black sm:text-4xl">11/2－11/9 完整行程</h2>
+      <p class="mx-auto mt-3 max-w-3xl text-stone-500">
+        點選上方日期選單即可切換每天行程；畫面一次只顯示一天，不需要一直向下捲動。
+      </p>
+    </div>
+
+    <div class="glass rounded-3xl p-4 shadow-soft sm:p-6">
+      <div id="dayTabs" class="hide-scrollbar flex gap-2 overflow-x-auto pb-3"></div>
+      <div id="itineraryPanel" class="mt-3"></div>
+    </div>
+  </section>
+
+  <section id="map" class="mx-auto max-w-7xl px-5 py-20">
+    <div class="mb-10 text-center" data-aos="fade-up">
+      <p class="font-semibold tracking-[.2em] text-matcha">MAP & FOOD</p>
+      <h2 class="mt-3 text-3xl font-black sm:text-4xl">互動景點與美食地圖</h2>
+      <p class="mt-3 text-stone-500">餐廳不列入每日行程順序；「今日」地圖仍顯示附近餐廳供臨時選擇，餐廳不編號、不加入路線。切換「美食」可集中查看 3.5+ 精選餐廳。</p>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[430px_1fr]">
+      <aside class="glass rounded-2xl p-4 shadow-soft" data-aos="fade-right">
+        <div class="grid gap-3">
+          <select id="mapDaySelect" class="map-control-select" aria-label="選擇每日行程地圖"></select>
+          <div class="grid grid-cols-4 rounded-xl bg-stone-100 p-1">
+            <button class="map-tab rounded-lg bg-white px-2 py-2.5 text-sm font-bold shadow" data-type="day">🗓 今日</button>
+            <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="spot">⛩️ 景點</button>
+            <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="food">🍱 美食</button>
+            <button class="map-tab rounded-lg px-2 py-2.5 text-sm font-bold" data-type="shopping">🛍️ 購物</button>
+          </div>
+          <div id="mapStatus" class="map-status">選擇日期後，「今日」會顯示當日景點與附近餐廳；只有景點／交通／住宿／購物點會編列第 1 站、第 2 站，餐廳僅作地圖參考。</div>
+        </div>
+        <div id="placeList" class="hide-scrollbar mt-4 max-h-[520px] space-y-3 overflow-y-auto pr-1"></div>
+      </aside>
+
+      <div class="overflow-hidden rounded-2xl bg-white shadow-soft" data-aos="fade-left">
+        <div id="travelMap"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="transport" class="bg-white/55 py-20">
+    <div class="mx-auto max-w-5xl px-5">
+      <div class="mb-10 text-center">
+        <p class="font-semibold tracking-[.2em] text-matcha">FLIGHTS・TRANSPORT・STAYS</p>
+        <h2 class="mt-3 text-3xl font-black sm:text-4xl">航班、交通與住宿</h2>
+        <p class="mx-auto mt-3 max-w-2xl text-stone-500">三項資訊整合於同一張卡片，點選上方選單即可切換查看。</p>
+      </div>
+
+      <div class="glass rounded-3xl p-4 shadow-soft sm:p-6" data-aos="fade-up">
+        <div class="grid grid-cols-3 gap-2 rounded-2xl bg-stone-100 p-1.5" role="tablist" aria-label="航班交通住宿選單">
+          <button class="transport-tab rounded-xl bg-white px-3 py-3 text-sm font-black shadow sm:text-base" data-panel="flight" role="tab" aria-selected="true">✈️ 航班</button>
+          <button class="transport-tab rounded-xl px-3 py-3 text-sm font-black sm:text-base" data-panel="rail" role="tab" aria-selected="false">🚄 交通</button>
+          <button class="transport-tab rounded-xl px-3 py-3 text-sm font-black sm:text-base" data-panel="stay" role="tab" aria-selected="false">🏨 住宿</button>
+        </div>
+
+        <div class="mt-5 overflow-hidden rounded-2xl border border-white/70 bg-white/80">
+          <div id="transport-flight" class="transport-panel p-5 sm:p-7">
+            <div class="mb-5 flex items-center gap-3"><span class="text-3xl">✈️</span><h3 class="text-xl font-black">國際航班</h3></div>
+            <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">去程｜CI152</p><p class="mt-2 text-sm leading-6 text-stone-600">11/2　09:45 桃園出發<br>13:20 抵達關西機場</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">家人前往東京｜CI108</p><p class="mt-2 text-sm leading-6 text-stone-600">11/5　14:25 桃園出發<br>18:30 抵達成田機場</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">家人先行返台｜CI109</p><p class="mt-2 text-sm leading-6 text-stone-600">11/8　19:30 成田出發<br>22:45 抵達桃園</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">回程｜CI101</p><p class="mt-2 text-sm leading-6 text-stone-600">11/9　14:35 成田出發<br>17:45 抵達桃園</p></div>
+            </div>
+          </div>
+
+          <div id="transport-rail" class="transport-panel hidden p-5 sm:p-7">
+            <div class="mb-5 flex items-center gap-3"><span class="text-3xl">🚄</span><h3 class="text-xl font-black">跨城市交通</h3></div>
+            <div class="grid gap-3 md:grid-cols-3">
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">HARUKA 關空特快</p><p class="mt-2 text-sm leading-6 text-stone-600">11/2　15:30 關西機場 → 京都<br>車程約 80 分鐘</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">東海道新幹線 NOZOMI</p><p class="mt-2 text-sm leading-6 text-stone-600">11/5　14:01 京都 → 東京<br>預計 16:15 抵達</p></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">京成 Skyliner</p><p class="mt-2 text-sm leading-6 text-stone-600">11/9　約 10:00 前往成田機場<br>請預留轉乘與行李時間</p></div>
+            </div>
+          </div>
+
+          <div id="transport-stay" class="transport-panel hidden p-5 sm:p-7">
+            <div class="mb-5 flex items-center gap-3"><span class="text-3xl">🏨</span><h3 class="text-xl font-black">飯店資訊</h3></div>
+            <div class="grid gap-3 md:grid-cols-2">
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">Hotel SUI Kyoto Kiyomizu</p><p class="mt-2 text-sm leading-6 text-stone-600">京都市東山區朱雀町423番</p><a class="mt-3 inline-flex rounded-xl bg-matcha px-4 py-2 text-sm font-bold text-white hover:bg-ink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Hotel+SUI+Kyoto+Kiyomizu">📍 開啟地圖</a></div>
+              <div class="rounded-2xl bg-mist p-4"><p class="font-bold">相鐵 Fresa Inn 銀座七丁目</p><p class="mt-2 text-sm leading-6 text-stone-600">東京都中央區銀座 7-11-12</p><a class="mt-3 inline-flex rounded-xl bg-matcha px-4 py-2 text-sm font-bold text-white hover:bg-ink" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Sotetsu+Fresa+Inn+Ginza+Nanachome">📍 開啟地圖</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="shopping" class="mx-auto max-w-5xl px-5 py-20">
+    <div class="mb-10 text-center">
+      <p class="font-semibold tracking-[.2em] text-matcha">SHOPPING LIST</p>
+      <h2 class="mt-3 text-3xl font-black sm:text-4xl">日本好用好買購物清單</h2>
+      <p class="mt-3 text-stone-500">支援 LocalStorage，重新整理或下次開啟網站仍會保留資料。</p>
+    </div>
+
+    <div class="glass rounded-2xl p-5 shadow-soft sm:p-7">
+
+      <div class="mt-6">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-xl font-black">日本好用好買推薦</h3>
+            <p class="mt-1 text-sm text-stone-500">🔥 社群熱門　🇯🇵 日本限定／地區特色　⭐ 值得囤貨　🎁 適合送人</p>
+          </div>
+          <p class="rounded-full bg-sakura/20 px-3 py-1.5 text-xs font-bold text-stone-600">台灣常見商品不列入</p>
+        </div>
+        <div class="mobile-card-row md:grid md:grid-cols-2 xl:grid-cols-3">
+          <article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">東京必買伴手禮</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">NewYork Perfect Cheese</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🎁 東京熱門起司夾心甜點，適合送人。 購買方向：東京車站、百貨等指定通路。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">N.Y.C.SAND</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🎁 焦糖巧克力夾心餅，東京伴手禮熱門選擇。 購買方向：東京百貨指定門市。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">AUDREY</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🎁 草莓甜點與花束造型餅乾，包裝精緻。 購買方向：東京百貨、指定門市。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">薰Sabrina</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🎁 花朵造型甜點，適合伴手禮。 購買方向：東京車站等指定通路。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">NUMBER SUGAR</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🎁 手工焦糖，多種口味、體積小。 購買方向：東京品牌門市。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">PISTA &amp; TOKYO</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🎁 開心果甜點，適合送人。 購買方向：東京車站、百貨指定通路。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Butter Butler</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🎁 奶油系甜點，適合喜歡濃郁奶香者。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">鎌倉紅谷 Kurumicco 核桃子</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥⭐🎁 焦糖核桃夾心點心，熱門品項可能售完。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">銀座菊廼舎 冨貴寄</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🎁 日式小點心鐵盒，外觀精緻。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">東京車站限定甜點</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 建議優先挑「東京站限定」及期間限定品，而非台灣常見品牌。</p>
+                </div></div>
+            </article><article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">京都必買</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">阿闍梨餅</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥⭐🎁 京都代表性和菓子，建議在京都購買。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">MALEBRANCHE 茶之菓</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🇯🇵🎁 京都抹茶系伴手禮。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">祇園辻利 京都限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🎁 優先挑限定包裝、限定甜點與京都限定品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">中村藤吉 京都／宇治限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🎁 抹茶、焙茶及限定甜點。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">小倉山莊 京都限定米菓</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🎁 適合送長輩或不愛甜食的人。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都限定八橋</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🎁 優先挑季節、限定口味，不必只買普通款。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都限定和菓子</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 選擇老舖、季節款及京都限定包裝。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都宇治茶</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵⭐ 建議選京都茶舖、宇治茶專門店商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都限定抹茶甜點</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 優先挑冷門品牌或京都限定品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都限定角色周邊</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 包含 Sanrio、寶可夢、吉卜力等京都特色設計。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都車站限定伴手禮</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🎁 適合離開京都前一次補齊。</p>
+                </div></div>
+            </article><article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">日本超市真正值得買</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">茅乃舍 高湯包</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 適合煮湯、烏龍麵、火鍋與日式料理。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">久世福商店限定食品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 推薦高湯、拌飯料、果醬、調味料等。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">AKOMEYA TOKYO 食品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵⭐ 米飯周邊、飯友、高湯、調味料。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">地方限定茶泡飯</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵⭐ 優先挑地方食材與特殊口味。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">地方限定拌飯料</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵⭐ 體積小、容易帶回台灣。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本地方咖哩</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 地區特色肉類、蔬菜或特殊風味咖哩。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">地方拉麵</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 選北海道、九州、京都、東京等地方特色款。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">地方烏龍麵／蕎麥麵</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 選一般台灣超市較少見的產地品牌。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">柚子胡椒</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 適合火鍋、烤肉、麵食。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">山椒調味料</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵⭐ 京都及日本地方品牌值得留意。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">七味唐辛子地方限定款</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 選京都、東京或地方限定配方。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定沙拉醬／調味醬</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 只挑台灣通路不常見的口味。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">季節限定食品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🇯🇵 春夏秋冬限定包裝、栗子、草莓、抹茶、地瓜等。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本超市地方限定零食</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 不買台灣常見普通款，優先地方限定。</p>
+                </div></div>
+            </article><article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">生活雜貨</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">3COINS 日本生活用品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥⭐ 推薦收納、旅行、廚房及居家小物。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">3COINS 手機周邊</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥 挑台灣少見設計與新品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">3COINS 旅行用品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 行李收納、盥洗、旅行便利用品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Standard Products 餐具</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 設計簡約，適合挑日本製或特色系列。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Standard Products 收納用品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 選台灣較難買到的尺寸及設計。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">DAISO 日本限定／季節商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 不買普通百元商品，專找日本限定、聯名及季節款。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Seria 雜貨</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 推薦文具、廚房、收納、手作用品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">LOFT 日本限定文具</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🇯🇵 手帳、貼紙、筆、聯名文具。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">LOFT 期間限定聯名</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🇯🇵 角色、插畫家、品牌合作商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Hands 創意生活用品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 找日本發明型、便利型生活小物。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本製廚房小物</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 刨刀、料理工具、便當用品等。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本製收納小物</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 優先選日本製及特殊尺寸商品。</p>
+                </div></div>
+            </article><article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">藥妝隱藏版</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定規格藥妝</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 同品牌若有日本限定配方、容量或包裝才列入。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本藥妝店限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 留意 Matsukiyo 等通路自有品牌。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Matsukiyo 自有品牌生活用品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 挑台灣沒有正式販售的品項。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定美容小物</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 推薦美容工具、刷具、旅行美容用品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定入浴劑</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵⭐ 選地方溫泉、季節或限定香味。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本地方溫泉入浴包</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🎁 體積小，適合自用或送人。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定香氛用品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 挑限定香味、品牌聯名。</p>
+                </div></div>
+            </article><article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">服飾・鞋款</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Onitsuka Tiger 日本限定款</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 優先看限定配色與日本特殊款。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">ASICS 日本限定款</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 選台灣未販售鞋款、配色。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">New Balance 日本限定／日本企劃款</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 普通款台灣有，不列入必買。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">ABC-MART 限定鞋款</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 留意 Exclusive 標示及特殊配色。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">BEAMS 日本企劃商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 服飾、包包、聯名商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">UNITED ARROWS</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 選日本企劃、限定與聯名商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">JOURNAL STANDARD</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 日本休閒服飾與聯名商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">UNIQLO 日本限定／聯名</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 普通款不列，只看日本限定或台灣沒有的款式。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">GU 日本限定／聯名</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 同樣只挑台灣沒有的商品。</p>
+                </div></div>
+            </article><article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">角色・動漫限定</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Pokémon Center 店舖限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 不買一般商品，優先店舖限定。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Pokémon 京都限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 京都特色寶可夢周邊。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Pokémon 東京限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 店舖限定、東京設計商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Sanrio 日本限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 優先地區、季節、聯名限定。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Sanrio 京都限定</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 和風、京都主題商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">吉卜力 Donguri Republic 限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 店舖及季節限定優先。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">東京晴空塔限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 角色聯名及東京晴空塔限定紀念品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">淺草限定角色商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 雷門、和風、淺草主題設計。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都限定角色商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 舞妓、鳥居、抹茶、和風主題。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定扭蛋</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🇯🇵 挑日本品牌、食物模型、地方限定。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">期間限定動漫快閃商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🇯🇵 遇到喜歡作品的 POP-UP STORE 可優先購買。</p>
+                </div></div>
+            </article><article class="snap-card rounded-2xl bg-white/85 p-4 shadow-sm">
+              <h3 class="text-lg font-black text-matcha">文具控必看</h3>
+              <div class="mt-3 grid gap-2"><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">Traveler's Factory 日本限定商品</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵🔥 限定筆記本、黃銅配件、店舖限定商品。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">東京車站限定文具</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 車站、列車、東京主題。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">京都限定文具</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵 神社、寺院、和風、京都主題。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定 masking tape</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🇯🇵⭐ 體積小、適合收藏。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本限定貼紙</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">🔥🇯🇵 LOFT、Hands、文具店選擇很多。</p>
+                </div><div class="rounded-xl border border-stone-200 bg-white p-3">
+                  <p class="font-bold text-ink">日本品牌特殊筆款</p>
+                  <p class="mt-1 text-xs leading-5 text-stone-500">⭐ 優先限定色、聯名款，不買台灣常見普通款。</p>
+                </div></div>
+            </article>
+        </div>
+        <div class="mt-4 rounded-xl bg-stone-100 p-4 text-sm leading-6 text-stone-600">
+          <strong>購買原則：</strong>台灣容易買到的不扛；優先日本限定、京都／東京限定、店舖限定、期間限定與台灣較少見商品。
+        </div>
+      </div>
+
+      <form id="shoppingForm" class="mt-7 grid gap-3 md:grid-cols-[1fr_1fr_170px_auto]" class="grid gap-3 md:grid-cols-[1fr_1fr_170px_auto]">
+        <input id="itemName" required class="rounded-xl border border-stone-200 bg-white px-4 py-3 outline-none focus:border-matcha" placeholder="商品名稱">
+        <input id="itemPlace" required class="rounded-xl border border-stone-200 bg-white px-4 py-3 outline-none focus:border-matcha" placeholder="購買地點">
+        <input id="itemPrice" required min="0" type="number" class="rounded-xl border border-stone-200 bg-white px-4 py-3 outline-none focus:border-matcha" placeholder="日幣價格">
+        <button class="rounded-xl bg-matcha px-6 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">新增</button>
+      </form>
+
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-stone-100 p-4">
+        <p class="text-sm text-stone-600">固定匯率：1 日圓 = 0.21 台幣</p>
+        <p class="font-bold">總額：<span id="totalJPY">¥0</span> ／ <span id="totalTWD">NT$0</span></p>
+      </div>
+
+      <div id="shoppingList" class="mt-5 space-y-3"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-ink px-5 py-10 text-center text-white/70">
+  <p class="font-bold text-white">Family Japan Trip 2026</p>
+  <p class="mt-2 text-sm">Kyoto・Nara・Tokyo｜11/2－11/9</p>
+</footer>
+
+<script>
+AOS.init({ duration: 720, once: true, offset: 70 });
+
+const menuButton = document.getElementById("menuButton");
+const mobileMenu = document.getElementById("mobileMenu");
+menuButton.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.add("hidden")));
+
+const transportTabs = document.querySelectorAll(".transport-tab");
+const transportPanels = document.querySelectorAll(".transport-panel");
+transportTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    const target = tab.dataset.panel;
+    transportTabs.forEach(btn => {
+      const active = btn === tab;
+      btn.classList.toggle("bg-white", active);
+      btn.classList.toggle("shadow", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    transportPanels.forEach(panel => panel.classList.toggle("hidden", panel.id !== `transport-${target}`));
+  });
+});
+
+const itinerary = [
+  {
+    day: "DAY 1", date: "11/02", city: "京都", title: "啟程前往古都・京都夜間散步",
+    image: "https://images.unsplash.com/photo-1493780474015-ba834fd0ce2f?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["CI152 前往關西機場", "HARUKA 前往京都", "京都拉麵小路", "先斗町", "八坂神社"],
+    times: [
+      ["06:00", "機場接送出發"],
+      ["07:45", "抵達桃園國際機場，辦理登機與出境"],
+      ["09:45", "搭乘中華航空 CI152 前往關西國際機場"],
+      ["13:20", "抵達關西國際機場，辦理入境與領取交通票券"],
+      ["15:30", "搭乘 HARUKA 特快前往京都車站"],
+      ["17:00", "Hotel SUI Kyoto Kiyomizu 入住與休息"],
+      ["18:30", "先斗町漫步"],
+      ["20:00", "京都 ENEN 燒肉晚餐（7人）"],
+      ["晚餐後", "依體力安排八坂神社夜間散步"]
+    ],
+    map: "八坂神社"
+  },
+  {
+    day: "DAY 2", date: "11/03", city: "京都", title: "和服體驗・禪與吉卜力京都展・河原町購物",
+    image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["清水寺", "和服體驗", "二寧坂・三寧坂", "錦市場", "禪與吉卜力京都展", "河原町・祇園"],
+    times: [
+      ["08:00", "清水寺參拜，避開人潮"],
+      ["09:00", "和服換裝，漫步二寧坂與三寧坂"],
+      ["11:30", "歸還和服，前往錦市場"],
+      ["12:00", "錦市場、新京極商店街逛街與採買"],
+      ["13:30", "返回飯店休息"],
+      ["14:15", "從飯店出發，前往京都市京瓷美術館新館東山 Cube"],
+      ["15:00", "《禪與吉卜力》京都展（預計參觀至 16:30；預約優先，請事先預約入場時段）"],
+      ["16:30", "離開美術館，前往河原町商圈"],
+      ["17:30", "河原町商圈購物、下午茶與甜點"],
+      ["19:00", "自由安排晚餐"],
+      ["20:30", "花見小路、祇園白川與鴨川散步"]
+    ],
+    map: "清水寺"
+  },
+  {
+    day: "DAY 3", date: "11/04", city: "奈良・京都", title: "奈良萌鹿文化之旅・三十三間堂",
+    image: "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["春日大社", "東大寺", "奈良公園", "奈良商店街", "三十三間堂"],
+    times: [
+      ["08:30", "搭乘 JR／近鐵前往奈良"],
+      ["09:15", "搭公車前往春日大社"],
+      ["10:00", "步行至東大寺，餵小鹿並欣賞古寺庭園"],
+      ["11:30", "奈良商店街散步與採買"],
+      ["12:55", "返回京都飯店休息"],
+      ["15:30", "前往三十三間堂參觀 1001 尊千手觀音像"],
+      ["16:30", "返回飯店或前往商圈補貨"],
+      ["18:00", "河堤散步，晚餐自由安排"]
+    ],
+    map: "奈良公園"
+  },
+  {
+    day: "DAY 4", date: "11/05", city: "京都 → 東京", title: "告別京都・新幹線移動・入住銀座",
+    image: "https://images.unsplash.com/photo-1549692520-acc6669e2f0c?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["京都退房", "NOZOMI 新幹線", "銀座入住", "東京車站夜景", "東京拉麵街"],
+    times: [
+      ["10:00", "京都飯店退房與行李寄放"],
+      ["10:30", "飯店周邊或京都車站商圈自由活動"],
+      ["14:01", "京都站搭乘東海道新幹線 NOZOMI 前往東京"],
+      ["16:15", "抵達東京車站"],
+      ["17:00", "入住相鐵 Fresa Inn 銀座七丁目"],
+      ["17:30", "銀座七丁目、UNIQLO、GU、GINZA SIX 與生活採買"],
+      ["19:15", "東京車站丸之內赤煉瓦夜景與 KITTE 屋頂庭園"],
+      ["20:30", "東京車站周邊散步；回程可逛唐吉訶德"]
+    ],
+    map: "銀座"
+  },
+  {
+    day: "DAY 5", date: "11/06", city: "東京", title: "築地・銀座・SHIBUYA SKY・澀谷晚餐・六本木點燈",
+    image: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["築地場外市場", "銀座深度巡禮", "SHIBUYA SKY", "澀谷晚餐", "六本木點燈"],
+    times: [
+      ["08:00", "築地場外市場逛市場與自由活動"],
+      ["10:30", "銀座步行者天國、百貨、蔦屋書店與咖啡"],
+      ["午餐", "銀座自由安排午餐"],
+      ["16:00", "視訂票結果前往 SHIBUYA SKY"],
+      ["17:30", "SHIBUYA SKY 結束後，前往澀谷十字路口、忠犬八公像拍照（依實際入場時段彈性調整）"],
+      ["18:00", "在澀谷享用晚餐"],
+      ["19:15", "晚餐後從澀谷前往六本木"],
+      ["19:45", "六本木之丘、毛利庭園散步（依長輩體力彈性縮短）"],
+      ["20:00", "櫸坂通 SNOW & BLUE 點燈，欣賞燈海並拍攝東京鐵塔同框；活動 11/5～12/25，17:00～22:00（依提供的活動資訊安排）"],
+      ["21:00", "依體力返回銀座飯店休息"]
+    ],
+    map: "築地場外市場"
+  },
+  {
+    day: "DAY 6", date: "11/07", city: "東京", title: "淺草・晴空塔・合羽橋・阿美橫町",
+    image: "https://images.unsplash.com/photo-1542931287-023b922fa89b?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["雷門", "淺草寺", "仲見世通", "東京晴空塔", "合羽橋道具街"],
+    times: [
+      ["09:00", "雷門、仲見世通與淺草寺"],
+      ["09:45", "結束淺草散步，前往東京晴空塔與 Solamachi 商場，預留交通時間"],
+      ["11:30", "孫家吃牛舌の檸檬"],
+      ["12:00", "用餐結束後前往合羽橋道具街，建議搭計程車減少長輩步行"],
+      ["12:30", "合羽橋道具街採買餐具、刀具與陶瓷"],
+      ["14:30", "合羽橋購物後返回銀座飯店，放下餐具與購物袋"],
+      ["15:00", "飯店午睡休息，預留約兩小時"],
+      ["17:00", "從銀座飯店出發，前往上野阿美橫町"],
+      ["17:30", "阿美橫町選購行李箱，優先看行李箱店並確認營業時間"],
+      ["18:30", "逛多慶屋（若要逛 TAKEYA3，需於19:00前；TAKEYA1食品生活館營業至23:00）"],
+      ["19:30", "上野／御徒町周邊自由安排晚餐"],
+      ["20:30", "帶行李箱返回銀座飯店，依購物量與體力選擇交通方式"]
+    ],
+    map: "淺草寺"
+  },
+  {
+    day: "DAY 7", date: "11/08", city: "東京", title: "明治神宮・原宿・表參道・根津美術館",
+    image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["明治神宮", "原宿", "表參道", "根津美術館"],
+    times: [
+      ["09:00", "明治神宮參拜與林蔭參道散步，依長輩體力調整步行範圍"],
+      ["10:45", "原宿散步，竹下通依人潮彈性短逛"],
+      ["12:00", "原宿／表參道午餐與坐下休息"],
+      ["13:00", "表參道街景、建築與咖啡，沿路前往南青山"],
+      ["14:00", "根津美術館欣賞展覽、庭園（預留約90分鐘；事先確認並預約入場時段）"],
+      ["15:30", "先行返台家人先返回銀座飯店取行李；其餘家人依體力繼續散步或返店休息"],
+      ["16:00", "先行返台家人取行李前往成田機場"],
+      ["17:00", "先行返台家人抵成田機場辦理退稅"],
+      ["17:30", "其餘家人返回銀座整理戰利品"],
+      ["晚餐", "其餘家人自由安排晚餐"],
+      ["19:30", "先行返台家人搭乘 CI109"]
+    ],
+    map: "明治神宮"
+  },
+  {
+    day: "DAY 8", date: "11/09", city: "東京 → 台灣", title: "銀座最後採買・Skyliner 前往成田返程",
+    image: "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=1200&q=84",
+    highlights: ["銀座最後巡禮", "最後採買", "Skyliner", "成田機場", "CI101 返台"],
+    times: [
+      ["上午", "飯店退房並寄放行李"],
+      ["早餐", "銀座周邊自由安排早餐"],
+      ["最後採買", "銀座周邊補齊伴手禮與免稅商品"],
+      ["10:00", "搭乘地鐵轉 Skyliner 前往成田機場"],
+      ["中午", "辦理出境、退稅與候機"],
+      ["14:35", "搭乘中華航空 CI101 返回桃園"],
+      ["17:45", "抵達桃園國際機場"]
+    ],
+    map: "銀座"
+  }
+];
+
+const dayTabs = document.getElementById("dayTabs");
+const itineraryPanel = document.getElementById("itineraryPanel");
+let activeDayIndex = 0;
+
+function renderDayTabs() {
+  dayTabs.innerHTML = itinerary.map((d, index) => `
+    <button onclick="selectDay(${index})"
+      class="day-tab shrink-0 rounded-xl px-4 py-3 text-left transition ${
+        index === activeDayIndex
+          ? "bg-matcha text-white shadow"
+          : "bg-white text-stone-600 hover:bg-mist"
+      }">
+      <span class="block text-xs font-bold opacity-75">${d.day}</span>
+      <span class="mt-0.5 block whitespace-nowrap font-black">${d.date}・${d.city}</span>
+    </button>
+  `).join("");
+}
+
+const navigationRules = [
+  ["京都 ENEN", "京都 焼肉 enen"],
+  ["明治神宮", "明治神宮"], ["根津美術館", "根津美術館 南青山"], ["表參道", "表参道 東京"], ["原宿", "原宿 東京"],
+  ["多慶屋", "多慶屋 御徒町"],
+  ["牛舌の檸檬", "牛たんの檸檬 東京"],
+  ["澀谷十字路口", "渋谷スクランブル交差点"], ["忠犬八公像", "忠犬ハチ公像"], ["櫸坂通", "六本木けやき坂通り"],
+  ["禪與吉卜力", "京都市京セラ美術館 東山キューブ"], ["京都市京瓷美術館", "京都市京セラ美術館 東山キューブ"],
+  ["桃園國際機場", "桃園國際機場"], ["關西國際機場", "關西國際機場"],
+  ["京都車站", "京都車站"], ["京都站", "京都車站"], ["Hotel SUI", "Hotel SUI Kyoto Kiyomizu"],
+  ["先斗町", "先斗町 京都"], ["八坂神社", "八坂神社 京都"], ["清水寺", "清水寺 京都"],
+  ["二寧坂", "二寧坂 京都"], ["三寧坂", "三寧坂 京都"], ["錦市場", "錦市場 京都"],
+  ["新京極", "新京極商店街 京都"], ["河原町", "河原町 京都"], ["花見小路", "花見小路 京都"],
+  ["祇園白川", "祇園白川 京都"], ["鴨川", "鴨川 京都"], ["春日大社", "春日大社 奈良"],
+  ["東大寺", "東大寺 奈良"], ["奈良公園", "奈良公園"], ["奈良商店街", "東向商店街 奈良"],
+  ["三十三間堂", "三十三間堂 京都"], ["東京車站", "東京車站"], ["銀座七丁目", "銀座七丁目 東京"],
+  ["相鐵 Fresa Inn", "Sotetsu Fresa Inn Ginza Nanachome"], ["UNIQLO", "UNIQLO Ginza"],
+  ["GINZA SIX", "GINZA SIX"], ["KITTE", "KITTE 丸之內"], ["東京拉麵街", "東京拉麵街"],
+  ["唐吉訶德", "Don Quijote Ginza"], ["築地場外市場", "築地場外市場"], ["銀座", "銀座 東京"],
+  ["五代目花山烏冬", "五代目花山うどん 銀座店"], ["SHIBUYA SKY", "SHIBUYA SKY"],
+  ["六本木之丘", "六本木之丘"], ["毛利庭園", "毛利庭園"], ["東京鐵塔", "東京鐵塔"],
+  ["雷門", "雷門 淺草"], ["仲見世通", "仲見世商店街"], ["淺草寺", "淺草寺"],
+  ["東京晴空塔", "東京晴空塔"], ["Solamachi", "東京ソラマチ"], ["三村房", "三村房 淺草"],
+  ["合羽橋", "合羽橋道具街"], ["阿美橫町", "阿美橫町"], ["秋葉原", "秋葉原"],
+  ["Radio 會館", "秋葉原ラジオ会館"], ["Bic Camera", "Bic Camera AKIBA"],
+  ["成田機場", "成田國際機場"], ["Skyliner", "京成上野站"], ["銀座木村家", "銀座木村家"],
+  ["京都車站商圈", "京都車站"], ["飯店周邊", "Hotel SUI Kyoto Kiyomizu"]
+];
+
+const itineraryDetails = {
+  "機場接送出發":"預留足夠時間前往桃園機場，建議出發前再次確認護照、網路、交通票券與行李件數。",
+  "桃園國際機場":"抵達後先辦理報到與託運，七人同行建議集中保管護照與登機證，並預留安檢及早餐時間。",
+  "關西國際機場":"完成入境、領行李與交通票券後前往 JR 車站；若同行長者較疲累，可先在機場補充水分再移動。",
+  "HARUKA":"HARUKA 是關西機場直達京都的重要特急列車，車廂舒適且有行李空間，適合家庭旅客。",
+  "Hotel SUI":"飯店位於京都東山區，鄰近清水五條，方便前往清水寺、祇園與京都車站。",
+  "先斗町":"沿鴨川旁延伸的狹長花街，聚集居酒屋、京料理與小酒館，夜間燈籠氣氛最有京都風情。",
+  "八坂神社":"祇園地區代表神社，夜間仍可參拜，朱紅樓門與點燈景色適合晚餐後悠閒散步。",
+  "清水寺":"京都最具代表性的世界文化遺產之一，以懸空木造清水舞台聞名，可俯瞰東山與京都市景。",
+  "和服":"換裝後步行二寧坂、三寧坂最有古都氛圍；石板坡道較多，鞋子不宜過高並注意長者行走速度。",
+  "二寧坂":"保存完整的京都町家與石板坡道，沿途有甜點、陶器、伴手禮與特色咖啡店。",
+  "三寧坂":"清水寺周邊最經典老街之一，傳統木造街景非常適合拍照，但坡道及階梯需注意腳步。",
+  "錦市場":"有京都廚房之稱，集結漬物、玉子燒、海鮮、豆乳甜點與京料理食材，適合少量多樣品嚐。",
+  "河原町":"京都最熱鬧的購物區之一，百貨、藥妝、咖啡與餐廳密集，可依體力彈性調整停留時間。",
+  "花見小路":"祇園最具代表性的花街，兩側町家與石板路呈現傳統京都景觀，拍照時應避免打擾住戶。",
+  "祇園白川":"白川河道、柳樹與町家構成優雅夜景，遊客較花見小路少，適合慢慢散步。",
+  "鴨川":"京都市民日常休憩河岸，傍晚可看夕陽與納涼床，行程結尾安排散步很放鬆。",
+  "春日大社":"以朱紅社殿、石燈籠與森林參道著名，是奈良重要世界文化遺產，沿途常可遇見小鹿。",
+  "東大寺":"寺內大佛殿規模宏偉，供奉奈良大佛，是理解奈良古都歷史與佛教文化的重要景點。",
+  "奈良公園":"可近距離與梅花鹿互動；購買鹿仙貝時需收好紙袋，並避免在鹿群密集處奔跑。",
+  "奈良商店街":"近鐵奈良站周邊商店街適合用餐與採買奈良漬、柿葉壽司及小鹿伴手禮。",
+  "三十三間堂":"以整齊排列的 1001 尊千手觀音像聞名，室內氣氛莊嚴，參觀時不可拍照。",
+  "京都飯店退房":"退房後可寄放行李，午餐與採買盡量安排在京都車站周邊，避免拖著行李長距離移動。",
+  "新幹線":"東海道新幹線連接京都與東京，建議提早到月台並確認車廂與座位，富士山座位視天候而定。",
+  "東京車站":"丸之內紅磚站舍是東京代表建築，站內地下街、拉麵街與伴手禮店規模龐大。",
+  "相鐵 Fresa Inn":"飯店位於銀座七丁目，鄰近新橋與東銀座，前往築地、東京站和各購物區都方便。",
+  "銀座":"東京高級商業區，精品百貨、老字號點心、建築與咖啡文化集中，晚上街景也很精緻。",
+  "KITTE":"由舊東京中央郵便局改建，屋頂庭園可免費眺望東京車站丸之內站舍與列車進出。",
+  "築地場外市場":"雖然批發市場已遷往豐洲，場外市場仍保留大量海鮮丼、玉子燒、乾貨與街頭小吃。",
+  "SHIBUYA SKY":"位於澀谷 Scramble Square 樓頂，360 度視野可眺望東京市區，熱門時段需事先預約。",
+  "六本木之丘":"集結美術館、商場與展望設施，傍晚至夜間可觀賞東京鐵塔與都心燈光。",
+  "毛利庭園":"六本木之丘內的小型日式庭園，適合在看夜景前短暫休息與散步。",
+  "雷門":"淺草最具辨識度的入口，大紅燈籠後方連接仲見世商店街，是經典拍照地點。",
+  "仲見世":"東京歷史悠久的商店街，販售人形燒、雷米花糖、和風小物與淺草限定伴手禮。",
+  "淺草寺":"東京最古老寺院，寶藏門、五重塔與本堂構成下町代表景觀，上午較容易避開人潮。",
+  "東京晴空塔":"高 634 公尺的東京地標，展望台可看遼闊市景，下方 Solamachi 適合用餐與購物。",
+  "合羽橋":"專門販售餐具、刀具、陶器、食品模型與餐飲用品，適合挑選實用又有日本特色的紀念品。",
+  "阿美橫町":"上野熱鬧露天商圈，藥妝、零食、海產與服飾價格選擇多，人潮密集需留意隨身物品。",
+  "秋葉原":"日本動漫、模型、電器與遊戲文化中心，Radio 會館與大型家電賣場適合集中採買。",
+  "成田機場":"國際航班建議至少提前三小時抵達，預留退稅、托運、安檢與航廈內移動時間。",
+  "Skyliner":"京成電鐵機場快線，從上野或日暮里前往成田速度快，指定席可事先劃位。",
+  "銀座木村家":"日本紅豆麵包名店，以酒種麵包聞名，適合最後一天購買早餐或伴手禮。"
+};
+
+const dayPlaceNames = [
+  ["京都車站","本家 第一旭 たかばし本店","新福菜館 本店","Hotel SUI Kyoto Kiyomizu","先斗町","先斗町 魯ビン","八坂神社"],
+  ["清水寺","二寧坂","三寧坂","奥丹 清水","錦市場","禪與吉卜力京都展","京極かねよ","麺屋 猪一","河原町","花見小路","祇園白川","WAGYU ICHINONE"],
+  ["春日大社","東大寺","奈良公園","吉野本葛 天極堂 奈良本店","東向商店街","柿の葉すし本舗たなか なら本店","三十三間堂"],
+  ["京都車站","はしたて","東京車站","六厘舎 東京駅店","相鐵 Fresa Inn 銀座七丁目","銀座","銀座 篝 本店","UNIQLO 銀座旗艦店","GINZA SIX","KITTE 丸之內","唐吉訶德 銀座本館"],
+  ["築地場外市場","築地虎杖 魚河岸千両","銀座","五代目 花山うどん 銀座店","銀座 八五","Sakura Marks Ginza","SHIBUYA SKY","澀谷十字路口","忠犬八公像","櫸坂通","牛かつ もと村 渋谷店","六本木之丘","AFURI 六本木交差点","毛利庭園","東京鐵塔"],
+  ["雷門","仲見世商店街","淺草寺","並木藪蕎麦","駒形どぜう 本店","東京晴空塔","東京ソラマチ","遠藤利三郎商店","三村房","合羽橋道具街"],
+  ["明治神宮","原宿","表參道","根津美術館"],
+  ["相鐵 Fresa Inn 銀座七丁目","銀座木村家","CENTRE THE BAKERY","銀座"]
+];
+
+function getItineraryDetail(description) {
+  const entry = Object.entries(itineraryDetails).find(([keyword]) => description.includes(keyword));
+  return entry ? entry[1] : "依現場人潮與同行家人體力彈性調整，並預留移動、休息及排隊時間。";
+}
+
+function getNavigationQuery(description) {
+  const match = navigationRules.find(([keyword]) => description.includes(keyword));
+  return match ? match[1] : "";
+}
+
+function googleDirectionsUrl(query) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}&travelmode=transit`;
+}
+
+function renderActiveDay() {
+  const d = itinerary[activeDayIndex];
+  itineraryPanel.innerHTML = `
+    <article class="overflow-hidden rounded-3xl border border-white/70 bg-white/80">
+      <div class="grid lg:grid-cols-[420px_1fr]">
+        <div class="day-image relative bg-cover bg-center" style="background-image:url('${d.image}')">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
+          <div class="absolute bottom-0 p-6 text-white">
+            <div class="flex flex-wrap gap-2">
+              <span class="rounded-full bg-white/18 px-3 py-1 text-xs font-bold backdrop-blur">${d.day}</span>
+              <span class="rounded-full bg-white/18 px-3 py-1 text-xs font-bold backdrop-blur">${d.date}</span>
+            </div>
+            <p class="mt-3 text-sm text-white/80">${d.city}</p>
+            <h3 class="mt-1 text-2xl font-black">${d.title}</h3>
+          </div>
+        </div>
+
+        <div class="p-6 sm:p-7">
+          <div class="flex flex-wrap gap-2">
+            ${d.highlights.map(h => `<span class="rounded-full bg-mist px-3 py-1 text-xs font-semibold text-stone-600">${h}</span>`).join("")}
+          </div>
+
+          <div class="timeline-line relative mt-6 space-y-4">
+            ${d.times.map(t => `
+              <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="grid gap-1 sm:grid-cols-[76px_1fr]">
+                  <p class="font-black text-matcha">${t[0]}</p>
+                  <div>
+                    <p class="font-semibold leading-7 text-stone-700">${t[1]}</p>
+                    <p class="detail-note">${getItineraryDetail(t[1])}</p>
+                    ${getNavigationQuery(t[1]) ? `<button type="button" class="google-nav-link" onclick="showDayOnMap(activeDayIndex)">📍 同步顯示今日地圖</button>` : ""}
+                  </div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="mt-7 flex flex-wrap gap-3">
+            <button onclick="showDayOnMap(activeDayIndex)" class="rounded-xl bg-matcha px-5 py-3 font-bold text-white transition hover:scale-105 hover:bg-ink">
+              🗺️ 同步顯示今日地圖
+            </button>
+            <button onclick="selectDay(activeDayIndex - 1)" class="rounded-xl border border-stone-200 bg-white px-5 py-3 font-bold transition hover:bg-mist ${activeDayIndex === 0 ? "pointer-events-none opacity-40" : ""}">
+              ← 前一天
+            </button>
+            <button onclick="selectDay(activeDayIndex + 1)" class="rounded-xl border border-stone-200 bg-white px-5 py-3 font-bold transition hover:bg-mist ${activeDayIndex === itinerary.length - 1 ? "pointer-events-none opacity-40" : ""}">
+              後一天 →
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+window.selectDay = function(index) {
+  activeDayIndex = Math.max(0, Math.min(itinerary.length - 1, index));
+  renderDayTabs();
+  renderActiveDay();
+  selectedMapDay = activeDayIndex;
+  if (document.getElementById("mapDaySelect")) document.getElementById("mapDaySelect").value = String(activeDayIndex);
+};
+
+renderDayTabs();
+renderActiveDay();
+
+const places = [
+  {name:"清水寺", type:"spot", city:"京都", lat:34.9949, lng:135.7850, rating:"4.6", desc:"京都代表性古寺，可順遊二寧坂與三寧坂。"},
+  {name:"八坂神社", type:"spot", city:"京都", lat:35.0037, lng:135.7785, rating:"4.5", desc:"祇園重要神社，適合夜間散步。"},
+  {name:"錦市場", type:"spot", city:"京都", lat:35.0050, lng:135.7649, rating:"4.3", desc:"京都傳統市場與在地美食集中地。"},
+  {name:"春日大社", type:"spot", city:"奈良", lat:34.6814, lng:135.8484, rating:"4.6", desc:"奈良著名神社，可搭配奈良公園行程。"},
+  {name:"奈良公園", type:"spot", city:"奈良", lat:34.6851, lng:135.8430, rating:"4.7", desc:"與小鹿互動，步行可達東大寺。"},
+  {name:"三十三間堂", type:"spot", city:"京都", lat:34.9879, lng:135.7717, rating:"4.6", desc:"以千手觀音像群聞名。"},
+  {name:"銀座", type:"spot", city:"東京", lat:35.6717, lng:139.7650, rating:"4.5", desc:"精品百貨、咖啡、美食與夜景集中地。"},
+  {name:"東京車站", type:"spot", city:"東京", lat:35.6812, lng:139.7671, rating:"4.6", desc:"丸之內赤煉瓦建築與東京拉麵街。"},
+  {name:"築地場外市場", type:"spot", city:"東京", lat:35.6654, lng:139.7707, rating:"4.4", desc:"海鮮丼、玉子燒、和牛串與市場美食。"},
+  {name:"SHIBUYA SKY", type:"spot", city:"東京", lat:35.6585, lng:139.7016, rating:"4.7", desc:"東京熱門高空展望台，需提前訂票。"},
+  {name:"六本木之丘", type:"spot", city:"東京", lat:35.6605, lng:139.7292, rating:"4.5", desc:"觀賞東京鐵塔夜景的經典地點。"},
+  {name:"淺草寺", type:"spot", city:"東京", lat:35.7148, lng:139.7967, rating:"4.6", desc:"雷門、仲見世通與下町文化。"},
+  {name:"東京晴空塔", type:"spot", city:"東京", lat:35.7101, lng:139.8107, rating:"4.5", desc:"東京地標與 Solamachi 購物商場。"},
+  {name:"合羽橋道具街", type:"spot", city:"東京", lat:35.7132, lng:139.7880, rating:"4.4", desc:"餐具、廚具、刀具與陶瓷採買天堂。"},
+  {name:"阿美橫町", type:"spot", city:"東京", lat:35.7101, lng:139.7744, rating:"4.3", desc:"藥妝、零食、伴手禮與市場小吃。"},
+  {name:"秋葉原", type:"spot", city:"東京", lat:35.6984, lng:139.7731, rating:"4.4", desc:"動漫、電器、Radio 會館與 Bic Camera。"},
+  {name:"京都車站", type:"spot", city:"京都", lat:34.9858, lng:135.7588, rating:"交通", desc:"京都主要交通樞紐，連接 HARUKA、新幹線、地鐵與巴士。"},
+  {name:"Hotel SUI Kyoto Kiyomizu", type:"spot", city:"京都・東山", lat:34.9922, lng:135.7726, rating:"住宿", desc:"京都住宿據點，鄰近清水五條與東山景點。"},
+  {name:"先斗町", type:"spot", city:"京都・河原町", lat:35.0052, lng:135.7712, rating:"4.4", desc:"鴨川旁的京都花街，夜間居酒屋與町家氣氛迷人。"},
+  {name:"二寧坂", type:"spot", city:"京都・東山", lat:34.9981, lng:135.7808, rating:"4.5", desc:"清水寺周邊傳統石板老街，甜點與伴手禮店密集。"},
+  {name:"三寧坂", type:"spot", city:"京都・東山", lat:34.9965, lng:135.7813, rating:"4.5", desc:"京都經典坡道街景，連接清水寺與二寧坂。"},
+  {name:"河原町", type:"spot", city:"京都", lat:35.0037, lng:135.7690, rating:"商圈", desc:"京都百貨、藥妝、美食與咖啡最集中的購物區。"},
+  {name:"花見小路", type:"spot", city:"京都・祇園", lat:35.0036, lng:135.7754, rating:"4.4", desc:"祇園代表性花街，傳統町家與石板路景觀優雅。"},
+  {name:"祇園白川", type:"spot", city:"京都・祇園", lat:35.0054, lng:135.7746, rating:"4.5", desc:"白川、柳樹與町家構成的京都散步名所。"},
+  {name:"東大寺", type:"spot", city:"奈良", lat:34.6890, lng:135.8398, rating:"4.7", desc:"以大佛殿與奈良大佛聞名的世界文化遺產。"},
+  {name:"東向商店街", type:"spot", city:"奈良", lat:34.6831, lng:135.8278, rating:"商圈", desc:"近鐵奈良站旁的有蓋商店街，適合午餐與伴手禮採買。"},
+  {name:"相鐵 Fresa Inn 銀座七丁目", type:"spot", city:"東京・銀座", lat:35.6684, lng:139.7639, rating:"住宿", desc:"東京住宿據點，方便前往銀座、築地、新橋與東京站。"},
+  {name:"KITTE 丸之內", type:"spot", city:"東京・丸之內", lat:35.6796, lng:139.7648, rating:"4.3", desc:"屋頂庭園可免費欣賞東京車站紅磚站舍與列車。"},
+  {name:"東京鐵塔", type:"spot", city:"東京・芝公園", lat:35.6586, lng:139.7454, rating:"4.5", desc:"東京經典紅白地標，六本木方向可欣賞優美夜景。"},
+  {name:"毛利庭園", type:"spot", city:"東京・六本木", lat:35.6600, lng:139.7302, rating:"4.2", desc:"六本木之丘內的日式庭園，適合夜景前休息散步。"},
+  {name:"雷門", type:"spot", city:"東京・淺草", lat:35.7111, lng:139.7964, rating:"4.5", desc:"淺草寺入口的大紅燈籠，是東京下町代表地標。"},
+  {name:"仲見世商店街", type:"spot", city:"東京・淺草", lat:35.7124, lng:139.7965, rating:"4.3", desc:"連接雷門與淺草寺的老字號商店街。"},
+  {name:"東京ソラマチ", type:"shopping", city:"東京・晴空塔", lat:35.7100, lng:139.8107, rating:"購物", desc:"晴空塔下方大型商場，餐廳、伴手禮與角色商店齊全。"},
+  {name:"銀座木村家", type:"food", city:"東京・銀座", lat:35.6716, lng:139.7655, rating:"老字號", desc:"以酒種紅豆麵包聞名的銀座百年麵包店。"},
+
+  {name:"ひとめぼれ 京都店", type:"food", city:"京都・河原町", lat:35.0043, lng:135.7680, rating:"推薦", desc:"豪華海鮮丼、生蛋黃海鮮丼。"},
+  {name:"鶏のとりこ 京都河原町店", type:"food", city:"京都・河原町", lat:35.0048, lng:135.7694, rating:"推薦", desc:"雞肉串、雞皮與雞肉丸。"},
+  {name:"炭櫻堂", type:"food", city:"京都車站", lat:34.9858, lng:135.7587, rating:"推薦", desc:"炭火燒烤與串燒居酒屋。"},
+  {name:"鰻と鶏 四條烏丸店", type:"food", city:"京都・四條烏丸", lat:35.0038, lng:135.7594, rating:"推薦", desc:"鰻魚串、雞肉串。"},
+  {name:"WAGYU ICHINONE", type:"food", city:"京都・祇園", lat:35.0032, lng:135.7756, rating:"推薦", desc:"A5 和牛壽喜燒。"},
+  {name:"京都市役所前鐵板料理", type:"food", city:"京都・河原町", lat:35.0116, lng:135.7681, rating:"推薦", desc:"玉子燒與牛排鐵板料理。"},
+
+  {name:"おでん to おさかな ますだ", type:"food", city:"東京・上野", lat:35.7108, lng:139.7748, rating:"推薦", desc:"鮪魚丼、海膽丼與鮭魚卵丼。"},
+  {name:"おちょこ丼 Lunch", type:"food", city:"東京・上野", lat:35.7112, lng:139.7752, rating:"推薦", desc:"六種迷你丼套餐。"},
+  {name:"ペこ東京居酒屋", type:"food", city:"東京・上野", lat:35.7096, lng:139.7750, rating:"推薦", desc:"肉刺身拼盤、牛舌與生牛肉。"},
+  {name:"本格焼鳥 とら屋", type:"food", city:"東京・新宿", lat:35.6938, lng:139.7034, rating:"推薦", desc:"超大雞肉丸與雞腿串。"},
+  {name:"炉端 小寅 新宿店", type:"food", city:"東京・新宿", lat:35.6933, lng:139.7042, rating:"推薦", desc:"和牛、海鮮與炭烤料理。"},
+  {name:"新宿壽司酒場", type:"food", city:"東京・新宿", lat:35.6929, lng:139.7046, rating:"推薦", desc:"壽喜燒手毬壽司與和牛壽司。"},
+  {name:"居酒屋 三村", type:"food", city:"東京・淺草", lat:35.7136, lng:139.7960, rating:"推薦", desc:"厚切豬五花與燒魚。"},
+  {name:"牛舌日 淺草橋分店", type:"food", city:"東京・淺草橋", lat:35.6976, lng:139.7856, rating:"推薦", desc:"厚切牛舌套餐。"},
+  {name:"日本橋 すし釣りきん", type:"food", city:"東京・日本橋", lat:35.6839, lng:139.7745, rating:"推薦", desc:"16 貫握壽司套餐。"},
+  {name:"Sakura Marks Ginza", type:"food", city:"東京・銀座", lat:35.6706, lng:139.7638, rating:"推薦", desc:"海鮮義大利麵與 Pizza。"},
+  {name:"TOKYO STATION CAFE - THE NORTH DOME", type:"food", city:"東京車站", lat:35.6812, lng:139.7671, rating:"推薦", desc:"咖啡與甜點。"},
+  {name:"鮨のだり半", type:"food", city:"東京・代代木", lat:35.6830, lng:139.7021, rating:"推薦", desc:"巨大鮪魚頭與鮪魚生魚片。"},
+  {name:"牛富屋", type:"food", city:"東京・澀谷", lat:35.6595, lng:139.7005, rating:"推薦", desc:"和牛小丼、牛舌與海鮮丼。"},
+  {name:"TEBAPS", type:"food", city:"東京・吉祥寺", lat:35.7033, lng:139.5797, rating:"推薦", desc:"牛排與義大利麵。"},
+
+  /* Tabelog 沿途餐廳：評分與營業資訊會變動，請由卡片按鈕開啟 Tabelog 再確認 */
+  {name:"本家 第一旭 たかばし本店", type:"food", city:"京都車站", lat:34.9855, lng:135.7613, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"京都車站附近老字號拉麵，推薦特製拉麵與叉燒麵。", tabelog:"https://tabelog.com/keywords/本家第一旭/kyoto/kwdLst/"},
+  {name:"新福菜館 本店", type:"food", city:"京都車站", lat:34.9854, lng:135.7610, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"京都代表性黑湯拉麵，亦可搭配炒飯。", tabelog:"https://tabelog.com/keywords/新福菜館/kyoto/kwdLst/"},
+  {name:"先斗町 魯ビン", type:"food", city:"京都・先斗町", lat:35.0054, lng:135.7714, rating:"Tabelog", cuisine:"京料理・居酒屋", price:"¥5,000–7,999", desc:"鴨川旁町家餐廳，適合先斗町夜間散步時用餐。", tabelog:"https://tabelog.com/keywords/先斗町%20魯ビン/kyoto/kwdLst/"},
+  {name:"奥丹 清水", type:"food", city:"京都・清水寺", lat:34.9983, lng:135.7811, rating:"Tabelog", cuisine:"湯豆腐", price:"¥3,000–4,999", desc:"清水寺老街附近的京都湯豆腐料理，適合午餐。", tabelog:"https://tabelog.com/keywords/奥丹清水/kyoto/kwdLst/"},
+  {name:"京極かねよ", type:"food", city:"京都・新京極", lat:35.0071, lng:135.7673, rating:"Tabelog", cuisine:"鰻魚", price:"¥3,000–4,999", desc:"京都老字號鰻魚店，招牌為鋪上厚蛋的金絲丼。", tabelog:"https://tabelog.com/keywords/京極かねよ/kyoto/kwdLst/"},
+  {name:"麺屋 猪一", type:"food", city:"京都・河原町", lat:35.0009, lng:135.7658, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"以清澈出汁及白醬油系拉麵聞名，河原町散步可順路。", tabelog:"https://tabelog.com/keywords/麺屋猪一/kyoto/kwdLst/"},
+  {name:"吉野本葛 天極堂 奈良本店", type:"food", city:"奈良・東大寺", lat:34.6870, lng:135.8393, rating:"Tabelog", cuisine:"葛料理・甜點", price:"¥1,000–2,999", desc:"東大寺附近，可品嚐葛切、葛餅及葛料理。", tabelog:"https://tabelog.com/keywords/天極堂奈良本店/nara/kwdLst/"},
+  {name:"柿の葉すし本舗たなか なら本店", type:"food", city:"奈良・近鐵奈良", lat:34.6831, lng:135.8279, rating:"Tabelog", cuisine:"柿葉壽司", price:"¥1,000–1,999", desc:"奈良代表性柿葉壽司，適合午餐或購買外帶。", tabelog:"https://tabelog.com/keywords/柿の葉すし本舗たなか/nara/kwdLst/"},
+  {name:"はしたて", type:"food", city:"京都車站", lat:34.9856, lng:135.7585, rating:"Tabelog", cuisine:"丼飯・麵食", price:"¥2,000–2,999", desc:"位於京都車站內，適合搭新幹線前快速用餐。", tabelog:"https://tabelog.com/keywords/はしたて/kyoto/kwdLst/"},
+  {name:"六厘舎 東京駅店", type:"food", city:"東京車站", lat:35.6813, lng:139.7670, rating:"Tabelog", cuisine:"沾麵", price:"¥1,000–1,999", desc:"東京拉麵街熱門濃厚沾麵，常需排隊。", tabelog:"https://tabelog.com/keywords/六厘舎東京駅/tokyo/kwdLst/"},
+  {name:"銀座 篝 本店", type:"food", city:"東京・銀座", lat:35.6716, lng:139.7650, rating:"Tabelog", cuisine:"雞白湯拉麵", price:"¥1,000–1,999", desc:"銀座人氣雞白湯拉麵，可作為入住銀座後的晚餐選項。", tabelog:"https://tabelog.com/keywords/銀座篝/tokyo/kwdLst/"},
+  {name:"築地虎杖 魚河岸千両", type:"food", city:"東京・築地", lat:35.6658, lng:139.7703, rating:"Tabelog", cuisine:"海鮮丼", price:"¥2,000–3,999", desc:"築地場外市場海鮮丼選擇，推薦海鮮ひつまぶし。", tabelog:"https://tabelog.com/keywords/魚河岸千両/tokyo/kwdLst/"},
+  {name:"五代目 花山うどん 銀座店", type:"food", city:"東京・銀座", lat:35.6709, lng:139.7658, rating:"Tabelog", cuisine:"烏龍麵", price:"¥1,000–2,999", desc:"招牌為寬版鬼ひも川烏龍麵，午餐時段常排隊。", tabelog:"https://tabelog.com/keywords/五代目花山うどん銀座/tokyo/kwdLst/"},
+  {name:"銀座 八五", type:"food", city:"東京・銀座", lat:35.6699, lng:139.7720, rating:"Tabelog", cuisine:"拉麵", price:"¥1,000–1,999", desc:"銀座東側知名中華そば，建議事先確認現場候位方式。", tabelog:"https://tabelog.com/keywords/銀座八五/tokyo/kwdLst/"},
+  {name:"牛かつ もと村 渋谷店", type:"food", city:"東京・澀谷", lat:35.6581, lng:139.7017, rating:"Tabelog", cuisine:"炸牛排", price:"¥2,000–2,999", desc:"SHIBUYA SKY 周邊可自行烤熟度的炸牛排套餐。", tabelog:"https://tabelog.com/keywords/牛かつもと村渋谷/tokyo/kwdLst/"},
+  {name:"AFURI 六本木交差点", type:"food", city:"東京・六本木", lat:35.6635, lng:139.7310, rating:"Tabelog", cuisine:"柚子鹽拉麵", price:"¥1,000–1,999", desc:"六本木夜景行程後可吃的清爽柚子鹽拉麵。", tabelog:"https://tabelog.com/keywords/AFURI六本木/tokyo/kwdLst/"},
+  {name:"並木藪蕎麦", type:"food", city:"東京・淺草", lat:35.7098, lng:139.7954, rating:"Tabelog", cuisine:"蕎麥麵", price:"¥1,000–1,999", desc:"雷門附近老字號江戶前蕎麥麵店。", tabelog:"https://tabelog.com/keywords/並木藪蕎麦/tokyo/kwdLst/"},
+  {name:"駒形どぜう 本店", type:"food", city:"東京・淺草", lat:35.7074, lng:139.7952, rating:"Tabelog", cuisine:"泥鰍鍋", price:"¥3,000–4,999", desc:"淺草傳統江戶料理，可體驗特色泥鰍鍋。", tabelog:"https://tabelog.com/keywords/駒形どぜう/tokyo/kwdLst/"},
+  {name:"遠藤利三郎商店", type:"food", city:"東京・押上", lat:35.7105, lng:139.8146, rating:"Tabelog", cuisine:"法式小酒館", price:"¥5,000–7,999", desc:"晴空塔與押上附近的葡萄酒餐廳，適合晚餐。", tabelog:"https://tabelog.com/keywords/遠藤利三郎商店/tokyo/kwdLst/"},
+  {name:"肉の大山", type:"food", city:"東京・上野", lat:35.7107, lng:139.7747, rating:"Tabelog", cuisine:"炸肉餅・洋食", price:"¥1,000–1,999", desc:"阿美橫町附近，可吃炸肉餅、可樂餅或店內套餐。", tabelog:"https://tabelog.com/keywords/肉の大山/tokyo/kwdLst/"},
+  {name:"鴨to葱", type:"food", city:"東京・御徒町", lat:35.7083, lng:139.7749, rating:"Tabelog", cuisine:"鴨肉拉麵", price:"¥1,000–1,999", desc:"阿美橫町旁人氣鴨肉拉麵，適合購物途中用餐。", tabelog:"https://tabelog.com/keywords/鴨to葱/tokyo/kwdLst/"},
+  {name:"麺処 ほん田 秋葉原本店", type:"food", city:"東京・秋葉原", lat:35.6991, lng:139.7745, rating:"Tabelog", cuisine:"拉麵・沾麵", price:"¥1,000–1,999", desc:"秋葉原車站附近的人氣拉麵與沾麵。", tabelog:"https://tabelog.com/keywords/麺処ほん田秋葉原/tokyo/kwdLst/"},
+  {name:"CENTRE THE BAKERY", type:"food", city:"東京・銀座一丁目", lat:35.6750, lng:139.7670, rating:"Tabelog", cuisine:"吐司・三明治", price:"¥1,000–2,999", desc:"最後一天銀座早餐選擇，主打吐司與三明治。", tabelog:"https://tabelog.com/keywords/CENTRE%20THE%20BAKERY/tokyo/kwdLst/"},
+
+  /* 東京購物地圖：獨立購物圖層，不改動每日行程 */
+  {name:"UNIQLO 銀座旗艦店", type:"shopping", city:"東京・銀座", lat:35.6702, lng:139.7639, rating:"服飾", desc:"大型旗艦店，適合集中採買 UNIQLO 服飾與日本限定商品。"},
+  {name:"GU 銀座店", type:"shopping", city:"東京・銀座", lat:35.6703, lng:139.7640, rating:"服飾", desc:"平價流行服飾，與 UNIQLO 銀座商圈可一起逛。"},
+  {name:"GINZA SIX", type:"shopping", city:"東京・銀座", lat:35.6696, lng:139.7644, rating:"百貨", desc:"銀座大型複合商場，精品、生活選物、餐飲與屋頂空間集中。"},
+  {name:"銀座三越", type:"shopping", city:"東京・銀座", lat:35.6715, lng:139.7651, rating:"百貨", desc:"銀座代表百貨，適合精品、化妝品、食品與伴手禮採買。"},
+  {name:"松屋銀座", type:"shopping", city:"東京・銀座", lat:35.6721, lng:139.7661, rating:"百貨", desc:"銀座老牌百貨，服飾、美妝、生活用品與地下食品區齊全。"},
+  {name:"無印良品 銀座", type:"shopping", city:"東京・銀座", lat:35.6741, lng:139.7667, rating:"生活", desc:"大型 MUJI 店舖，生活用品、文具、服飾與食品選擇完整。"},
+  {name:"銀座 伊東屋 本店", type:"shopping", city:"東京・銀座", lat:35.6726, lng:139.7680, rating:"文具", desc:"銀座知名文具專門店，適合購買筆記本、鋼筆、紙品與設計文具。"},
+  {name:"Bic Camera 有樂町店", type:"shopping", city:"東京・有樂町", lat:35.6752, lng:139.7630, rating:"3C", desc:"大型家電量販店，家電、3C、相機與免稅商品選擇多。"},
+  {name:"唐吉訶德 銀座本館", type:"shopping", city:"東京・銀座", lat:35.6679, lng:139.7640, rating:"24H", desc:"零食、藥妝、生活用品與伴手禮，適合回飯店前補貨。"},
+  {name:"東京站一番街", type:"shopping", city:"東京・東京車站", lat:35.6811, lng:139.7681, rating:"伴手禮", desc:"角色商店、東京拉麵街與伴手禮集中，可搭配東京車站行程。"},
+  {name:"GRANSTA 東京", type:"shopping", city:"東京・東京車站", lat:35.6813, lng:139.7668, rating:"伴手禮", desc:"東京站內大型商業區，甜點、便當、伴手禮與限定商品豐富。"},
+  {name:"KITTE 丸之內", type:"shopping", city:"東京・丸之內", lat:35.6796, lng:139.7648, rating:"商場", desc:"東京車站旁複合商場，可逛選物店並順遊屋頂庭園。"},
+  {name:"阿美橫町", type:"shopping", city:"東京・上野", lat:35.7101, lng:139.7744, rating:"藥妝", desc:"藥妝、零食、伴手禮、服飾與行李箱集中，適合大量採買。"},
+  {name:"二木菓子 第一營業所", type:"shopping", city:"東京・上野", lat:35.7096, lng:139.7736, rating:"零食", desc:"阿美橫町人氣零食店，適合一次採買日本餅乾、糖果與伴手禮。"},
+  {name:"松坂屋 上野店", type:"shopping", city:"東京・上野", lat:35.7075, lng:139.7732, rating:"百貨", desc:"御徒町站旁百貨，食品、美妝與服飾採買方便。"},
+  {name:"Bic Camera AKIBA", type:"shopping", city:"東京・秋葉原", lat:35.6983, lng:139.7735, rating:"3C", desc:"家電、3C、相機、玩具與免稅商品集中。"},
+  {name:"秋葉原 Radio 會館", type:"shopping", city:"東京・秋葉原", lat:35.6979, lng:139.7715, rating:"動漫", desc:"模型、卡牌、動漫周邊與收藏商品集中，適合動漫採買。"},
+  {name:"SHIBUYA PARCO", type:"shopping", city:"東京・澀谷", lat:35.6620, lng:139.6987, rating:"潮流", desc:"潮流品牌、Nintendo TOKYO、動漫與設計選物集中。"},
+  {name:"SHIBUYA SCRAMBLE SQUARE", type:"shopping", city:"東京・澀谷", lat:35.6585, lng:139.7020, rating:"百貨", desc:"澀谷站直結商場，可與 SHIBUYA SKY 同區安排。"},
+  {name:"澀谷 Loft", type:"shopping", city:"東京・澀谷", lat:35.6608, lng:139.6999, rating:"雜貨", desc:"文具、美妝、旅行用品與生活雜貨選擇豐富。"},
+  {name:"Hands 澀谷店", type:"shopping", city:"東京・澀谷", lat:35.6615, lng:139.6979, rating:"生活", desc:"生活用品、DIY、文具、旅行小物與日本特色商品齊全。"},
+  {name:"MIYASHITA PARK", type:"shopping", city:"東京・澀谷", lat:35.6617, lng:139.7015, rating:"潮流", desc:"潮流商店、餐飲與屋頂公園結合的澀谷複合設施。"},
+  {name:"伊勢丹 新宿店", type:"shopping", city:"東京・新宿", lat:35.6916, lng:139.7046, rating:"百貨", desc:"東京代表性百貨之一，精品、美妝、服飾與食品館完整。"},
+  {name:"NEWoMan 新宿", type:"shopping", city:"東京・新宿", lat:35.6886, lng:139.7005, rating:"商場", desc:"新宿站南口商場，時尚、甜點、餐飲與伴手禮集中。"},
+  {name:"LUMINE EST 新宿", type:"shopping", city:"東京・新宿", lat:35.6910, lng:139.7017, rating:"服飾", desc:"年輕流行服飾、美妝與餐飲品牌集中。"},
+  {name:"Tokyo Solamachi", type:"shopping", city:"東京・晴空塔", lat:35.7100, lng:139.8107, rating:"商場", desc:"晴空塔下方大型購物商場，角色商店、伴手禮、餐廳與生活品牌齊全。"},
+
+  /* 依 restaurants-instructions(1).txt 補齊的餐廳資料 */
+  {name:"入鹿TOKYO 六本木", type:"food", city:"東京・六本木", lat:35.6634, lng:139.7310, rating:"推薦", cuisine:"拉麵", desc:"六本木4-12-12 穂高ビル1F；六本木站約2分鐘。"},
+  {name:"東上野居酒屋（店名待核對）", type:"food", city:"東京・東上野", lat:35.7090, lng:139.7800, rating:"推薦", cuisine:"居酒屋", desc:"地址：東京都台東區東上野3丁目30-2；肉刺、內臟料理。店名待核對。"},
+  {name:"伊豆榮 本店", type:"food", city:"東京・上野", lat:35.7110, lng:139.7725, rating:"推薦", cuisine:"鰻魚", desc:"江戶老字號鰻魚料理；JR上野站步行約5分鐘。"},
+  {name:"牛かつ もと村 上野店", type:"food", city:"東京・上野", lat:35.7078, lng:139.7745, rating:"推薦", cuisine:"炸牛排", desc:"炸牛排，可自行加熱熟度；御徒町站步行約2分鐘。"},
+  {name:"月島もんじゃ 玉屋 上野店", type:"food", city:"東京・上野", lat:35.7100, lng:139.7740, rating:"推薦", cuisine:"文字燒", desc:"東京下町文字燒，鐵板現場製作；上野站周邊。"},
+  {name:"みはし 上野本店", type:"food", city:"東京・上野", lat:35.7116, lng:139.7737, rating:"推薦", cuisine:"日式甘味", desc:"老字號甘味店，以あんみつ聞名。"},
+  {name:"上野藪そば", type:"food", city:"東京・上野", lat:35.7085, lng:139.7740, rating:"推薦", cuisine:"蕎麥麵", desc:"老東京風格蕎麥麵；御徒町站步行約8分鐘。"},
+  {name:"上野大統領", type:"food", city:"東京・上野", lat:35.7099, lng:139.7742, rating:"推薦", cuisine:"居酒屋", desc:"昭和氛圍居酒屋，燒鳥與串燒。"},
+  {name:"韻松亭", type:"food", city:"東京・上野", lat:35.7145, lng:139.7719, rating:"推薦", cuisine:"日式料理", desc:"傳統料理亭與日式庭園；上野公園周邊。"},
+  {name:"天寿々", type:"food", city:"東京・上野", lat:35.7074, lng:139.7746, rating:"推薦", cuisine:"天婦羅", desc:"江戶前風格天婦羅；御徒町站周邊。"},
+  {name:"井泉 本店", type:"food", city:"東京・上野", lat:35.7072, lng:139.7725, rating:"推薦", cuisine:"炸豬排", desc:"厚切炸豬排老店；分店資訊使用前請再確認。"},
+  {name:"喫茶YOU", type:"food", city:"東京・東銀座", lat:35.6693, lng:139.7677, rating:"推薦", cuisine:"蛋包飯・喫茶", desc:"東銀座人氣喫茶店，以滑嫩蛋包飯聞名。"},
+  {name:"Tonkatsu Hasegawa 東銀座店", type:"food", city:"東京・東銀座", lat:35.6695, lng:139.7700, rating:"推薦", cuisine:"炸豬排", desc:"厚切炸豬排；東銀座站步行約3分鐘。"},
+  {name:"麺処 銀笹", type:"food", city:"東京・銀座", lat:35.6677, lng:139.7690, rating:"推薦", cuisine:"拉麵", desc:"鹽味拉麵與鯛魚飯，銀座東側。"},
+  {name:"煉瓦亭", type:"food", city:"東京・銀座", lat:35.6720, lng:139.7648, rating:"推薦", cuisine:"洋食", desc:"1895年創業的經典洋食老店。"},
+  {name:"銀之塔", type:"food", city:"東京・銀座", lat:35.6692, lng:139.7682, rating:"推薦", cuisine:"燉菜", desc:"銀座經典燉菜老店；東銀座站周邊。"},
+  {name:"HIRAGI 銀座本店", type:"food", city:"東京・銀座", lat:35.6700, lng:139.7680, rating:"推薦", cuisine:"甜點", desc:"鯛魚燒、刨冰；正式拼寫可再核對。"},
+  {name:"竹葉亭 本店", type:"food", city:"東京・銀座", lat:35.6675, lng:139.7660, rating:"推薦", cuisine:"鰻魚", desc:"江戶前鰻魚老字號。"},
+  {name:"銀座 朧月", type:"food", city:"東京・銀座", lat:35.6711, lng:139.7638, rating:"推薦", cuisine:"沾麵", desc:"濃郁魚介沾麵；銀座站周邊。"},
+  {name:"京沾麵 鶴亀 本店", type:"food", city:"京都・河原町", lat:35.0042, lng:135.7675, rating:"推薦", cuisine:"沾麵", desc:"魚介醬油、京味噌風格沾麵。"},
+  {name:"天丼まきの 京都寺町店", type:"food", city:"京都・寺町", lat:35.0046, lng:135.7662, rating:"推薦", cuisine:"天婦羅丼", desc:"現炸天婦羅丼；河原町站步行約4分鐘。"},
+  {name:"肉料理 荒川", type:"food", city:"京都・河原町", lat:35.0040, lng:135.7690, rating:"推薦", cuisine:"燒肉・肉料理", desc:"圖卡標示1968年創立；河原町站步行約2～3分鐘。"},
+  {name:"おにまる 京都四条河原町店", type:"food", city:"京都・四條河原町", lat:35.0033, lng:135.7693, rating:"推薦", cuisine:"炭烤飯糰", desc:"炭烤飯糰；京都河原町站步行約2分鐘。"},
+  {name:"かつくら 四条寺町店", type:"food", city:"京都・寺町", lat:35.0037, lng:135.7667, rating:"推薦", cuisine:"炸豬排", desc:"京都炸豬排；京都河原町站周邊。"},
+  {name:"koé Donuts Kyoto", type:"food", city:"京都・新京極", lat:35.0038, lng:135.7671, rating:"推薦", cuisine:"甜甜圈", desc:"甜甜圈與甜點；河原町站9號出口附近。"},
+  {name:"名代おめん 四条先斗町店", type:"food", city:"京都・先斗町", lat:35.0038, lng:135.7711, rating:"推薦", cuisine:"烏龍麵", desc:"京都烏龍麵；先斗町／四條周邊。"},
+  {name:"佛蘭西屋（店名待核對）", type:"food", city:"京都・河原町", lat:35.0038, lng:135.7685, rating:"推薦", cuisine:"喫茶・甜點", desc:"復古咖啡店；正式店名／分店待核對。"},
+  {name:"和栗専門 紗織", type:"food", city:"京都・木屋町", lat:35.0047, lng:135.7700, rating:"推薦", cuisine:"和栗甜點", desc:"現擠和栗蒙布朗；木屋町／河原町。"},
+  {name:"もりもり寿し 四条河原町店", type:"food", city:"京都・四條河原町", lat:35.0035, lng:135.7690, rating:"推薦", cuisine:"迴轉壽司", desc:"北陸迴轉壽司；京都河原町站附近。"},
+  {name:"旭川 Gyoza 中島餃子", type:"food", city:"京都・祇園四條", lat:35.0024, lng:135.7728, rating:"推薦", cuisine:"餃子", desc:"地址：京都市東山區六軒町206-1；祇園四條站附近。"},
+  {name:"Taisho Romance Cafe & Studio", type:"food", city:"京都・四條河原町", lat:35.0020, lng:135.7670, rating:"推薦", cuisine:"Cafe・洋食", desc:"大正浪漫風格咖啡／洋食；地址依截圖整理。"},
+  {name:"Menya Edition Honten", type:"food", city:"京都・東山", lat:34.9985, lng:135.7725, rating:"推薦", cuisine:"拉麵", desc:"豚旨味系湯頭；正式日文店名與完整車站資訊待核對。"},
+  {name:"小梅澀谷（店名待核對）", type:"food", city:"東京・澀谷", lat:35.6598, lng:139.7030, rating:"推薦", cuisine:"日式料理", desc:"多款小鉢料理；澀谷站宮益坂口約2分鐘，正式店名待核對。"},
+  {name:"THE BELCOMO", type:"food", city:"東京・青山", lat:35.6710, lng:139.7187, rating:"推薦", cuisine:"Cafe・餐廳", desc:"THE AOYAMA GRAND HOTEL 4F；早餐、鬆餅與餐廳料理。"},
+];
+
+const map = L.map("travelMap", { zoomControl: true }).setView([35.4, 137.6], 6);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+
+const markerLayer = L.layerGroup().addTo(map);
+const routeLayer = L.layerGroup().addTo(map);
+const markers = {};
+
+function tabelogUrl(place) {
+  return place.tabelog || `https://tabelog.com/rstLst/?vs=1&sa=&sk=${encodeURIComponent(place.name)}`;
+}
+
+function popupHtml(place) {
+  return `<div style="min-width:230px">
+    <strong style="font-size:16px">${place.type === "food" ? "🍜 " : ""}${place.name}</strong><br>
+    <span>${place.city}・${place.rating}</span>
+    ${place.type === "food" ? `<p style="margin:7px 0 0;font-weight:800;color:#78866B">${place.cuisine || "餐廳"}${place.price ? `・${place.price}` : ""}</p>` : ""}
+    <p style="margin:8px 0;line-height:1.55">${place.desc}</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a target="_blank" rel="noopener" style="font-weight:800;color:#78866B" href="${googleDirectionsUrl(place.name + ' ' + place.city)}">🧭 Google 導覽</a>
+      <a target="_blank" rel="noopener" style="font-weight:800;color:#A9826B" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.city)}">🔎 Google 地圖</a>
+      ${place.type === "food" ? `<a target="_blank" rel="noopener" style="font-weight:800;color:#b45309" href="${tabelogUrl(place)}">⭐ Tabelog</a>` : ""}
+    </div>
+  </div>`;
+}
+
+places.forEach(place => {
+  const markerIcon = L.divIcon({
+    className: "",
+    html: `<div class="${place.type === "food" ? "food-map-marker" : "spot-map-marker"}">${place.type === "food" ? "🍜" : place.type === "shopping" ? "🛍️" : "📍"}</div>`,
+    iconSize: [34,34],
+    iconAnchor: [17,17],
+    popupAnchor: [0,-15]
+  });
+  const marker = L.marker([place.lat, place.lng], {icon: markerIcon}).bindPopup(popupHtml(place));
+  marker.on("click", () => highlightPlaceCard(place.name));
+  markers[place.name] = marker;
+});
+
+let activeType = "day";
+let selectedMapDay = 0;
+const MIN_RESTAURANT_RATING = 3.5;
+
+/*
+  可在餐廳資料中加入 score: 3.72。
+  若尚未填入數字分數，既有 Tabelog／推薦餐廳先列為 3.5+ 精選候選；
+  用餐前仍應按 Tabelog 確認即時評分。
+*/
+function restaurantScore(place) {
+  if (typeof place.score === "number") return place.score;
+  const parsed = Number.parseFloat(place.rating);
+  if (Number.isFinite(parsed)) return parsed;
+  return place.type === "food" ? MIN_RESTAURANT_RATING : null;
+}
+
+function isQualifiedRestaurant(place) {
+  return place.type === "food" && restaurantScore(place) >= MIN_RESTAURANT_RATING;
+}
+
+function visiblePlaces() {
+  if (activeType === "day") {
+    const names = dayPlaceNames[selectedMapDay] || [];
+    return names
+      .map(name => places.find(p => p.name === name))
+      .filter(Boolean)
+      .filter(p => p.type !== "food" || isQualifiedRestaurant(p));
+  }
+  if (activeType === "food") return places.filter(isQualifiedRestaurant);
+  return places.filter(p => p.type === activeType);
+}
+
+function drawVisibleMarkers({fit=true, openName=""} = {}) {
+  markerLayer.clearLayers();
+  routeLayer.clearLayers();
+  const shown = visiblePlaces();
+
+  const routePlaces = activeType === "day"
+    ? shown.filter(place => place.type !== "food")
+    : shown;
+
+  const routeOrder = new Map(routePlaces.map((place, index) => [place.name, index + 1]));
+
+  shown.forEach(place => {
+    const marker = markers[place.name];
+    marker.addTo(markerLayer);
+
+    if (activeType === "day" && place.type !== "food") {
+      marker.bindTooltip(String(routeOrder.get(place.name)), {
+        permanent:true,
+        direction:"top",
+        className:"trip-order",
+        offset:[0,-12]
+      });
+    } else {
+      marker.unbindTooltip();
+    }
+  });
+
+  if (activeType === "day" && routePlaces.length > 1) {
+    L.polyline(
+      routePlaces.map(p => [p.lat, p.lng]),
+      {color:"#78866B", weight:4, opacity:.72, dashArray:"8 8"}
+    ).addTo(routeLayer);
+  }
+
+  if (fit && shown.length) {
+    const bounds = L.latLngBounds(shown.map(p => [p.lat, p.lng]));
+    map.fitBounds(bounds.pad(.18), {maxZoom:14});
+  }
+
+  if (openName && markers[openName]) markers[openName].openPopup();
+
+  if (activeType === "day") {
+    const foodCount = shown.filter(p => p.type === "food").length;
+    document.getElementById("mapStatus").textContent =
+      `${itinerary[selectedMapDay].date} ${itinerary[selectedMapDay].city}：${routePlaces.length} 個行程站點依序編號，另顯示 ${foodCount} 家附近餐廳作為用餐參考；餐廳不列入第幾站。`;
+  } else {
+    document.getElementById("mapStatus").textContent =
+      `目前顯示 ${shown.length} 個${activeType === "spot" ? "景點" : activeType === "food" ? "3.5+ 精選餐廳" : "東京購物點"}。左右滑動卡片即可讓地圖同步定位並開啟介紹。`;
+  }
+}
+
+function renderPlaces(keyword = "") {
+  const list = document.getElementById("placeList");
+  const q = keyword.toLowerCase();
+  const filtered = visiblePlaces().filter(p => `${p.name}${p.city}${p.desc}${p.cuisine || ''}${p.price || ''}`.toLowerCase().includes(q));
+
+  list.innerHTML = filtered.map((p, index) => `
+    <article data-name="${p.name}" class="place-card w-full rounded-2xl border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow">
+      <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="w-full text-left">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-xs font-black text-sakura">${activeType === "day" ? (p.type === "food" ? "附近美食" : `第 ${visiblePlaces().filter(x => x.type !== "food").findIndex(x => x.name === p.name) + 1} 站`) : p.type === "spot" ? "景點" : p.type === "food" ? "美食" : "購物"}</p>
+            <h3 class="mt-1 font-bold">${p.name}</h3>
+            <p class="mt-1 text-xs font-semibold text-matcha">${p.city}</p>
+          </div>
+          <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${p.type === "food" ? "rating-qualified" : "bg-mist"}">${
+              p.type === "food"
+                ? (typeof p.score === "number" ? `⭐ ${p.score.toFixed(2)}` : "⭐ 3.5+ 精選")
+                : p.rating
+            }</span>
+        </div>
+        ${p.type === "food" ? `<div class="mt-2 flex flex-wrap gap-2 text-xs font-bold"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">${p.cuisine || "餐廳"}</span>${p.price ? `<span class="rounded-full bg-mist px-2.5 py-1 text-stone-600">${p.price}</span>` : ""}</div><p class="mt-2 text-xs text-amber-700">左右滑動卡片會自動切換地圖；即時評分請開啟 Tabelog 確認。</p>` : ""}
+        <p class="mt-2 text-sm leading-6 text-stone-500">${p.desc}</p>
+      </button>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <button onclick="focusPlace('${p.name.replace(/'/g, "\\'")}')" class="rounded-xl border border-stone-200 px-3 py-2 text-xs font-bold hover:bg-mist">📍 網頁地圖定位</button>
+        <a target="_blank" rel="noopener" href="${googleDirectionsUrl(p.name + ' ' + p.city)}" class="rounded-xl bg-matcha px-3 py-2 text-xs font-bold text-white hover:bg-ink">🧭 Google 導覽</a>
+        <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + p.city)}" class="rounded-xl bg-clay px-3 py-2 text-xs font-bold text-white hover:bg-ink">🔎 Google 地圖</a>
+        ${p.type === "food" ? `<a target="_blank" rel="noopener" href="${tabelogUrl(p)}" class="rounded-xl bg-amber-600 px-3 py-2 text-xs font-bold text-white hover:bg-ink">⭐ Tabelog</a>` : ""}
+      </div>
+    </article>
+  `).join("") || `<p class="rounded-xl bg-white p-5 text-center text-stone-500">這個分類目前沒有符合 3.5+ 條件的餐廳資料。</p>`;
+
+  requestAnimationFrame(() => setupPlaceCardSwipe());
+}
+
+let placeSwipeTimer = null;
+
+function setupPlaceCardSwipe() {
+  const list = document.getElementById("placeList");
+  if (!list) return;
+
+  const syncCenteredCard = () => {
+    const cards = [...list.querySelectorAll(".place-card")];
+    if (!cards.length) return;
+
+    const listRect = list.getBoundingClientRect();
+    const listCenter = listRect.left + listRect.width / 2;
+    let closest = cards[0];
+    let closestDistance = Infinity;
+
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const distance = Math.abs(cardCenter - listCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = card;
+      }
+    });
+
+    const name = closest.dataset.name;
+    const place = places.find(p => p.name === name);
+    if (!place || !markers[name]) return;
+
+    highlightPlaceCard(name);
+    map.flyTo(
+      [place.lat, place.lng],
+      place.city.includes("京都") || place.city.includes("奈良") ? 15 : 16,
+      {duration: .55}
+    );
+    markers[name].openPopup();
+  };
+
+  list.onscroll = () => {
+    clearTimeout(placeSwipeTimer);
+    placeSwipeTimer = setTimeout(syncCenteredCard, 150);
+  };
+  list.onpointerup = () => setTimeout(syncCenteredCard, 80);
+}
+
+function highlightPlaceCard(name) {
+  document.querySelectorAll(".place-card").forEach(card => card.classList.toggle("active", card.dataset.name === name));
+  const card = document.querySelector(`.place-card[data-name="${CSS.escape(name)}"]`);
+  if (card) card.scrollIntoView({behavior:"smooth", block:"nearest", inline:"nearest"});
+}
+
+function updateTabs() {
+  document.querySelectorAll(".map-tab").forEach(btn => {
+    const active = btn.dataset.type === activeType;
+    btn.classList.toggle("bg-white", active);
+    btn.classList.toggle("shadow", active);
+    btn.classList.toggle("text-matcha", active);
+  });
+}
+
+window.focusPlace = function(name) {
+  let place = places.find(p => p.name === name) || places.find(p => p.name.includes(name) || name.includes(p.name));
+  if (!place) {
+    const query = getNavigationQuery(name) || name;
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, "_blank", "noopener");
+    return;
+  }
+  if (!visiblePlaces().some(p => p.name === place.name)) {
+    activeType = place.type;
+    updateTabs();
+    renderPlaces();
+    drawVisibleMarkers({fit:false});
+  }
+  setTimeout(() => {
+    map.invalidateSize();
+    map.flyTo([place.lat, place.lng], place.city.includes("京都") || place.city.includes("奈良") ? 14 : 15, {duration:1.0});
+    markers[place.name].openPopup();
+    highlightPlaceCard(place.name);
+    document.getElementById("map").scrollIntoView({behavior:"smooth"});
+  }, 80);
+};
+
+window.showDayOnMap = function(index) {
+  selectedMapDay = Math.max(0, Math.min(itinerary.length - 1, index));
+  activeType = "day";
+  document.getElementById("mapDaySelect").value = String(selectedMapDay);
+  updateTabs();
+  renderPlaces();
+  setTimeout(() => { map.invalidateSize(); drawVisibleMarkers(); document.getElementById("map").scrollIntoView({behavior:"smooth"}); }, 80);
+};
+
+const mapDaySelect = document.getElementById("mapDaySelect");
+mapDaySelect.innerHTML = itinerary.map((d, i) => `<option value="${i}">${d.date}・${d.city}｜${d.title}</option>`).join("");
+mapDaySelect.addEventListener("change", e => showDayOnMap(Number(e.target.value)));
+
+document.querySelectorAll(".map-tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    activeType = btn.dataset.type;
+    updateTabs();
+    renderPlaces();
+    drawVisibleMarkers();
+  });
+});
+
+updateTabs();
+renderPlaces();
+setTimeout(() => { map.invalidateSize(); drawVisibleMarkers(); }, 120);
+
+
+const STORAGE_KEY = "familyJapanTrip2026Shopping";
+const exchangeRate = 0.21;
+let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+function saveItems() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+function renderItems() {
+  const list = document.getElementById("shoppingList");
+  list.innerHTML = items.map(item => `
+    <div class="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-4 sm:flex-row sm:items-center">
+      <button onclick="toggleItem('${item.id}')" class="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 ${item.done ? 'border-matcha bg-matcha text-white' : 'border-stone-300'}">
+        ${item.done ? '✓' : ''}
+      </button>
+      <div class="min-w-0 flex-1 ${item.done ? 'opacity-45 line-through' : ''}">
+        <h3 class="font-bold">${escapeHTML(item.name)}</h3>
+        <p class="mt-1 text-sm text-stone-500">購買地點：${escapeHTML(item.place)}</p>
+      </div>
+      <div class="sm:text-right">
+        <p class="font-bold">¥${Number(item.price).toLocaleString()}</p>
+        <p class="text-sm text-stone-500">約 NT$${Math.round(item.price * exchangeRate).toLocaleString()}</p>
+      </div>
+      <button onclick="deleteItem('${item.id}')" class="rounded-lg px-3 py-2 font-bold text-red-500 hover:bg-red-50">刪除</button>
+    </div>
+  `).join("") || `<p class="rounded-xl border border-dashed border-stone-300 p-8 text-center text-stone-500">尚未加入購物商品。</p>`;
+
+  const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
+  document.getElementById("totalJPY").textContent = `¥${total.toLocaleString()}`;
+  document.getElementById("totalTWD").textContent = `NT$${Math.round(total * exchangeRate).toLocaleString()}`;
+}
+window.toggleItem = function(id) {
+  items = items.map(i => i.id === id ? {...i, done:!i.done} : i);
+  saveItems(); renderItems();
+}
+window.deleteItem = function(id) {
+  items = items.filter(i => i.id !== id);
+  saveItems(); renderItems();
+}
+document.getElementById("shoppingForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = document.getElementById("itemName").value.trim();
+  const place = document.getElementById("itemPlace").value.trim();
+  const price = Number(document.getElementById("itemPrice").value);
+  if (!name || !place || price < 0) return;
+  items.unshift({id:`${Date.now()}-${Math.random().toString(16).slice(2)}`, name, place, price, done:false});
+  saveItems(); renderItems(); e.target.reset();
+});
+renderItems();
+window.addEventListener("resize", () => map.invalidateSize());
+</script>
+</body>
+</html>
